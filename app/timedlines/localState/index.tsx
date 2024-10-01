@@ -3,12 +3,24 @@ export { useEditorState, useEditorDispatch } from './editor'
 import { LocalCacheProvider } from './cache'
 import { LocalEditorProvider } from './editor'
 
-export default function LocalStoreProvider({ children }: { children: React.ReactNode }) {
+import EditorInternalStore from '../timeline/FocusView/internalState'
+
+export function LocalStoreProvider({ children }: { children: React.ReactNode }) {
     return (
         <>
             <LocalCacheProvider>
-                <LocalEditorProvider>{children}</LocalEditorProvider>
+                <LocalEditorProvider>
+                    <InternalStoresProvider>{children}</InternalStoresProvider>
+                </LocalEditorProvider>
             </LocalCacheProvider>
+        </>
+    )
+}
+
+export function InternalStoresProvider({ children }: { children: React.ReactNode }) {
+    return (
+        <>
+            <EditorInternalStore>{children}</EditorInternalStore>
         </>
     )
 }

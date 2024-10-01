@@ -1,14 +1,19 @@
 import { createContext, useContext, useReducer, type Dispatch } from 'react'
-import { SessionReference } from '@/app/cachedb/sessions'
 
-export type State = { session: SessionReference | null; activeLyrics: Array<[number, string]> }
-export type Action = { type: 'session/update'; payload: SessionReference | null }
+export type State = { detailTime: number; zoomSize: number; focusViewRoot: HTMLDivElement | null }
+export type Action =
+    | { type: 'detailTime/update'; payload: number }
+    | { type: 'zoomSize/update'; payload: number }
 
-const EditorContext = createContext<State>({} as any)
-const DispatchContext = createContext<Dispatch<Action>>(null as any)
+const EditorContext = createContext<State>({} as unknown as State)
+const DispatchContext = createContext<Dispatch<Action>>(null as unknown as Dispatch<Action>)
 
 export function LocalEditorProvider({ children }: { children: React.ReactNode }) {
-    const [state, dispatch] = useReducer(reducer, {} as any)
+    const [state, dispatch] = useReducer(reducer, {
+        detailTime: 1000,
+        zoomSize: 1,
+        focusViewRoot: null
+    } satisfies State)
 
     return (
         <EditorContext.Provider value={state}>
@@ -19,12 +24,19 @@ export function LocalEditorProvider({ children }: { children: React.ReactNode })
 
 function reducer(state: State, action: Action): State {
     switch (action.type) {
-        case 'session/update':
+        case 'detailTime/update':
             return {
                 ...state,
-                session: action.payload
+                detailTime: action.payload
+            }
+        case 'zoomSize/update':
+            return {
+                ...state,
+                zoomSize: action.payload
             }
     }
+
+    return state
 }
 
 export const useEditorState = () => useContext(EditorContext)

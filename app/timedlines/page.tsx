@@ -3,11 +3,10 @@ import TimelineComponent from './timeline/component'
 import DragToTimelineComponent from './timeline/DragToTimelineComponent'
 import StateLoader from './StateLoader'
 import * as TimedlinesActions from '@/lib/timedlines'
-import { useLocalDispatch, useLocalState, LocalStateProvider } from './localState/'
+import { useCacheState, LocalStoreProvider } from './localState/'
 import { useAppSelector, useAppDispatch } from '@/lib/hooks'
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { cyrb53 } from '@/app/cachedb/index'
-import { Session, SessionReference } from '../cachedb/sessions'
 import { TimedLinesReferenceLine } from '../cachedb/timedlines'
 
 export function formattedMS(milliseconds?: number) {
@@ -31,7 +30,7 @@ function LyricsView() {
     const activeLyric = useAppSelector((state) => state.lyrics.active)
     const timedlines = useAppSelector((state) => state.timedlines)
     const dispatch = useAppDispatch()
-    const { session } = useLocalState()
+    const { session } = useCacheState()
 
     useEffect(() => {
         if (!session) return
@@ -154,13 +153,12 @@ function LyricsView() {
 }
 
 export default function Page() {
-    const [activeLyric, setActiveLyric] = useState<Array<[number, string]>>([])
-    const [detailTime, setDetailTime] = useState(1000) // milliseconds
-    const [zoomSize, setZoomSize] = useState(1)
+    // const [detailTime, setDetailTime] = useState(1000) // milliseconds
+    // const [zoomSize, setZoomSize] = useState(1)
 
     return (
         <>
-            <LocalStateProvider>
+            <LocalStoreProvider>
                 <StateLoader />
 
                 <div className="flex flex-col items-center gap-4 pb-52 bg-background-base w-screen h-full py-6 overflow-y-auto overflow-x-hidden">
@@ -168,13 +166,9 @@ export default function Page() {
                         <LyricsView />
                     </div>
 
-                    <TimelineComponent
-                        detailTime={detailTime}
-                        zoomSize={zoomSize}
-                        setZoomSize={setZoomSize}
-                    />
+                    <TimelineComponent />
                 </div>
-            </LocalStateProvider>
+            </LocalStoreProvider>
         </>
     )
 }

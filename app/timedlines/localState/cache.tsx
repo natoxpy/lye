@@ -9,11 +9,14 @@ export type Action =
           payload: Array<[number, string]>
       }
 
-const CacheContext = createContext<State>({} as any)
-const DispatchContext = createContext<Dispatch<Action>>(null as any)
+const CacheContext = createContext<State>({} as unknown as State)
+const DispatchContext = createContext<Dispatch<Action>>(null as unknown as Dispatch<Action>)
 
 export function LocalCacheProvider({ children }: { children: React.ReactNode }) {
-    const [state, dispatch] = useReducer(reducer, {} as any)
+    const [state, dispatch] = useReducer(reducer, {
+        session: null,
+        activeLyrics: []
+    } satisfies State)
 
     return (
         <CacheContext.Provider value={state}>

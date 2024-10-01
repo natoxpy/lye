@@ -1,4 +1,4 @@
-import { formattedMS } from '../../page'
+import { formattedMS } from '../../../page'
 
 export default function Component({
     duration,

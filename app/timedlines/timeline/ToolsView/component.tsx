@@ -1,11 +1,6 @@
-import { Dispatch, SetStateAction } from 'react'
 import { Slider } from '@mantine/core'
 
-export default function Component({
-    setZoomSize
-}: {
-    setZoomSize: Dispatch<SetStateAction<number>>
-}) {
+export default function Component({ setZoomSize }: { setZoomSize: (value: number) => void }) {
     return (
         <div className="flex justifycenter w-full h-6">
             <div className="flex w-96 h-6 grow-[1]">
