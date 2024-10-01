@@ -6,7 +6,7 @@
 ///
 
 import { TimedLinesLine } from '@/app/cachedb/timedlines'
-import { Line, useInternalDispatch } from './internalState'
+import { Line, useInternalDispatch, useInternalSelector } from './internalState'
 import { useAppSelector } from '@/lib/hooks'
 import { useEffect } from 'react'
 
@@ -43,6 +43,7 @@ function LinkPlayerState() {
 export default function Component() {
     const internalDispatch = useInternalDispatch()
     const timedlines = useAppSelector((state) => state.timedlines)
+    const inlines = useInternalSelector((state) => state.lines)
 
     const toLine = (line: TimedLinesLine, timeline: Line['timeline']): Line => ({
         start: line.start,
@@ -54,13 +55,15 @@ export default function Component() {
     })
 
     useEffect(() => {
+        if (inlines.length !== 0) return
+
         const lines: Line[] = [
             ...timedlines.primary.map((line) => toLine(line, 'primary')),
             ...timedlines.secondary.map((line) => toLine(line, 'secondary'))
         ]
 
         internalDispatch({ type: 'lines/load', payload: lines })
-    }, [timedlines])
+    })
 
     return (
         <>

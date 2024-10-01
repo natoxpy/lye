@@ -6,6 +6,7 @@ import LinkActivityTick from './LinkActivityTick'
 import LinkMousePosition from './LinkMousePosition'
 import LinkActivityEnd from './LinkActivityEnd'
 import LinkRootWidth from './LinkRootWidth'
+import LinkExternalLines from './LinkExternalLines'
 
 export default function Component() {
     return (
@@ -14,6 +15,7 @@ export default function Component() {
             <LinkMousePosition />
             <LinkActivityEnd />
             <LinkRootWidth />
+            <LinkExternalLines />
         </>
     )
 }
