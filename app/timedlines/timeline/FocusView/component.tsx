@@ -1,67 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
-import { formattedMS } from '../page'
-import { DragToTimelineDrophandleComponent } from './DragToTimelineComponent'
-import { useAppDispatch, useAppSelector } from '@/lib/hooks'
+import TimelineDetails from './TimelineDetails'
 import * as TimedlinesActions from '@/lib/timedlines'
-import { Session, SessionReference } from '@/app/cachedb/sessions'
+import { useCacheState } from '../../localState'
+import { useEffect, useRef, useState } from 'react'
+import { DragToTimelineDrophandleComponent } from './../DragToTimelineComponent'
+import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import { TimedLinesReferenceLine } from '@/app/cachedb/timedlines'
-
-function FocusEditorViewTimelineDetails({
-    duration,
-    divwidth,
-    detailTime
-}: {
-    duration: number
-    divwidth: number
-    detailTime: number
-}) {
-    const details = Math.floor(duration / detailTime)
-
-    return (
-        <div className="relative flex w-full">
-            {Array.from({
-                length: details
-            }).map((_, i) => (
-                <div key={i}>
-                    {i % 16 == 0 ? (
-                        <div
-                            className="flex justify-center absolute min-w-[2px] h-0 bg-text-400 opacity-55"
-                            style={{
-                                left: (1 + i) * (divwidth / details) - 0.5 + 'px'
-                            }}
-                        >
-                            <div className="absolute min-w-[2px] h-1 bg-text-400 z-50 opacity-95"></div>
-                            <div className="-top-0.5 absolute min-w-[2px] h-2  z-50 ">
-                                <span className="text-xs text-text-400 select-none">
-                                    {formattedMS((1 + i) * detailTime)}
-                                </span>
-                            </div>
-                            <div className="absolute min-w-[1px] h-28 bg-text-800 opacity-55"></div>
-                        </div>
-                    ) : i % 2 !== 0 ? (
-                        <div
-                            className="absolute flex min-w-[2px] h-0 opacity-40"
-                            style={{
-                                left: (1 + i) * (divwidth / details) - 0.5 + 'px'
-                            }}
-                        >
-                            <div className="absolute min-w-[2px] h-2 bg-text-700 opacity-20"></div>
-                        </div>
-                    ) : (
-                        <div
-                            className="absolute flex min-w-[2px] h-0 opacity-40"
-                            style={{
-                                left: (1 + i) * (divwidth / details) - 0.5 + 'px'
-                            }}
-                        >
-                            <div className="absolute min-w-[2px] h-3 bg-text-800 z-50"></div>
-                        </div>
-                    )}
-                </div>
-            ))}
-        </div>
-    )
-}
 
 export default function FocusEditorView({
     zoomSize,
@@ -70,19 +13,21 @@ export default function FocusEditorView({
     zoomSize: number
     detailTime: number
 }) {
-    const activeSession = useAppSelector((state) => state.sessions.activeSession)
-    const [session, setSession] = useState<null | SessionReference>(null)
+    const { session } = useCacheState()
     const dispatch = useAppDispatch()
     const state = useRef<HTMLDivElement>(null)
     const rootDiv = useRef<HTMLDivElement>(null)
+
     const duration = useAppSelector((state) =>
         Math.floor((state.audioPlayer.audio?.duration ?? 0) * 1000)
     )
+
     const currentTime = useAppSelector((state) =>
         Math.floor((state.audioPlayer.audio?.currentTime ?? 0) * 1000)
     )
 
     const timedlines = useAppSelector((state) => state.timedlines)
+
     const [width, setWidth] = useState(0)
     const [defaultWidth, setDefaultWidth] = useState(0)
     const [activityTarget, setActivityTarget] = useState<number | null>(null)
@@ -113,13 +58,6 @@ export default function FocusEditorView({
             content
         }
     }
-
-    useEffect(() => {
-        if (activeSession == null) return
-        ;(async () => {
-            setSession(await Session.get(activeSession.uuid))
-        })()
-    }, [activeSession])
 
     useEffect(() => {
         const handleResize = () => {
@@ -399,11 +337,7 @@ export default function FocusEditorView({
                     className="top-0 min-w-1 h-full bg-text-800 opacity-85 absolute z-50"
                 ></div>
                 <div className="flex justify-between h-4 w-full" ref={state}>
-                    <FocusEditorViewTimelineDetails
-                        detailTime={detailTime}
-                        duration={duration}
-                        divwidth={width}
-                    />
+                    <TimelineDetails detailTime={detailTime} duration={duration} divwidth={width} />
                 </div>
 
                 {[timedlines.primary, timedlines.secondary].map((value, k) => (

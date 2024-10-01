@@ -1,7 +1,9 @@
 'use client'
-import TimelineComponent from './timeline/Component'
+import TimelineComponent from './timeline/component'
 import DragToTimelineComponent from './timeline/DragToTimelineComponent'
+import StateLoader from './StateLoader'
 import * as TimedlinesActions from '@/lib/timedlines'
+import { useLocalDispatch, useLocalState, LocalStateProvider } from './localState/'
 import { useAppSelector, useAppDispatch } from '@/lib/hooks'
 import { useState, useEffect } from 'react'
 import { cyrb53 } from '@/app/cachedb/index'
@@ -25,18 +27,11 @@ export function formattedMS(milliseconds?: number) {
     }${fms}`
 }
 
-function LyricsView({ activeLyric }: { activeLyric: Array<[number, string]> }) {
-    const activeSession = useAppSelector((state) => state.sessions.activeSession)
-    const [session, setSession] = useState<null | SessionReference>(null)
+function LyricsView() {
+    const activeLyric = useAppSelector((state) => state.lyrics.active)
     const timedlines = useAppSelector((state) => state.timedlines)
     const dispatch = useAppDispatch()
-
-    useEffect(() => {
-        if (activeSession == null) return
-        ;(async () => {
-            setSession(await Session.get(activeSession.uuid))
-        })()
-    }, [activeSession])
+    const { session } = useLocalState()
 
     useEffect(() => {
         if (!session) return
@@ -159,54 +154,27 @@ function LyricsView({ activeLyric }: { activeLyric: Array<[number, string]> }) {
 }
 
 export default function Page() {
-    const activeSession = useAppSelector((state) => state.sessions.activeSession)
-    const everyLyrics = useAppSelector((state) => state.lyrics.lyrics)
-    const dispatch = useAppDispatch()
     const [activeLyric, setActiveLyric] = useState<Array<[number, string]>>([])
     const [detailTime, setDetailTime] = useState(1000) // milliseconds
     const [zoomSize, setZoomSize] = useState(1)
 
-    useEffect(() => {
-        if (everyLyrics == null) return
-        const lyric = everyLyrics.find((i) => i.uuid == activeSession?.lyricRef)
-        if (!lyric) return
-
-        let data = lyric.lines.map((i) => i['content'])
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        data = data.map((item, i) => [i + 1, item]) as any
-        data = data.filter((item) => !item[1].startsWith('['))
-        data = data.filter((item) => !(item[1].trim() === ''))
-
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        setActiveLyric(data as any)
-        ;(async () => {
-            if (activeSession === null) return
-
-            const session = await Session.get(activeSession.uuid)
-            const timedlines = session.timedlines.serialize().timelines
-
-            dispatch(TimedlinesActions.loadAll(timedlines))
-        })()
-    }, [everyLyrics, activeSession, dispatch])
-
-    useEffect(() => {
-        if (zoomSize <= 0.75) setDetailTime(2000)
-        else if (zoomSize <= 1.5) setDetailTime(1000)
-        else if (zoomSize < 2) setDetailTime(500)
-        else if (zoomSize < 2.5) setDetailTime(250)
-    }, [zoomSize])
-
     return (
-        <div className="flex flex-col items-center gap-4 pb-52 bg-background-base w-screen h-full py-6 overflow-y-auto overflow-x-hidden">
-            <div className="flex gap-1">
-                <LyricsView activeLyric={activeLyric} />
-            </div>
+        <>
+            <LocalStateProvider>
+                <StateLoader />
 
-            <TimelineComponent
-                detailTime={detailTime}
-                zoomSize={zoomSize}
-                setZoomSize={setZoomSize}
-            />
-        </div>
+                <div className="flex flex-col items-center gap-4 pb-52 bg-background-base w-screen h-full py-6 overflow-y-auto overflow-x-hidden">
+                    <div className="flex gap-1">
+                        <LyricsView />
+                    </div>
+
+                    <TimelineComponent
+                        detailTime={detailTime}
+                        zoomSize={zoomSize}
+                        setZoomSize={setZoomSize}
+                    />
+                </div>
+            </LocalStateProvider>
+        </>
     )
 }

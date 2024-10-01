@@ -1,15 +1,28 @@
-'use client'
-import * as TimedLyricsAction from '@/lib/timedlyrics'
-import * as TimedlinesActions from '@/lib/timedlines'
 import * as LyricsActions from '@/lib/lyrics'
+import * as TimedlinesActions from '@/lib/timedlines'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import { useEffect } from 'react'
 import { Session } from '../cachedb/sessions'
+import { useCacheDispatch } from './localState'
 
-function LoadActiveLyric() {
-    const dispatch = useAppDispatch()
+export default function Loader() {
     const activeSession = useAppSelector((state) => state.sessions.activeSession)
+    const cacheDispatch = useCacheDispatch()
     const everyLyrics = useAppSelector((state) => state.lyrics.lyrics)
+    const dispatch = useAppDispatch()
+
+    useEffect(() => {
+        if (activeSession == null) return
+
+        const asyncFun = async () => {
+            cacheDispatch({
+                type: 'session/update',
+                payload: await Session.get(activeSession.uuid)
+            })
+        }
+
+        asyncFun()
+    }, [activeSession])
 
     useEffect(() => {
         if (everyLyrics == null) return
@@ -22,35 +35,18 @@ function LoadActiveLyric() {
         ndata = ndata.filter((item) => !(item[1].trim() === ''))
 
         dispatch(LyricsActions.setActive(ndata))
-    }, [activeSession, everyLyrics])
 
-    return <></>
-}
-
-export function LoadRelevantState() {
-    const dispatch = useAppDispatch()
-
-    const activeSession = useAppSelector((state) => state.sessions.activeSession)
-    const everyLyrics = useAppSelector((state) => state.lyrics.lyrics)
-
-    useEffect(() => {
         const asyncFun = async () => {
             if (activeSession === null) return
 
             const session = await Session.get(activeSession.uuid)
             const timedlines = session.timedlines.serialize().timelines
-            const timedlyrics = session.timedlyrics.serialize()
 
-            dispatch(TimedLyricsAction.loadAll(timedlyrics.lines))
             dispatch(TimedlinesActions.loadAll(timedlines))
         }
 
         asyncFun()
-    }, [everyLyrics, activeSession])
+    }, [everyLyrics, activeSession, dispatch])
 
-    return (
-        <>
-            <LoadActiveLyric />
-        </>
-    )
+    return <></>
 }
