@@ -10,8 +10,6 @@ export default function Component() {
     const duration = useInternalSelector((state) => state.player.duration)
     const width = useInternalSelector((state) => state.root.width)
 
-    if (duration === undefined || width === undefined) return <></>
-
     const dispatch = useInternalDispatch()
 
     const triggerActivity = (
@@ -19,6 +17,7 @@ export default function Component() {
         activity: MouseActivities,
         target: UHash
     ) => {
+        if (duration === undefined || width === undefined) return
         const lineStart = lines.find((item) => item.uhash === target)?.start
         if (lineStart === undefined) return
 
@@ -44,6 +43,8 @@ export default function Component() {
             payload: target
         })
     }
+
+    if (duration === undefined || width === undefined) return <></>
 
     return (
         <>

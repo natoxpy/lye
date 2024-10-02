@@ -11,8 +11,7 @@ export default function Component() {
 
     return (
         <div className="flex fixed bottom-0 w-screen h-44 overflow-hidden bg-background-900">
-            <div className="min-w-16 h-full bg-text-950 select-none z-10">WIP</div>
-            <div className="flex flex-col w-[calc(100%-4rem)]">
+            <div className="flex flex-col w-full">
                 <ToolsView setZoomSize={setZoomSize} />
                 <FullView />
                 <FocusEditorView />

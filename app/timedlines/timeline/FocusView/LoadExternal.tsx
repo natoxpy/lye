@@ -46,8 +46,8 @@ export default function Component() {
     const inlines = useInternalSelector((state) => state.lines)
 
     const toLine = (line: TimedLinesLine, timeline: Line['timeline']): Line => ({
-        start: line.start,
-        end: line.end,
+        start: Math.round(line.start),
+        end: Math.round(line.end),
         displayLine: line.displayLineNumber,
         line: line.linenumber,
         uhash: line.uhash,

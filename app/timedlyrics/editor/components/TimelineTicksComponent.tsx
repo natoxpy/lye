@@ -1,6 +1,6 @@
 'use client'
 import { Fragment } from 'react'
-import { formattedMS } from '../timedlines/page'
+import { formattedMS } from '../../../timedlines/page'
 
 export default function FocusEditorViewTimelineDetails({
     start,

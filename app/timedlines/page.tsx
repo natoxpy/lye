@@ -16,9 +16,6 @@ export function formattedMS(milliseconds?: number) {
     const seconds = Math.floor((milliseconds / 1000) % 60)
     const minutes = Math.floor(milliseconds / 1000 / 60)
 
-    // let fms = ms < 10 ? '.00' + ms : ms < 100 ? '.0' + ms : '.' + ms
-    // if (ms == 0) fms = ''
-
     const fms = ms < 10 ? '.00' + ms : ms < 100 ? '.0' + ms : '.' + ms
 
     return `${minutes < 10 ? '0' + minutes : minutes}:${

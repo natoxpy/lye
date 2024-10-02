@@ -9,6 +9,7 @@ export default function Component({ linenumber, lyric }: { linenumber: number; l
 
     const activeLine = useAppSelector((state) => state.timedlyrics.activeLine)
     const timedlines = useAppSelector((state) => state.timedlines)
+    const activeLyrics = useAppSelector((state) => state.lyrics.active)
 
     const hasLine = () => {
         return (
@@ -16,6 +17,10 @@ export default function Component({ linenumber, lyric }: { linenumber: number; l
                 (item) => item.linenumber == linenumber
             ) !== -1
         )
+    }
+
+    const Lyric = () => {
+        return activeLyrics.find((lyric) => lyric[0] === activeLine)![1]
     }
 
     return (
@@ -45,7 +50,7 @@ export default function Component({ linenumber, lyric }: { linenumber: number; l
                 </span>
             </div>
 
-            {linenumber === activeLine && <TimedLyricEditor />}
+            {linenumber === activeLine && <TimedLyricEditor lyric={Lyric()} />}
         </div>
     )
 }

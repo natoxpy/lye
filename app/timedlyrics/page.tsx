@@ -3,7 +3,7 @@ import LinenumberColumnComponent from './components/LinenumberColumnComponent'
 import LyricColumnComponent from './components/LyricColumnComponent'
 import { useAppSelector } from '@/lib/hooks'
 import { LoadRelevantState } from './StateLoader'
-import { LocalStateProvider } from './LocalState'
+import { LocalStoreProvider } from './localState'
 
 function LyricsView() {
     const activeLyric = useAppSelector((state) => state.lyrics.active)
@@ -32,12 +32,12 @@ function LyricsView() {
 export default function Page() {
     return (
         <div className="flex flex-col items-center gap-4 pb-52 bg-background-base w-screen h-full py-6 overflow-y-auto overflow-x-hidden">
-            <LocalStateProvider>
+            <LocalStoreProvider>
                 <LoadRelevantState />
                 <div className="flex gap-1">
                     <LyricsView />
                 </div>
-            </LocalStateProvider>
+            </LocalStoreProvider>
         </div>
     )
 }
