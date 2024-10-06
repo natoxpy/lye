@@ -10,7 +10,7 @@ export default function Component() {
         editorDispatch({ type: 'zoomSize/update', payload: value })
 
     return (
-        <div className="flex fixed bottom-0 w-screen h-44 overflow-hidden bg-background-900">
+        <div className="flex fixed bottom-10 w-screen h-44 overflow-hidden bg-background-900">
             <div className="flex flex-col w-full">
                 <ToolsView setZoomSize={setZoomSize} />
                 <FullView />

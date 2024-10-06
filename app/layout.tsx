@@ -8,6 +8,7 @@ import './globals.css'
 import '@mantine/core/styles.css'
 import '@mantine/notifications/styles.css'
 import { theme } from '../theme'
+import Footer from '@/app/components/footer'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -33,6 +34,7 @@ export default function RootLayout({
                         <div className="flex flex-col h-screen w-screen">
                             <Header />
                             <div className="flex-grow h-full overflow-y-scroll">{children}</div>
+                            <Footer />
                         </div>
                     </StoreProvider>
                 </MantineProvider>
