@@ -10,8 +10,12 @@ import { usePlayerDispatch, usePlayerState } from '@/app/player/state'
 export default function Component() {
     const { duration, currentTime } = usePlayerState()
     const dispatch = usePlayerDispatch()
+    const setCurrentTime = (valueMS: number) => {
+        let value = valueMS
 
-    const onChangeCurrentTime = (value: number) => {
+        if (valueMS >= duration) value = duration
+        else if (valueMS <= 0) value = 0
+
         dispatch({
             type: 'sync-currentTime',
             payload: value / 1000,
@@ -30,7 +34,18 @@ export default function Component() {
                 <PLayPause />
                 <TimeComponent milliseconds={currentTime} />
                 <Scrubber
-                    onChange={onChangeCurrentTime}
+                    onKeyDown={(e) => {
+                        console.log(e)
+                        if (e.key == 'ArrowRight')
+                            setCurrentTime(currentTime + 5 * 1000)
+                        else if (e.key == 'ArrowLeft')
+                            setCurrentTime(currentTime - 5 * 1000)
+                        else if (e.key == '.')
+                            setCurrentTime(currentTime + 1 * 1000)
+                        else if (e.key == ',')
+                            setCurrentTime(currentTime - 1 * 1000)
+                    }}
+                    onChange={(value) => setCurrentTime(value)}
                     value={currentTime}
                     max={duration}
                 />

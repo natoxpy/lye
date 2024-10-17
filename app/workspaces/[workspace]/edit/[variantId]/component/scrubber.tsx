@@ -1,4 +1,5 @@
 import {
+    KeyboardEventHandler,
     MouseEventHandler,
     useCallback,
     useEffect,
@@ -10,10 +11,12 @@ export default function Scrubber({
     value,
     max,
     onChange,
+    onKeyDown,
 }: {
     max: number
     value: number
     onChange: (value: number) => void
+    onKeyDown?: KeyboardEventHandler<HTMLDivElement>
 }) {
     // const dispatch = usePlayerDispatch()
     const root = useRef<HTMLDivElement>(null)
@@ -77,6 +80,7 @@ export default function Scrubber({
             className="group outline-none flex items-center w-full h-full min-w-[100px]"
             onMouseDown={onMouseDown}
             onContextMenu={(e) => e.preventDefault()}
+            onKeyDown={onKeyDown}
         >
             <div className="relative flex items-center w-full h-[3px] bg-bg-6 rounded-xl">
                 <div
