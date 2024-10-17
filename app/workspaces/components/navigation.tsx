@@ -29,7 +29,7 @@ export default function Component() {
                 backgroundColor: page == name ? 'var(--color-bg-4)' : '',
             }}
             tabIndex={page == name ? -1 : 0}
-            className="group outline-none focus:bg-bg-5 hover:bg-bg-4 cursor-pointer flex items-center w-[128px] h-full justify-center relative"
+            className="group outline-none focus-visible:bg-bg-5 hover:bg-bg-4 cursor-pointer flex items-center w-[128px] h-full justify-center relative"
         >
             <Icon className="stroke-txt-2" />
             <div
@@ -38,7 +38,7 @@ export default function Component() {
                         page == name ? 'var(--color-accent-1)' : '',
                     opacity: page == name ? '1' : '',
                 }}
-                className="bottom-0 absolute w-full h-[2px] group-focus:bg-accent-1 opacity-50"
+                className="bottom-0 absolute w-full h-[2px] group-focus-visible:bg-accent-1 opacity-50"
             ></div>
         </Link>
     )
