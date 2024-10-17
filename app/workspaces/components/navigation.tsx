@@ -47,25 +47,6 @@ export default function Component() {
             <LinkItem name="edit" pathname="/original" Icon={IconEditLyrics} />
             <LinkItem name="sync" Icon={IconSyncLines} />
             <LinkItem name="perfect-sync" Icon={IconSyncLyrics} />
-
-            {/*}
-            <Link
-                tabIndex={0}
-                href={'/workspaces/main/sync'}
-                className="group outline-none focus:bg-bg-5 hover:bg-bg-4 cursor-pointer flex items-center w-[128px] h-full justify-center relative"
-            >
-                <IconSyncLines className="stroke-txt-2" />
-                <div className="outline-none bottom-0 absolute w-full h-[2px] group-focus:bg-accent-1 opacity-50"></div>
-            </Link>
-            <Link
-                tabIndex={0}
-                href={'/workspaces/main/perfect-sync'}
-                className="group outline-none focus:bg-bg-5 hover:bg-bg-4 cursor-pointer flex items-center w-[128px] h-full justify-center relative"
-            >
-                <IconSyncLyrics className="stroke-txt-2" />
-                <div className="bottom-0 absolute w-full h-[2px] group-focus:bg-accent-1 opacity-50"></div>
-            </Link>
-            {*/}
         </div>
     )
 }
