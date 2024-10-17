@@ -1,0 +1,34 @@
+html[data-theme='dark'] {
+    --color-bg-1-hsl: 210, 15%, 5%;
+    --color-bg-1: hsl(var(--color-bg-1-hsl));
+
+    --color-bg-2-hsl: 210, 17%, 7%;
+    --color-bg-2: hsl(var(--color-bg-2-hsl));
+
+    --color-bg-3-hsl: 206, 18%, 8%;
+    --color-bg-3: hsl(var(--color-bg-3-hsl));
+
+    --color-bg-4-hsl: 207, 21%, 10%;
+    --color-bg-4: hsl(var(--color-bg-4-hsl));
+
+    --color-bg-5-hsl: 208, 21%, 12%;
+    --color-bg-5: hsl(var(--color-bg-5-hsl));
+
+    --color-bg-6-hsl: 211, 22%, 21%;
+    --color-bg-6: hsl(var(--color-bg-6-hsl));
+
+    --color-txt-1-hsl: 245, 5%, 58%;
+    --color-txt-1: hsl(var(--color-txt-1-hsl));
+
+    --color-txt-2-hsl: 247, 50%, 93%;
+    --color-txt-2: hsl(var(--color-txt-2-hsl));
+
+    --color-accent-1-hsl: 195, 74%, 49%;
+    --color-accent-1: hsl(var(--color-accent-1-hsl));
+
+    --color-accent-red-hsl: 0, 75%, 65%;
+    --color-accent-red: hsl(var(--color-accent-red-hsl));
+
+    --color-accent-green-hsl: 125, 75%, 65%;
+    --color-accent-green: hsl(var(--color-accent-green-hsl));
+}

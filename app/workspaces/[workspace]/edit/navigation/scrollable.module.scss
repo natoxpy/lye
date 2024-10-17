@@ -1,0 +1,75 @@
+$grad_start_color: var(--color-bg-4-hsl);
+$grad_mid_color: var(--color-bg-4-hsl);
+
+$gradient: hsla($grad_start_color, 0.85) 0%, hsla($grad_mid_color, 0.75) 25%,
+    transparent 100%;
+
+.bg4bottomScrollGradient {
+    $grad_start_color: var(--color-bg-4-hsl);
+    $grad_mid_color: var(--color-bg-4-hsl);
+
+    $gradient: hsla($grad_start_color, 0.85) 0%, hsla($grad_mid_color, 0.75) 25%,
+        transparent 100%;
+
+    background: linear-gradient(0deg, $gradient);
+}
+
+.bg4topScrollGradient {
+    $grad_start_color: var(--color-bg-4-hsl);
+    $grad_mid_color: var(--color-bg-4-hsl);
+
+    $gradient: hsla($grad_start_color, 0.85) 0%, hsla($grad_mid_color, 0.75) 25%,
+        transparent 100%;
+    background: linear-gradient(180deg, $gradient);
+}
+
+.bg3bottomScrollGradient {
+    $grad_start_color: var(--color-bg-3-hsl);
+    $grad_mid_color: var(--color-bg-3-hsl);
+
+    $gradient: hsla($grad_start_color, 0.85) 0%, hsla($grad_mid_color, 0.75) 25%,
+        transparent 100%;
+
+    background: linear-gradient(0deg, $gradient);
+}
+
+.bg3topScrollGradient {
+    $grad_start_color: var(--color-bg-3-hsl);
+    $grad_mid_color: var(--color-bg-3-hsl);
+
+    $gradient: hsla($grad_start_color, 0.85) 0%, hsla($grad_mid_color, 0.75) 25%,
+        transparent 100%;
+    background: linear-gradient(180deg, $gradient);
+}
+
+.bg2bottomScrollGradient {
+    $grad_start_color: var(--color-bg-2-hsl);
+    $grad_mid_color: var(--color-bg-2-hsl);
+
+    $gradient: hsla($grad_start_color, 0.85) 0%, hsla($grad_mid_color, 0.75) 25%,
+        transparent 100%;
+
+    background: linear-gradient(0deg, $gradient);
+}
+
+.bg2topScrollGradient {
+    $grad_start_color: var(--color-bg-2-hsl);
+    $grad_mid_color: var(--color-bg-2-hsl);
+
+    $gradient: hsla($grad_start_color, 0.85) 0%, hsla($grad_mid_color, 0.75) 25%,
+        transparent 100%;
+    background: linear-gradient(180deg, $gradient);
+}
+
+.invisible {
+    opacity: 0;
+}
+
+.languageVariantSelected {
+    cursor: pointer;
+    background-color: var(--color-bg-5);
+
+    &:hover {
+        background-color: var(--color-bg-6);
+    }
+}

@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import './theme/dark.scss';
+
+body,
+pre {
+    font-family: 'Inter', serif;
+}
+
+::selection {
+    background: var(--color-bg-6);
+}
+
+/* add the code bellow */
+@layer utilities {
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+    /* Hide scrollbar for IE, Edge and Firefox */
+    .no-scrollbar {
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
+    }
+
+    .tab-focus {
+        border: 1px solid transparent;
+        outline: none;
+    }
+
+    .tab-focus:focus {
+        border: 1px solid var(--color-accent-1);
+    }
+}
