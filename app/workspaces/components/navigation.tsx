@@ -28,6 +28,7 @@ export default function Component() {
             style={{
                 backgroundColor: page == name ? 'var(--color-bg-4)' : '',
             }}
+            tabIndex={page == name ? -1 : 0}
             className="group outline-none focus:bg-bg-5 hover:bg-bg-4 cursor-pointer flex items-center w-[128px] h-full justify-center relative"
         >
             <Icon className="stroke-txt-2" />

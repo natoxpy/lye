@@ -2,15 +2,18 @@
 import Navigation from './components/navigation'
 import Header from './components/header'
 import StateProvider from './[workspace]/edit/state'
+import PlayerAudioProvider from '../player/component'
 
 export default function layout({ children }: { children: React.ReactNode }) {
     return (
         <StateProvider>
-            <div className="flex-col w-screen h-screen bg-bg-4 flex overflow-hidden">
-                <Header />
-                {children}
-                <Navigation />
-            </div>
+            <PlayerAudioProvider>
+                <div className="flex-col w-screen h-screen bg-bg-4 flex overflow-hidden">
+                    <Header />
+                    {children}
+                    <Navigation />
+                </div>
+            </PlayerAudioProvider>
         </StateProvider>
     )
 }
