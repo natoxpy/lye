@@ -8,9 +8,7 @@ export default function Header() {
             <IconFile className="stroke-txt-2" />
             <IconLinked className="stroke-txt-1" />
             <div className="flex gap-[10px] justify-center items-center">
-                <span className="text-txt-2 text-[16px]">
-                    In Hell We Live, Lament
-                </span>
+                <span className="text-txt-2 text-[16px]">Iron Lotus</span>
                 <IconCarrot className="stroke-txt-2" />
             </div>
         </div>

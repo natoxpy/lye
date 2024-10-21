@@ -10,7 +10,6 @@ import iso6391 from 'iso-639-1'
 import MiniSearch from 'minisearch'
 import Style from './variantNav.module.scss'
 import Link from 'next/link'
-import { useDispatch, useState } from '../state'
 import {
     KeyboardEventHandler,
     MouseEventHandler,
@@ -18,61 +17,75 @@ import {
     useRef,
     useState as useReactState,
 } from 'react'
+import { useParams } from 'next/navigation'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import {
+    createVariant,
+    deleteVariant,
+    editVariant,
+    setVariantLanguages,
+    setVariantName,
+    useVariants,
+} from '@/store/stores/lyrics'
 
 function VariantItem({
-    variantId,
     name,
     languages,
+    id,
 }: {
-    variantId: string
     name: string
     languages: string[]
+    id: string
     ondbClick?: MouseEventHandler<HTMLDivElement>
 }) {
-    const { workspace } = useState()
-    const dispatch = useDispatch()
+    const { workspace, variant } = useParams<{
+        workspace: string
+        variant?: string
+    }>()
+    const dispatch = useAppDispatch()
 
     const OpenLanguageEditor = () =>
-        dispatch({
-            type: 'set-edit-variant',
-            payload: {
-                id: variantId,
+        dispatch(
+            editVariant({
+                workspaceId: workspace,
+                variantId: id,
                 editing: 'languages',
-            },
-        })
+            })
+        )
 
     const OpenNameEditor = () =>
-        dispatch({
-            type: 'set-edit-variant',
-            payload: {
-                id: variantId,
+        dispatch(
+            editVariant({
+                workspaceId: workspace,
+                variantId: id,
                 editing: 'name',
-            },
-        })
+            })
+        )
 
     return (
         <Link
             tabIndex={0}
             aria-label="Language Variant Item"
             role="menuitem"
-            href={`/workspaces/main/edit/${variantId}`}
+            href={`/workspaces/main/edit/${id}`}
             style={{
                 backgroundColor:
-                    workspace.active == variantId
-                        ? 'hsla(var(--color-bg-6-hsl), 0.4)'
-                        : '',
+                    variant == id ? 'hsla(var(--color-bg-6-hsl), 0.4)' : '',
             }}
             className="w-full px-[20px] group outline-none flex items-center h-[50px] focus:bg-bg-4 hover:bg-bg-4 cursor-pointer"
-            onDoubleClick={() => OpenNameEditor()}
+            onDoubleClick={() => {
+                OpenNameEditor()
+            }}
             onKeyDown={(e) => {
                 if (e.key == 'F2') OpenNameEditor()
-                else if (e.key == 'Delete')
-                    dispatch({
-                        type: 'delete-variant',
-                        payload: {
-                            id: variantId,
-                        },
-                    })
+                else if (e.key == 'Delete') {
+                    dispatch(
+                        deleteVariant({
+                            workspaceId: workspace,
+                            variantId: id,
+                        })
+                    )
+                }
             }}
         >
             <div className="flex justify-center items-center">
@@ -120,8 +133,10 @@ function VariantItem({
 }
 
 function LanguageEditor({ variantId }: { variantId: string }) {
-    const { variants } = useState()
-    const dispatch = useDispatch()
+    const { workspace } = useParams<{ workspace: string }>()
+    const variants = useAppSelector(useVariants(workspace))
+    const dispatch = useAppDispatch()
+
     const variant = variants.find((item) => item.id === variantId)!
     const inputRef = useRef<HTMLInputElement>(null)
     const rootRef = useRef<HTMLDivElement>(null)
@@ -267,11 +282,14 @@ function LanguageEditor({ variantId }: { variantId: string }) {
         </div>
     )
 
-    const Close = () =>
-        dispatch({
-            type: 'set-edit-variant',
-            payload: { id: variantId, editing: undefined },
-        })
+    const Close = () => {
+        dispatch(
+            editVariant({
+                workspaceId: workspace,
+                variantId,
+            })
+        )
+    }
 
     const inputKeyDown: KeyboardEventHandler<HTMLInputElement> = (e) => {
         const moveUp = () =>
@@ -417,13 +435,13 @@ function LanguageEditor({ variantId }: { variantId: string }) {
                         name={result.nativeName}
                         selected={languageCursor == idx}
                         onTrigger={() => {
-                            dispatch({
-                                type: 'set-languages',
-                                payload: {
-                                    id: variantId,
+                            dispatch(
+                                setVariantLanguages({
+                                    workspaceId: workspace,
+                                    variantId,
                                     languages: [result, ...variant.languages],
-                                },
-                            })
+                                })
+                            )
                         }}
                     />
                 ))}
@@ -456,15 +474,15 @@ function LanguageEditor({ variantId }: { variantId: string }) {
                             idx == languageCursor - results.length
                         }
                         onTrigger={() => {
-                            dispatch({
-                                type: 'set-languages',
-                                payload: {
-                                    id: variantId,
+                            dispatch(
+                                setVariantLanguages({
+                                    workspaceId: workspace,
+                                    variantId,
                                     languages: variant.languages.filter(
                                         (lang) => lang.code !== language.code
                                     ),
-                                },
-                            })
+                                })
+                            )
                         }}
                     />
                 ))}
@@ -474,7 +492,8 @@ function LanguageEditor({ variantId }: { variantId: string }) {
 }
 
 function VariantItemLanguageEditor({ variantId }: { variantId: string }) {
-    const { variants } = useState()
+    const { workspace } = useParams<{ workspace: string }>()
+    const variants = useAppSelector(useVariants(workspace))
     const variant = variants.find((item) => item.id === variantId)!
 
     return (
@@ -512,19 +531,19 @@ function VariantItemLanguageEditor({ variantId }: { variantId: string }) {
 }
 
 function VariantItemNameEditor({ variantId }: { variantId: string }) {
-    const { variants } = useState()
-    const dispatch = useDispatch()
+    const { workspace } = useParams<{ workspace: string }>()
+    const variants = useAppSelector(useVariants(workspace))
+    const dispatch = useAppDispatch()
     const variant = variants.find((item) => item.id == variantId)!
     const inputRef = useRef<HTMLInputElement>(null)
 
     const Close = () =>
-        dispatch({
-            type: 'set-edit-variant',
-            payload: {
-                id: variantId,
-                editing: undefined,
-            },
-        })
+        dispatch(
+            editVariant({
+                workspaceId: workspace,
+                variantId,
+            })
+        )
 
     useEffect(() => {
         if (!inputRef.current) return
@@ -554,13 +573,13 @@ function VariantItemNameEditor({ variantId }: { variantId: string }) {
                             if (e.key == 'Escape' || e.key == 'Enter') Close()
                         }}
                         onChange={(e) =>
-                            dispatch({
-                                type: 'set-variant-name',
-                                payload: {
-                                    id: variantId,
+                            dispatch(
+                                setVariantName({
+                                    workspaceId: workspace,
+                                    variantId,
                                     name: e.target.value,
-                                },
-                            })
+                                })
+                            )
                         }
                     />
                 </div>
@@ -570,8 +589,9 @@ function VariantItemNameEditor({ variantId }: { variantId: string }) {
 }
 
 export default function Navigation() {
-    const { variants } = useState()
-    const dispatch = useDispatch()
+    const { workspace } = useParams<{ workspace: string }>()
+    const variants = useAppSelector(useVariants(workspace))
+    const dispatch = useAppDispatch()
 
     return (
         <div
@@ -583,25 +603,22 @@ export default function Navigation() {
                 <span className="select-none text-txt-2 text-[14px]">
                     Variants
                 </span>
-                <div
+                <button
                     aria-label="Add variant"
-                    role="button"
                     tabIndex={0}
                     className="tab-focus group cursor-pointer"
                     onClick={() =>
-                        dispatch({
-                            type: 'new-variant',
-                        })
-                    }
-                    onKeyDown={(e) => {
-                        if (e.key == ' ')
-                            dispatch({
-                                type: 'new-variant',
+                        dispatch(
+                            createVariant({
+                                workspace: workspace,
+                                name: '',
+                                editing: 'name',
                             })
-                    }}
+                        )
+                    }
                 >
                     <AddFileIcon className="group-hover:stroke-accent-1 stroke-txt-2" />
-                </div>
+                </button>
             </div>
 
             {variants.map((variant) => {
@@ -622,20 +639,20 @@ export default function Navigation() {
                 else
                     return (
                         <VariantItem
-                            variantId={variant.id}
                             key={variant.id}
+                            id={variant.id}
                             name={variant.name}
                             languages={variant.languages.map(
                                 (l) => l.nativeName
                             )}
                             ondbClick={() =>
-                                dispatch({
-                                    type: 'set-edit-variant',
-                                    payload: {
+                                dispatch(
+                                    editVariant({
+                                        workspaceId: workspace,
+                                        variantId: variant.id,
                                         editing: 'name',
-                                        id: variant.id,
-                                    },
-                                })
+                                    })
+                                )
                             }
                         />
                     )

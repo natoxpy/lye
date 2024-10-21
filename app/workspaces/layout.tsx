@@ -1,12 +1,13 @@
 'use client'
 import Navigation from './components/navigation'
 import Header from './components/header'
-import StateProvider from './[workspace]/edit/state'
+// import StateProvider from './[workspace]/edit/state/provider'
+import AppProvider from '@/store/provider'
 import PlayerAudioProvider from '../player/component'
 
 export default function layout({ children }: { children: React.ReactNode }) {
     return (
-        <StateProvider>
+        <AppProvider>
             <PlayerAudioProvider>
                 <div className="flex-col w-screen h-screen bg-bg-4 flex overflow-hidden">
                     <Header />
@@ -14,6 +15,6 @@ export default function layout({ children }: { children: React.ReactNode }) {
                     <Navigation />
                 </div>
             </PlayerAudioProvider>
-        </StateProvider>
+        </AppProvider>
     )
 }
