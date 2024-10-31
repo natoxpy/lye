@@ -16,7 +16,10 @@ pre {
 
 /* add the code bellow */
 @layer utilities {
-    /* Hide scrollbar for Chrome, Safari and Opera */
+    .rendering-pixelated {
+        image-rendering: pixelated;
+    }
+        /* Hide scrollbar for Chrome, Safari and Opera */
     .no-scrollbar::-webkit-scrollbar {
         display: none;
     }

@@ -23,6 +23,9 @@ html[data-theme='dark'] {
     --color-txt-2-hsl: 247, 50%, 93%;
     --color-txt-2: hsl(var(--color-txt-2-hsl));
 
+    --color-txt-3-hsl: 209, 12%, 45%;
+    --color-txt-3: hsl(var(--color-txt-3-hsl));
+
     --color-accent-1-hsl: 195, 74%, 49%;
     --color-accent-1: hsl(var(--color-accent-1-hsl));
 
@@ -31,4 +34,13 @@ html[data-theme='dark'] {
 
     --color-accent-green-hsl: 125, 75%, 65%;
     --color-accent-green: hsl(var(--color-accent-green-hsl));
+
+    --color-unaccent-1-hsl: 210, 12%, 20%;
+    --color-unaccent-1: hsl(var(--color-unaccent-1-hsl));
+
+    --color-unaccent-accent-1-hsl: 208, 36%, 22%;
+    --color-unaccent-accent-1: hsl(var(--color-unaccent-accent-1-hsl));
+
+    --color-unaccent-accent-2-hsl: 211, 29%, 19%;
+    --color-unaccent-accent-2: hsl(var(--color-unaccent-accent-2-hsl));
 }
