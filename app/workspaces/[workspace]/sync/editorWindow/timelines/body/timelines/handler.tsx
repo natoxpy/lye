@@ -13,7 +13,9 @@ export default function Handler() {
         timeOffset,
         targetItem,
         targetOffsetPx,
+        locationTarget,
         setTargetItem,
+        setLocationTarget,
     } = useLocalState()
     const { duration } = usePlayerState()
     const lines = useAppSelector((state) => state.syncLines.lines)
@@ -44,16 +46,21 @@ export default function Handler() {
             if (lineTime + lineDuration >= duration)
                 lineTime = duration - lineDuration
 
-            dispatch(
-                setStartMs({
-                    lineNumber: targetItem,
-                    value: lineTime,
-                })
-            )
+            setLocationTarget(lineTime)
         }
 
         const mouseup = () => {
             setTargetItem(null)
+            setLocationTarget(null)
+
+            if (targetItem == null || locationTarget == null) return
+
+            dispatch(
+                setStartMs({
+                    lineNumber: targetItem,
+                    value: locationTarget,
+                })
+            )
         }
 
         document.addEventListener('mousemove', mousemove)

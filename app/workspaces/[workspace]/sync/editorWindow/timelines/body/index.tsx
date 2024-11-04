@@ -3,6 +3,7 @@ import Timebar from './timebar'
 import State from './state'
 import Timelines from './timelines'
 import TimelineItem from './timelines/item'
+import { MoveTemplate } from './timelines/item'
 import { useAppSelector } from '@/store/hooks'
 
 export default function Layout() {
@@ -24,6 +25,8 @@ export default function Layout() {
                                 duration={line.durationMs}
                             />
                         ))}
+
+                        <MoveTemplate />
                     </div>
                     <div className="flex w-full items-center grow">
                         {secondaryLines.map((line, idx) => (

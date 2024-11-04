@@ -1,5 +1,36 @@
 import { useRef } from 'react'
 import { useLocalState } from '../state'
+import { useAppSelector } from '@/store/hooks'
+
+export function MoveTemplate() {
+    const { timeWidth, canvasWidthPx, locationTarget, targetItem } =
+        useLocalState()
+    const timeToPx = (t: number) => Math.floor((t / timeWidth) * canvasWidthPx)
+    const lines = useAppSelector((state) => state.syncLines.lines)
+    const rootRef = useRef<HTMLDivElement>(null)
+
+    const line = lines.find((item) => item.lineNumber == targetItem)
+    if (line == undefined) return <></>
+
+    const start = locationTarget
+    const duration = line.durationMs
+
+    if (start == null) return <></>
+
+    const left = timeToPx(start) + 'px'
+    const width = timeToPx(duration) + 'px'
+
+    return (
+        <div
+            ref={rootRef}
+            style={{
+                left,
+                width,
+            }}
+            className="flex cursor-pointer items-center justify-center absolute rounded-[6px] h-[32px] bg-bg-4 border-2 border-accent-1 opacity-50"
+        ></div>
+    )
+}
 
 export default function Item({
     number,
@@ -10,8 +41,13 @@ export default function Item({
     start: number
     duration: number
 }) {
-    const { timeWidth, canvasWidthPx, setTargetItem, setTargetOffsetPx } =
-        useLocalState()
+    const {
+        timeWidth,
+        canvasWidthPx,
+        targetItem,
+        setTargetItem,
+        setTargetOffsetPx,
+    } = useLocalState()
     const timeToPx = (t: number) => Math.floor((t / timeWidth) * canvasWidthPx)
     const rootRef = useRef<HTMLDivElement>(null)
 
@@ -21,8 +57,17 @@ export default function Item({
     return (
         <div
             ref={rootRef}
-            style={{ left, width }}
-            className="flex cursor-pointer items-center justify-center absolute rounded-[6px] h-[32px] bg-unaccent-accent-1"
+            style={{
+                left,
+                width,
+                background: 'var(--color-unaccent-accent-1)',
+                opacity: targetItem == number ? '0.5' : '1',
+                border:
+                    targetItem == number
+                        ? '2px solid var(--color-accent-1)'
+                        : '',
+            }}
+            className="flex cursor-pointer items-center justify-center absolute rounded-[6px] h-[32px] bg-"
             onMouseDown={(e) => {
                 if (!rootRef.current) return
                 setTargetItem(number)

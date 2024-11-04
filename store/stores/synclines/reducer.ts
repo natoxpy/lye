@@ -17,9 +17,16 @@ const initialState: State = {
         {
             id: '1000',
             startMs: 0,
-            durationMs: 8750,
+            durationMs: 10000,
             timeline: 'primary',
             lineNumber: 1,
+        },
+        {
+            id: '1000',
+            startMs: 20000,
+            durationMs: 10000,
+            timeline: 'primary',
+            lineNumber: 3,
         },
         {
             id: '2000',
