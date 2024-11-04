@@ -1,4 +1,5 @@
 import { formatMS } from '@/app/utils/time'
+import { Dispatch, SetStateAction } from 'react'
 
 const colors = {
     unaccented_1: 'rgb(45,51,57)',
@@ -19,6 +20,9 @@ export type Props = {
         timeOffset: number
         timeWidth: number
     }
+    state: {
+        setVisibleMarks: Dispatch<SetStateAction<number[]>>
+    }
 }
 
 function clear({ canvas: { ctx, width, height } }: Props) {
@@ -29,8 +33,10 @@ function clear({ canvas: { ctx, width, height } }: Props) {
 function ticks({
     canvas: { ctx, width },
     window: { timeOffset: To, timeWidth: Tw },
+    player: { duration },
 }: Props) {
     const timeToPx = (t: number) => (t / Tw) * width
+    const lst = []
 
     const J = Tw,
         H = To,
@@ -43,16 +49,18 @@ function ticks({
         bi = (Pi - G) / pt,
         n = Math.floor(J / p)
 
-    let X = G
+    let X = G - p
 
     for (let i = 0; i < bi; i++) {
         ctx.fillRect(timeToPx(X), 0, 1, 8)
+        lst.push(X)
         X += K
     }
     ctx.font = '12px Inter, serif'
 
-    for (let j = 0; j < n; j++) {
+    a: for (let j = -1; j <= n; j++) {
         ctx.fillRect(timeToPx(X), 0, 1, 20)
+        lst.push(X)
         ctx.fillStyle = colors.text_3
         ctx.fillText(formatMS(H + X), timeToPx(X) + 5, 23)
         ctx.fillStyle = colors.unaccented_1
@@ -60,13 +68,19 @@ function ticks({
         X += K
 
         for (let i = 1; i < b; i++) {
+            if (To + X >= duration) break a
+
             ctx.fillRect(timeToPx(X), 0, 1, 8)
+            lst.push(X)
             X += K
         }
     }
+
+    return lst.map((a) => a)
 }
 
 export default function redraw(props: Props) {
     clear(props)
-    ticks(props)
+    const visibleMarks = ticks(props)
+    props.state.setVisibleMarks(visibleMarks)
 }

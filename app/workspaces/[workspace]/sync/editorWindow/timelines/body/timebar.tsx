@@ -6,7 +6,7 @@ import { useLocalState } from './state'
 export default function Component() {
     const canvas = useRef<HTMLCanvasElement>(null)
     const { duration } = usePlayerState()
-    const { timeOffset, timeWidth } = useLocalState()
+    const { timeOffset, timeWidth, setVisibleMarks } = useLocalState()
 
     useEffect(() => {
         const canvaselement = canvas.current
@@ -34,6 +34,9 @@ export default function Component() {
                 window: {
                     timeOffset,
                     timeWidth,
+                },
+                state: {
+                    setVisibleMarks,
                 },
             })
         }
