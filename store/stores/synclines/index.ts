@@ -1,1 +1,1 @@
-export { setStartMs, setDurationMs } from './reducer'
+export { setStartMs, setDurationMs, setTimeline } from './reducer'

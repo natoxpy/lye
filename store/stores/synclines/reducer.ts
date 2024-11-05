@@ -52,7 +52,7 @@ const initialState: State = {
         {
             id: '2000',
             startMs: 50_000,
-            durationMs: 4750,
+            durationMs: 5000,
             timeline: 'secondary',
             lineNumber: 2,
         },
@@ -75,6 +75,22 @@ export const Slice = createSlice({
 
             state.lines[index].startMs = action.payload.value
         },
+
+        setTimeline(
+            state,
+            action: PayloadAction<{
+                lineNumber: number
+                value: 'primary' | 'secondary'
+            }>
+        ) {
+            const index = state.lines.findIndex(
+                (item) => item.lineNumber === action.payload.lineNumber
+            )
+
+            if (index == -1) return
+
+            state.lines[index].timeline = action.payload.value
+        },
         setDurationMs(
             state,
             action: PayloadAction<{ lineNumber: number; value: number }>
@@ -90,6 +106,6 @@ export const Slice = createSlice({
     },
 })
 
-export const { setStartMs, setDurationMs } = Slice.actions
+export const { setStartMs, setDurationMs, setTimeline } = Slice.actions
 
 export default Slice.reducer

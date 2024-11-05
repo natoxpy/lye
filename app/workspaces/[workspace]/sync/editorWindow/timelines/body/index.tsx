@@ -39,7 +39,8 @@ export default function Layout() {
                             />
                         ))}
 
-                        {/*} <MoveTemplate timeline="secondary" /> {*/}
+                        <MoveTemplate timeline="secondary" />
+                        <TrueMoveTemplate timeline="secondary" />
                     </div>
                 </Timelines>
             </State>

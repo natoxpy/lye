@@ -2,15 +2,20 @@ import { useRef } from 'react'
 import { useLocalState } from '../state'
 import { useAppSelector } from '@/store/hooks'
 
-export function TrueMoveTemplate({}: { timeline: string }) {
-    const { timeWidth, canvasWidthPx, targetItem, cursorLocation } =
-        useLocalState()
+export function TrueMoveTemplate({ timeline }: { timeline: string }) {
+    const {
+        timeWidth,
+        canvasWidthPx,
+        targetItem,
+        cursorLocation,
+        levelTarget,
+    } = useLocalState()
     const timeToPx = (t: number) => Math.floor((t / timeWidth) * canvasWidthPx)
     const lines = useAppSelector((state) => state.syncLines.lines)
     const rootRef = useRef<HTMLDivElement>(null)
 
     const line = lines.find((item) => item.lineNumber == targetItem)
-    if (line == undefined) return <></>
+    if (line == undefined || timeline !== levelTarget) return <></>
 
     const start = cursorLocation
     const duration = line.durationMs
@@ -27,20 +32,25 @@ export function TrueMoveTemplate({}: { timeline: string }) {
                 left,
                 width,
             }}
-            className="flex cursor-pointer items-center justify-center absolute rounded-[6px] h-[32px] bg-red-400 border-2 border-red-700 opacity-15"
+            className="pointer-events-none flex cursor-pointer items-center justify-center absolute rounded-[6px] h-[32px] bg-red-400 border-2 border-red-700 opacity-15"
         ></div>
     )
 }
 
-export function MoveTemplate({}: { timeline: string }) {
-    const { timeWidth, canvasWidthPx, locationTarget, targetItem } =
-        useLocalState()
+export function MoveTemplate({ timeline }: { timeline: string }) {
+    const {
+        timeWidth,
+        canvasWidthPx,
+        locationTarget,
+        targetItem,
+        levelTarget,
+    } = useLocalState()
     const timeToPx = (t: number) => Math.floor((t / timeWidth) * canvasWidthPx)
     const lines = useAppSelector((state) => state.syncLines.lines)
     const rootRef = useRef<HTMLDivElement>(null)
 
     const line = lines.find((item) => item.lineNumber == targetItem)
-    if (line == undefined) return <></>
+    if (line == undefined || levelTarget !== timeline) return <></>
 
     const start = locationTarget
     const duration = line.durationMs
@@ -57,7 +67,7 @@ export function MoveTemplate({}: { timeline: string }) {
                 left,
                 width,
             }}
-            className="flex cursor-pointer items-center justify-center absolute rounded-[6px] h-[32px] bg-bg-4 border-2 border-accent-1 opacity-50"
+            className="pointer-events-none flex cursor-pointer items-center justify-center absolute rounded-[6px] h-[32px] bg-bg-4 border-2 border-accent-1 opacity-50"
         ></div>
     )
 }
@@ -87,6 +97,7 @@ export default function Item({
     return (
         <div
             ref={rootRef}
+            onDragStart={(e) => e.preventDefault()}
             style={{
                 left,
                 width,
@@ -105,7 +116,9 @@ export default function Item({
                 setTargetOffsetPx(e.clientX - left)
             }}
         >
-            <span className="text-[16px] text-txt-2 select-none">{number}</span>
+            <span className="pointer-events-none text-[16px] text-txt-2 select-none">
+                {number}
+            </span>
         </div>
     )
 }

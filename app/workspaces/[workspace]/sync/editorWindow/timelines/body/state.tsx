@@ -16,6 +16,7 @@ type State = {
     visibleMarks: number[]
     locationTarget: number | null
     cursorLocation: number | null // for when location target is limited
+    levelTarget: 'primary' | 'secondary' | null
     setTimeOffset: Dispatch<SetStateAction<number>>
     setTimeWidth: Dispatch<SetStateAction<number>>
     setCanvasWidthPx: Dispatch<SetStateAction<number>>
@@ -24,6 +25,7 @@ type State = {
     setVisibleMarks: Dispatch<SetStateAction<number[]>>
     setLocationTarget: Dispatch<SetStateAction<number | null>>
     setCursorLocation: Dispatch<SetStateAction<number | null>>
+    setLevelTarget: Dispatch<SetStateAction<'primary' | 'secondary' | null>>
 }
 const Context = createContext<State>({} as State)
 
@@ -38,6 +40,9 @@ export default function Provider({ children }: { children: React.ReactNode }) {
     const [visibleMarks, setVisibleMarks] = useState<number[]>([])
     const [locationTarget, setLocationTarget] = useState<number | null>(null)
     const [cursorLocation, setCursorLocation] = useState<number | null>(null)
+    const [levelTarget, setLevelTarget] = useState<
+        'primary' | 'secondary' | null
+    >(null)
 
     return (
         <Context.Provider
@@ -58,6 +63,8 @@ export default function Provider({ children }: { children: React.ReactNode }) {
                 setLocationTarget,
                 cursorLocation,
                 setCursorLocation,
+                levelTarget,
+                setLevelTarget,
             }}
         >
             {children}

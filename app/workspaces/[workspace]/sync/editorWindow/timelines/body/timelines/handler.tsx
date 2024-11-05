@@ -3,7 +3,7 @@ import { useLocalState } from '../state'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { setStartMs } from '@/store/stores/synclines'
 import { usePlayerState } from '@/app/player/state'
-import { Line } from '@/store/stores/synclines/reducer'
+import { Line, setTimeline } from '@/store/stores/synclines/reducer'
 
 // Virtual Realm
 class VR {
@@ -11,6 +11,7 @@ class VR {
     constructor(
         public location: number,
         public cursor: number,
+        public levelTarget: 'primary' | 'secondary',
         public duration: number,
         public line: Line,
         public lines: Line[]
@@ -134,7 +135,7 @@ class VR {
 
     public collision() {
         const lines = this.lines.filter(
-            (item) => item.timeline === this.line.timeline
+            (item) => item.timeline === this.levelTarget
         )
         const overlapLine = this.utilFindOverlappingLine(this.getLine(), lines)
         if (!overlapLine) return
@@ -163,9 +164,11 @@ export default function Handler() {
         targetItem,
         targetOffsetPx,
         locationTarget,
+        levelTarget,
         setTargetItem,
         setLocationTarget,
         setCursorLocation,
+        setLevelTarget,
     } = useLocalState()
     const { duration } = usePlayerState()
     const lines = useAppSelector((state) => state.syncLines.lines)
@@ -174,6 +177,9 @@ export default function Handler() {
     useEffect(() => {
         const mousemove = (e: MouseEvent) => {
             if (targetItem == null || targetOffsetPx == null) return
+
+            computeLevel(e.clientY)
+
             const process = (v: number) => {
                 if (v < 0) v = 0
                 if (canvasWidthPx < v) v = canvasWidthPx
@@ -184,6 +190,17 @@ export default function Handler() {
             const cursor = e.clientX - leftOffset
 
             moveElement(process(x), process(cursor))
+        }
+
+        const computeLevel = (y: number) => {
+            const offset = 96
+            const docHeight = document.body.getBoundingClientRect().height
+
+            if (docHeight - offset > y) {
+                setLevelTarget('primary')
+            } else {
+                setLevelTarget('secondary')
+            }
         }
 
         const moveElement = (time: number, cursor: number) => {
@@ -201,7 +218,12 @@ export default function Handler() {
 
             let lineTime = clamp(time)
             const cursorTime = clamp(cursor)
-            if (lineTime == undefined || cursorTime == undefined) return
+            if (
+                lineTime == undefined ||
+                cursorTime == undefined ||
+                levelTarget == null
+            )
+                return
 
             const line = lines.find((item) => item.lineNumber === targetItem)
             if (!line) return
@@ -211,7 +233,14 @@ export default function Handler() {
             if (lineTime + lineDuration >= duration)
                 lineTime = duration - lineDuration
 
-            const vr = new VR(lineTime, cursorTime, duration, line, lines)
+            const vr = new VR(
+                lineTime,
+                cursorTime,
+                levelTarget,
+                duration,
+                line,
+                lines
+            )
             const vrComputed = vr.compute()
 
             if (vrComputed !== lineTime) {
@@ -225,7 +254,19 @@ export default function Handler() {
             setTargetItem(null)
             setLocationTarget(null)
 
-            if (targetItem == null || locationTarget == null) return
+            if (
+                targetItem == null ||
+                locationTarget == null ||
+                levelTarget == null
+            )
+                return
+
+            dispatch(
+                setTimeline({
+                    lineNumber: targetItem,
+                    value: levelTarget,
+                })
+            )
 
             dispatch(
                 setStartMs({
