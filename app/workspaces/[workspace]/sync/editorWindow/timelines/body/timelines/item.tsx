@@ -2,7 +2,37 @@ import { useRef } from 'react'
 import { useLocalState } from '../state'
 import { useAppSelector } from '@/store/hooks'
 
-export function MoveTemplate() {
+export function TrueMoveTemplate({}: { timeline: string }) {
+    const { timeWidth, canvasWidthPx, targetItem, cursorLocation } =
+        useLocalState()
+    const timeToPx = (t: number) => Math.floor((t / timeWidth) * canvasWidthPx)
+    const lines = useAppSelector((state) => state.syncLines.lines)
+    const rootRef = useRef<HTMLDivElement>(null)
+
+    const line = lines.find((item) => item.lineNumber == targetItem)
+    if (line == undefined) return <></>
+
+    const start = cursorLocation
+    const duration = line.durationMs
+
+    if (start == null) return <></>
+
+    const left = timeToPx(start) + 'px'
+    const width = timeToPx(duration) + 'px'
+
+    return (
+        <div
+            ref={rootRef}
+            style={{
+                left,
+                width,
+            }}
+            className="flex cursor-pointer items-center justify-center absolute rounded-[6px] h-[32px] bg-red-400 border-2 border-red-700 opacity-15"
+        ></div>
+    )
+}
+
+export function MoveTemplate({}: { timeline: string }) {
     const { timeWidth, canvasWidthPx, locationTarget, targetItem } =
         useLocalState()
     const timeToPx = (t: number) => Math.floor((t / timeWidth) * canvasWidthPx)
