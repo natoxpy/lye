@@ -1,3 +1,5 @@
+'use client'
+import { useAppSelector } from '@/store/hooks'
 import LineComponent from './components/line'
 
 function Layout({ children }: { children: React.ReactNode }) {
@@ -13,21 +15,23 @@ function LineByLineLayout({ children }: { children: React.ReactNode }) {
 }
 
 export default function Page() {
+    const lines = Array.from(useAppSelector((state) => state.syncLines.lines))
     return (
         <Layout>
             <LineByLineLayout>
-                <LineComponent
-                    lineNumber={1}
-                    text="How much I wished for another"
-                />
-                <LineComponent
-                    lineNumber={2}
-                    text="Better, happier, brighter future"
-                />
-                <LineComponent
-                    lineNumber={3}
-                    text="Here I am at the gate I stand"
-                />
+                {lines
+                    .sort((a, b) => a.lineNumber - b.lineNumber)
+                    .map((line, key) => (
+                        <LineComponent
+                            key={key}
+                            lineNumber={line.lineNumber}
+                            text="How much I wished for another"
+                            timeframe={[
+                                line.startMs,
+                                line.startMs + line.durationMs,
+                            ]}
+                        />
+                    ))}
             </LineByLineLayout>
         </Layout>
     )

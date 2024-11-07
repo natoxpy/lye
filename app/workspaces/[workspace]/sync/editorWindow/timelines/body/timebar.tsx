@@ -46,7 +46,7 @@ export default function Component() {
         resize()
 
         return () => window.removeEventListener('resize', resize)
-    }, [canvas, duration, timeWidth, timeOffset])
+    }, [canvas, duration, timeWidth, timeOffset, setVisibleMarks])
 
     return (
         <div className="w-full h-[28px]">

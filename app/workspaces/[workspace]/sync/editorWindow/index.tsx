@@ -1,4 +1,4 @@
-import ControlsComponent from './controls'
+import ControlsComponent from './controls/index'
 import MinimapComponent from './minimap'
 import TimelineComponent from './timelines'
 

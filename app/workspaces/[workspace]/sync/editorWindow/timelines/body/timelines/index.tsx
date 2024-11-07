@@ -6,13 +6,16 @@ import { useLocalState } from '../state'
 export default function Timelines({ children }: { children: React.ReactNode }) {
     const elementRef = useRef<HTMLDivElement>(null)
     const childElementRef = useRef<HTMLDivElement>(null)
-    const { setTimeOffset, setTimeWidth, setCanvasWidthPx } = useLocalState()
+    const { setTimeOffset, setTimeWidth, setCanvasWidthPx, setScrollWidthPx } =
+        useLocalState()
     const { duration } = usePlayerState()
 
     useEffect(() => {
         const element = elementRef.current
         const childElement = childElementRef.current
         if (element === null || childElement == null) return
+
+        setScrollWidthPx(childElement.getBoundingClientRect().width)
 
         const scroll = () => {
             const left = element.scrollLeft

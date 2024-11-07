@@ -1,9 +1,17 @@
+import PlayPause from './playpause'
+
 function Layout({ controls }: { controls: React.ReactNode }) {
-    return <div className="flex">{controls}</div>
+    return <div className="flex h-full">{controls}</div>
 }
 
 function Controls() {
-    return <div></div>
+    return (
+        <div className="w-full h-full flex items-center justify-center">
+            <div>
+                <PlayPause />
+            </div>
+        </div>
+    )
 }
 
 export default function Component() {

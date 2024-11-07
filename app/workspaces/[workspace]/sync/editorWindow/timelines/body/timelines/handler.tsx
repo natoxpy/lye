@@ -3,11 +3,16 @@ import { useLocalState } from '../state'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { setStartMs } from '@/store/stores/synclines'
 import { usePlayerState } from '@/app/player/state'
-import { Line, setTimeline } from '@/store/stores/synclines/reducer'
+import {
+    Line,
+    setDurationMs,
+    setTimeline,
+} from '@/store/stores/synclines/reducer'
 
 // Virtual Realm
 class VR {
     result: number
+
     constructor(
         public location: number,
         public cursor: number,
@@ -19,137 +24,81 @@ class VR {
         this.result = this.location
     }
 
-    public utilOverlap(lhs: Line, rhs: Line) {
-        const A = lhs.startMs
-        const B = A + lhs.durationMs
+    public getLines() {
+        const lines = this.lines.filter((i) => i.timeline == this.levelTarget)
 
-        const C = rhs.startMs
-        const D = C + rhs.durationMs
-
-        return B > C && A < D
-    }
-
-    public utilLineSpan(line: Line): [number, number] {
-        return [line.startMs, line.startMs + line.durationMs]
-    }
-
-    public utilLinesSpan(lines: Line[]): Array<[number, number]> {
-        const spans = []
-
-        for (const line of lines) {
-            spans.push(this.utilLineSpan(line))
+        if (
+            lines.findIndex((i) => i.lineNumber === this.line.lineNumber) === -1
+        ) {
+            lines.push({ ...this.line, timeline: this.levelTarget })
         }
 
-        return spans
+        lines.sort((a, b) => a.lineNumber - b.lineNumber)
+
+        return lines
     }
 
-    public utilJoinSpans(spans: Array<[number, number]>): [number, number] {
-        let leftest = Infinity
-        let rightest = 0
+    moveCompute() {
+        const lines = this.getLines()
 
-        for (const span of spans) {
-            if (span[0] < leftest) leftest = span[0]
-            if (span[1] > rightest) rightest = span[1]
-        }
-
-        return [leftest, rightest]
-    }
-
-    public utilCollapseDirection(
-        location: number,
-        span: [number, number]
-    ): 'left' | 'right' {
-        const spanDuration = span[1] - span[0]
-        const midPoint = span[0] + spanDuration / 2
-
-        return location > midPoint ? 'right' : 'left'
-    }
-
-    public utilCollapseToEdge(
-        line: Line,
-        location: number,
-        span: [number, number]
-    ) {
-        const direction = this.utilCollapseDirection(location, span)
-        const left = span[0] - line.durationMs
-        const right = span[1]
-
-        if (direction == 'left') {
-            if (left >= 0) return left
-            else return right
-        } else {
-            if (right + line.durationMs >= this.duration) return left
-            else return right
-        }
-    }
-
-    public getLine(): Line {
-        return { ...this.line, startMs: this.location }
-    }
-
-    public utilFindOverlappingLine(target: Line, lines: Line[]): Line | void {
-        for (const line of lines) {
-            if (line.lineNumber === target.lineNumber) continue
-            if (this.utilOverlap(target, line)) return line
-        }
-    }
-
-    /**
-     *
-     * @param overlap Last overlaping line
-     * @param registry Set of all overlaping lines on record
-     * @returns
-     */
-    public utilCollapseOverrun(
-        cursor: number,
-        target: Line,
-        lines: Line[],
-        overlap: Line,
-        registry: Set<Line> = new Set()
-    ): number {
-        const nextStep = this.utilCollapseToEdge(
-            target,
-            cursor,
-            this.utilJoinSpans(
-                this.utilLinesSpan(
-                    Array.from(new Set([overlap, ...Array.from(registry)]))
-                )
-            )
+        const currentIndex = lines.findIndex(
+            (i) => i.lineNumber == this.line.lineNumber
         )
 
-        const shadowLine = { ...target, startMs: nextStep }
+        if (currentIndex == -1) return this.result
 
-        const shadowOverlap = this.utilFindOverlappingLine(shadowLine, lines)
+        const left = lines[currentIndex - 1]
+        const right = lines[currentIndex + 1]
 
-        if (shadowOverlap == undefined) {
-            return nextStep
-        }
-        return this.utilCollapseOverrun(
-            cursor,
-            target,
-            lines,
-            shadowOverlap,
-            registry.add(overlap)
+        const leftLimit = left ? left.startMs + left.durationMs : 0
+        const rightLimit =
+            (right ? right.startMs : this.duration) - this.line.durationMs
+
+        if (this.location <= leftLimit) this.result = leftLimit
+        else if (this.location >= rightLimit) this.result = rightLimit
+
+        if (
+            rightLimit + this.line.durationMs - leftLimit >=
+            this.line.durationMs
         )
+            return this.result
+
+        return null
     }
 
-    public collision() {
-        const lines = this.lines.filter(
-            (item) => item.timeline === this.levelTarget
-        )
-        const overlapLine = this.utilFindOverlappingLine(this.getLine(), lines)
-        if (!overlapLine) return
+    leftCompute() {
+        const lines = this.getLines()
 
-        this.result = this.utilCollapseOverrun(
-            this.cursor,
-            this.getLine(),
-            lines,
-            overlapLine
+        const currentIndex = lines.findIndex(
+            (i) => i.lineNumber == this.line.lineNumber
         )
+
+        if (currentIndex == -1) return this.result
+
+        const left = lines[currentIndex - 1]
+
+        const leftLimit = left ? left.startMs + left.durationMs : 0
+
+        if (this.location <= leftLimit) this.result = leftLimit
+
+        return this.result
     }
 
-    compute() {
-        this.collision()
+    rightCompute() {
+        const lines = this.getLines()
+
+        const currentIndex = lines.findIndex(
+            (i) => i.lineNumber == this.line.lineNumber
+        )
+
+        if (currentIndex == -1) return this.result
+
+        const right = lines[currentIndex + 1]
+
+        const rightLimit = right ? right.startMs : this.duration
+
+        if (this.location >= rightLimit) this.result = rightLimit
+
         return this.result
     }
 }
@@ -164,21 +113,32 @@ export default function Handler() {
         targetItem,
         targetOffsetPx,
         locationTarget,
+        cursorLevelTarget,
         levelTarget,
+        resizeType,
+        setTargetOffsetPx,
         setTargetItem,
         setLocationTarget,
         setCursorLocation,
         setLevelTarget,
+        setCursorLevelTarget,
+        setResizeType,
     } = useLocalState()
     const { duration } = usePlayerState()
     const lines = useAppSelector((state) => state.syncLines.lines)
     const dispatch = useAppDispatch()
+    const clamp = (v: number) => {
+        if (targetItem == null) return
+        const items = visibleMarks.map((item, id) => [Math.abs(v - item), id])
+
+        items.sort((a, b) => a[0] - b[0])
+
+        return timeOffset + visibleMarks[items[0][1]]
+    }
 
     useEffect(() => {
         const mousemove = (e: MouseEvent) => {
             if (targetItem == null || targetOffsetPx == null) return
-
-            computeLevel(e.clientY)
 
             const process = (v: number) => {
                 if (v < 0) v = 0
@@ -189,7 +149,108 @@ export default function Handler() {
             const x = e.clientX - leftOffset - targetOffsetPx
             const cursor = e.clientX - leftOffset
 
-            moveElement(process(x), process(cursor))
+            computeCursorLevel(e.clientY)
+
+            if (resizeType !== null) {
+                if (resizeType == 'right') {
+                    const v = clamp(process(cursor))
+                    if (v !== undefined) resizeRight(v)
+                } else {
+                    const v = clamp(process(cursor))
+                    if (v !== undefined) resizeLeft(v)
+                }
+                return
+            }
+
+            const levelCompute = moveElement(process(x), process(cursor))
+            if (levelCompute !== null) computeLevel(e.clientY)
+        }
+
+        const resizeRight = (time: number) => {
+            const line = lines.find((item) => item.lineNumber === targetItem)
+            if (!line || targetItem == undefined) return
+
+            const clampedTime = clamp(time)
+            if (clampedTime == null) return
+
+            const min = 1000
+
+            const vr = new VR(
+                clampedTime,
+                clampedTime,
+                line.timeline,
+                duration,
+                line,
+                lines
+            )
+
+            const computed = vr.rightCompute()
+
+            let val = computed - line.startMs
+            if (val <= min) val = min
+
+            dispatch(
+                setDurationMs({
+                    lineNumber: targetItem,
+                    value: val,
+                })
+            )
+        }
+
+        const resizeLeft = (time: number) => {
+            const line = lines.find((item) => item.lineNumber === targetItem)
+            if (!line || targetItem == undefined) return
+
+            const clampedTime = clamp(time)
+            if (clampedTime == null) return
+
+            const min = 1000
+
+            const vr = new VR(
+                clampedTime,
+                clampedTime,
+                line.timeline,
+                duration,
+                line,
+                lines
+            )
+
+            const computed = vr.leftCompute()
+
+            const end = line.durationMs + line.startMs
+            let lineDuration = line.durationMs + line.startMs - computed
+
+            if (lineDuration <= min) {
+                lineDuration = min
+                dispatch(
+                    setDurationMs({
+                        lineNumber: line.lineNumber,
+                        value: lineDuration,
+                    })
+                )
+
+                dispatch(
+                    setStartMs({
+                        lineNumber: line.lineNumber,
+                        value: end - lineDuration,
+                    })
+                )
+                return
+            }
+
+            dispatch(
+                setDurationMs({
+                    lineNumber: line.lineNumber,
+                    value: lineDuration,
+                })
+            )
+
+            dispatch(
+                setStartMs({
+                    lineNumber: line.lineNumber,
+                    value: computed,
+                })
+            )
         }
 
         const computeLevel = (y: number) => {
@@ -203,25 +264,24 @@ export default function Handler() {
             }
         }
 
-        const moveElement = (time: number, cursor: number) => {
-            const clamp = (v: number) => {
-                if (targetItem == null) return
-                const items = visibleMarks.map((item, id) => [
-                    Math.abs(v - item),
-                    id,
-                ])
+        const computeCursorLevel = (y: number) => {
+            const offset = 96
+            const docHeight = document.body.getBoundingClientRect().height
 
-                items.sort((a, b) => a[0] - b[0])
-
-                return timeOffset + visibleMarks[items[0][1]]
+            if (docHeight - offset > y) {
+                setCursorLevelTarget('primary')
+            } else {
+                setCursorLevelTarget('secondary')
             }
+        }
 
+        const moveElement = (time: number, cursor: number) => {
             let lineTime = clamp(time)
             const cursorTime = clamp(cursor)
             if (
                 lineTime == undefined ||
                 cursorTime == undefined ||
-                levelTarget == null
+                cursorLevelTarget == null
             )
                 return
 
@@ -236,23 +296,35 @@ export default function Handler() {
             const vr = new VR(
                 lineTime,
                 cursorTime,
-                levelTarget,
+                cursorLevelTarget,
                 duration,
                 line,
                 lines
             )
-            const vrComputed = vr.compute()
+            const vrComputed = vr.moveCompute()
+
+            if (vrComputed === null) {
+                setLocationTarget(line.startMs)
+                setCursorLocation(lineTime)
+                setLevelTarget(line.timeline)
+                return null
+            }
 
             if (vrComputed !== lineTime) {
                 setCursorLocation(lineTime)
             } else setCursorLocation(null)
 
             setLocationTarget(vrComputed)
+            return 1
         }
 
         const mouseup = () => {
             setTargetItem(null)
             setLocationTarget(null)
+            setCursorLocation(null)
+            setResizeType(null)
+            setTargetOffsetPx(0)
+            setCursorLevelTarget(null)
 
             if (
                 targetItem == null ||
