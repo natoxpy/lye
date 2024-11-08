@@ -15,23 +15,30 @@ function LineByLineLayout({ children }: { children: React.ReactNode }) {
 }
 
 export default function Page() {
-    const lines = Array.from(useAppSelector((state) => state.syncLines.lines))
+    // const lyrics = useAppSelector(
+    //     (state) => state.lyrics.instances[0].variants[0].lines
+    // )
+
+    const lines = Array.from(
+        useAppSelector((state) => state.syncLines.lines)
+    ).sort((a, b) => a.lineNumber - b.lineNumber)
+
+    // console.log(lyrics)
+
     return (
         <Layout>
             <LineByLineLayout>
-                {lines
-                    .sort((a, b) => a.lineNumber - b.lineNumber)
-                    .map((line, key) => (
-                        <LineComponent
-                            key={key}
-                            lineNumber={line.lineNumber}
-                            text="How much I wished for another"
-                            timeframe={[
-                                line.startMs,
-                                line.startMs + line.durationMs,
-                            ]}
-                        />
-                    ))}
+                {lines.map((line, key) => (
+                    <LineComponent
+                        key={key}
+                        lineNumber={line.lineNumber}
+                        text="How much I wished for another"
+                        timeframe={[
+                            line.startMs,
+                            line.startMs + line.durationMs,
+                        ]}
+                    />
+                ))}
             </LineByLineLayout>
         </Layout>
     )

@@ -66,6 +66,8 @@ function Editor() {
                 onChange={(e) => {
                     const lines = e.target.value.split('\n')
 
+                    // console.log(lines)
+
                     dispatch(
                         syncLines({
                             lines,

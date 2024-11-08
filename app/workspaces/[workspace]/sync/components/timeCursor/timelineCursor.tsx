@@ -26,7 +26,7 @@ function IconCursor(props: React.ComponentProps<'svg'>) {
 
 export default function Component() {
     const rootRef = useRef<HTMLDivElement>(null)
-    const { duration, currentTime } = usePlayerState()
+    const { duration, currentTime, paused } = usePlayerState()
     const playerDispatch = usePlayerDispatch()
     const { timeOffset, scrollWidthPx, canvasWidthPx } = useLocalState()
     const [mouseDown, setMouseDown] = useState(false)
@@ -76,6 +76,17 @@ export default function Component() {
 
             setCursorTimeMS(xms)
             setPosition(xms)
+
+            if (paused) {
+                playerDispatch({
+                    type: 'sync-currentTime',
+                    payload: xms / 1_000,
+                })
+                playerDispatch({
+                    type: 'set-currentTime',
+                    payload: xms,
+                })
+            }
         }
 
         const mouseUp_m = () => {
@@ -101,6 +112,7 @@ export default function Component() {
             document.removeEventListener('mouseup', mouseUp_m)
         }
     }, [
+        paused,
         cursorTimeMs,
         canvasWidthPx,
         duration,

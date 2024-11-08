@@ -12,13 +12,9 @@ function DoubleSidedIcon(props: React.ComponentProps<'svg'>) {
             xmlns="http://www.w3.org/2000/svg"
             {...props}
         >
-            <path
-                d="M2 1H5H8V3.2L5 5.4V40.6L8 42.8V45H5H2V42.8L5 40.6V5.4L2 3.2V1Z"
-                fill="#20ABD9"
-            />
+            <path d="M2 1H5H8V3.2L5 5.4V40.6L8 42.8V45H5H2V42.8L5 40.6V5.4L2 3.2V1Z" />
             <path
                 d="M5 5.4L2 3.2V1H5H8V3.2L5 5.4ZM5 5.4V40.6M5 40.6L2 42.8V45H5H8V42.8L5 40.6Z"
-                stroke="#20ABD9"
                 strokeLinecap="round"
                 strokeLinejoin="round"
             />
@@ -50,7 +46,7 @@ export default function Component({
         const offset = (start / lineDuration) * width
         const value = (currentTime / lineDuration) * width
 
-        setLeft(value - offset)
+        setLeft(value - offset - 4)
     }, [currentTime, duration, timeframe])
 
     return (
@@ -69,7 +65,7 @@ export default function Component({
                     style={{
                         left: left + 'px',
                     }}
-                    className="absolute"
+                    className="absolute fill-accent-1 stroke-accent-1"
                 />
 
                 <span className="text-txt-2">{text}</span>
