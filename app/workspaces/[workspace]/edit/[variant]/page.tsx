@@ -52,7 +52,7 @@ function Editor() {
                                     ? 'var(--color-txt-1)'
                                     : 'var(--color-txt-2)',
                             }}
-                            className="w-full text-[24px]"
+                            className="w-full text-[24px] select-none"
                         >
                             {line.content}
                         </pre>
@@ -94,7 +94,7 @@ function Lines() {
 
     const LineNumber = ({ num }: { num: string; id: string }) => (
         <div className="flex min-w-[80px] justify-end items-center w-full min-h-[60px] pr-[25px]">
-            <span className="text-[20px] text-txt-1">{num}</span>
+            <span className="text-[20px] text-txt-1 select-none">{num}</span>
         </div>
     )
 
