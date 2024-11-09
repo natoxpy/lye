@@ -262,15 +262,17 @@ type Payload = {
 }
 
 export default function Reducer(state: State, action: PayloadAction<Payload>) {
-    const linesFd = state.instances
-        .find((lyrics) => lyrics.workspace == action.payload.workspaceId)
-        ?.variants.find(
-            (variant) => variant.id == action.payload.variantId
-        )?.lines
+    const instance = state.instances.find(
+        (lyrics) => lyrics.workspace == action.payload.workspaceId
+    )
+
+    const linesFd = instance?.variants.find(
+        (variant) => variant.id == action.payload.variantId
+    )?.lines
 
     const lines = linesFd?.map((line) => line.content)
 
-    if (!lines || !linesFd) return
+    if (!lines || !linesFd || !instance) return
 
     let nlines = action.payload.lines
 
@@ -281,11 +283,7 @@ export default function Reducer(state: State, action: PayloadAction<Payload>) {
 
     const diff = new Diffing(lines, nlines).compute()
 
-    const instance = state.instances.find(
-        (item) => item.workspace === action.payload.workspaceId
-    )
-
-    const variant = instance?.variants.find(
+    const variant = instance.variants.find(
         (item) => item.id === action.payload.variantId
     )
 
@@ -296,27 +294,30 @@ export default function Reducer(state: State, action: PayloadAction<Payload>) {
     const genId = (line: number, content: string) =>
         String(cyrb53(`${line}${content}`))
 
-    const SyncActions: Array<LinesSync> = []
+    const syncActions: Array<LinesSync> = []
 
     const remapId = (id: string, nid: string, line: number) => {
         if (id === nid) return
-        SyncActions.push({ type: 'remap', id, nid, line: line + 1 })
+        syncActions.push({ type: 'remap', id, nid, line: line + 1 })
     }
 
     const add = (id: string, line: number) => {
-        SyncActions.push({ type: 'add', id, line: line + 1 })
+        syncActions.push({ type: 'add', id, line: line + 1 })
     }
 
     const remove = (id: string) => {
-        SyncActions.push({ type: 'remove', id })
+        syncActions.push({ type: 'remove', id })
     }
 
     for (const item of diff) {
+        const line = item.newline + 1
+
         if (item instanceof Header) {
             const nid = genId(item.newline, item.content)
             newlines.push({
                 id: nid,
                 content: item.content,
+                line,
             })
         } else if (item instanceof Consistent) {
             const nid = genId(item.newline, item.content)
@@ -325,6 +326,7 @@ export default function Reducer(state: State, action: PayloadAction<Payload>) {
             newlines.push({
                 id: nid,
                 content: item.content,
+                line,
             })
         } else if (item instanceof Added) {
             const nid = genId(item.newline, item.content)
@@ -332,6 +334,7 @@ export default function Reducer(state: State, action: PayloadAction<Payload>) {
             newlines.push({
                 id: nid,
                 content: item.content,
+                line,
             })
         } else if (item instanceof Updated) {
             const nid = genId(item.newline, item.content)
@@ -340,6 +343,7 @@ export default function Reducer(state: State, action: PayloadAction<Payload>) {
             newlines.push({
                 id: nid,
                 content: item.content,
+                line,
             })
         } else if (item instanceof Removed) {
             const nid = genId(item.newline, item.content)
@@ -347,9 +351,10 @@ export default function Reducer(state: State, action: PayloadAction<Payload>) {
         }
     }
 
-    const conjuction = cyrb53(SyncActions.map((item) => item.id).join(''))
+    const linesSyncHash = cyrb53(syncActions.map((item) => item.id).join(''))
 
-    console.log(conjuction)
+    instance.linesSyncHash = String(linesSyncHash)
+    instance.linesSync = syncActions
 
     variant.lines = newlines
 }

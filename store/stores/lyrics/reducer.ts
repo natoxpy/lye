@@ -11,6 +11,7 @@ import { TemporaryWorkspaceID } from '../workspaces/reducer'
 export type Line = {
     id: string
     content: string
+    line: number
 }
 
 export type Language = {
@@ -34,8 +35,9 @@ export type LinesSync =
 export type Instance = {
     id: string
     workspace: string
-    primary: string
+    primaryId: string
     linesSync: LinesSync[]
+    linesSyncHash: string
     variants: Variant[]
 }
 
@@ -46,8 +48,9 @@ const initialState: State = {
         {
             id: uuidv4(),
             workspace: TemporaryWorkspaceID,
-            primary: 'original',
+            primaryId: 'original',
             linesSync: [],
+            linesSyncHash: '',
             variants: [],
         },
     ],

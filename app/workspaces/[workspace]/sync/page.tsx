@@ -3,7 +3,11 @@ import { useAppSelector } from '@/store/hooks'
 import LineComponent from './components/line'
 
 function Layout({ children }: { children: React.ReactNode }) {
-    return <div className="w-full h-full overflow-auto">{children}</div>
+    return (
+        <div className="w-full h-full max-h-full overflow-y-auto">
+            {children}
+        </div>
+    )
 }
 
 function LineByLineLayout({ children }: { children: React.ReactNode }) {
@@ -15,28 +19,28 @@ function LineByLineLayout({ children }: { children: React.ReactNode }) {
 }
 
 export default function Page() {
-    // const lyrics = useAppSelector(
-    //     (state) => state.lyrics.instances[0].variants[0].lines
-    // )
+    const lyrics = useAppSelector((state) => {
+        const instance = state.lyrics.instances[0]
+        const variant = instance.variants.find(
+            (item) => item.id === instance.primaryId
+        )
+
+        return variant?.lines ?? []
+    })
 
     const lines = Array.from(
         useAppSelector((state) => state.syncLines.lines)
     ).sort((a, b) => a.lineNumber - b.lineNumber)
 
-    // console.log(lyrics)
-
     return (
         <Layout>
             <LineByLineLayout>
-                {lines.map((line, key) => (
+                {lyrics.map((line, key) => (
                     <LineComponent
                         key={key}
-                        lineNumber={line.lineNumber}
-                        text="How much I wished for another"
-                        timeframe={[
-                            line.startMs,
-                            line.startMs + line.durationMs,
-                        ]}
+                        lineNumber={line.line}
+                        text={line.content}
+                        notIntimeLine={false}
                     />
                 ))}
             </LineByLineLayout>

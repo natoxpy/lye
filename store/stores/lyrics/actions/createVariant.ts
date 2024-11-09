@@ -32,6 +32,7 @@ export default function Action(
             {
                 id: uuidv4(),
                 content: '',
+                line: 1,
             },
         ],
     })

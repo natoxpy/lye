@@ -25,10 +25,12 @@ function DoubleSidedIcon(props: React.ComponentProps<'svg'>) {
 export default function Component({
     lineNumber,
     text,
+    notIntimeLine,
     timeframe,
 }: {
     text: string
     lineNumber: number
+    notIntimeLine: boolean
     timeframe?: [number, number]
 }) {
     const rootRef = useRef<HTMLDivElement>(null)
@@ -49,17 +51,39 @@ export default function Component({
         setLeft(value - offset - 4)
     }, [currentTime, duration, timeframe])
 
+    const bg = notIntimeLine ? 'var(--color-bg-5)' : 'var(--color-bg-2)'
+
     return (
-        <div className="flex bg-bg-4 text-[1rem] select-none gap-[3px] min-w-[1000px] h-[46px] rounded-[4px] overflow-hidden">
-            <div className="flex items-center justify-center bg-bg-5 min-w-[56px] h-full">
-                <span className="text-txt-2">{lineNumber}</span>
+        <div
+            style={{
+                color: notIntimeLine
+                    ? 'var(--color-txt-2)'
+                    : 'var(--color-txt-3)',
+            }}
+            className="flex bg-bg-4 text-[1rem] select-none gap-[3px] min-w-[1000px] h-[46px] rounded-[4px] overflow-hidden"
+        >
+            <div
+                style={{
+                    background: bg,
+                }}
+                className="flex items-center justify-center min-w-[56px] h-full"
+            >
+                <span>{lineNumber}</span>
             </div>
-            <div className="flex items-center justify-center bg-bg-5 min-w-[112px] h-full">
-                <span className="text-txt-2">{formatMS(timeframe?.[0])}</span>
+            <div
+                style={{
+                    background: bg,
+                }}
+                className="flex items-center justify-center min-w-[112px] h-full"
+            >
+                <span>{formatMS(timeframe?.[0])}</span>
             </div>
             <div
                 ref={rootRef}
-                className="relative overflow-hidden bg-bg-5 px-[24px] flex w-full h-full items-center"
+                style={{
+                    background: bg,
+                }}
+                className="relative overflow-hidden px-[24px] flex w-full h-full items-center"
             >
                 <DoubleSidedIcon
                     style={{
@@ -68,10 +92,15 @@ export default function Component({
                     className="absolute fill-accent-1 stroke-accent-1"
                 />
 
-                <span className="text-txt-2">{text}</span>
+                <span>{text}</span>
             </div>
-            <div className="flex items-center justify-center bg-bg-5 min-w-[112px] h-full">
-                <span className="text-txt-2">{formatMS(timeframe?.[1])}</span>
+            <div
+                style={{
+                    background: bg,
+                }}
+                className="flex items-center justify-center  min-w-[112px] h-full"
+            >
+                <span>{formatMS(timeframe?.[1])}</span>
             </div>
         </div>
     )
