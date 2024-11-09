@@ -1,7 +1,8 @@
 import { PayloadAction } from '@reduxjs/toolkit'
-import { Line, State } from '../reducer'
+import { Line, LinesSync, State } from '../reducer'
 import * as Diff from 'diff'
 import { cyrb53 } from '@/app/utils/hash'
+import { HEADER_INITIAL } from '..'
 
 class DiffItem {
     constructor(
@@ -12,6 +13,11 @@ class DiffItem {
     ) {}
 }
 
+class Header extends DiffItem {
+    constructor(content: string, line: number, newline: number) {
+        super(content, line, newline, 'header')
+    }
+}
 class Consistent extends DiffItem {
     constructor(content: string, line: number, newline: number) {
         super(content, line, newline, 'consistent')
@@ -44,6 +50,7 @@ class Diffing {
     line: number = 0
     removedLine: number = 0
     addedLine: number = 0
+    headerLine: number = 0
     skipCount: number = 0
 
     constructor(
@@ -54,18 +61,41 @@ class Diffing {
         this.result = []
     }
 
+    public computeLine(key = 0) {
+        return key + this.line
+    }
+
+    public computeNewLine(key = 0, postComputeCB?: () => void) {
+        const value =
+            key +
+            this.line -
+            this.removedLine +
+            this.addedLine -
+            this.headerLine
+
+        if (postComputeCB) postComputeCB()
+        return value
+    }
+
     consistent(item: Diff.ArrayChange<string>) {
         if (item.removed || item.added) return 0
 
         this.result.push(
-            ...item.value.map(
-                (i, key) =>
-                    new Consistent(
+            ...item.value.map((i, key) => {
+                if (i.startsWith(HEADER_INITIAL)) {
+                    return new Header(
                         i,
-                        key + this.line,
-                        key + this.line - this.removedLine + this.addedLine
+                        this.computeLine(key),
+                        this.computeNewLine(key, () => this.headerLine++)
                     )
-            )
+                }
+
+                return new Consistent(
+                    i,
+                    this.computeLine(key),
+                    this.computeNewLine(key)
+                )
+            })
         )
 
         this.line += item.value.length
@@ -74,6 +104,22 @@ class Diffing {
     }
 
     updatedMap(original?: string, content?: string, key: number = 0): DiffItem {
+        if (content?.startsWith(HEADER_INITIAL)) {
+            return new Header(
+                content,
+                this.computeLine(key),
+                this.computeNewLine(key, () => this.headerLine++)
+            )
+        }
+
+        if (original?.startsWith(HEADER_INITIAL) && content) {
+            return new Added(
+                content,
+                this.computeLine(key),
+                this.computeNewLine(key, () => this.addedLine++)
+            )
+        }
+
         if (
             original !== undefined &&
             content !== undefined &&
@@ -82,20 +128,20 @@ class Diffing {
             return new Updated(
                 original,
                 content,
-                key,
-                key - this.removedLine + this.addedLine
+                this.computeLine(key),
+                this.computeNewLine(key)
             )
         else if (original !== undefined && content == undefined) {
             return new Removed(
                 original,
-                key,
-                key - this.removedLine++ + this.addedLine
+                this.computeLine(key),
+                this.computeNewLine(key, () => this.removedLine++)
             )
         } else
             return new Added(
                 content!,
-                key,
-                key - this.removedLine + this.addedLine++
+                this.computeLine(key),
+                this.computeNewLine(key, () => this.addedLine++)
             )
     }
 
@@ -108,7 +154,7 @@ class Diffing {
         const nvalues = Array.from({
             length: Math.max(item.value.length, peaked.value.length),
         }).map((_, key) =>
-            this.updatedMap(item.value[key], peaked.value[key], this.line + key)
+            this.updatedMap(item.value[key], peaked.value[key], key)
         )
 
         this.result.push(...nvalues)
@@ -122,17 +168,24 @@ class Diffing {
         if (!this.peak(index, ['added'])) return 0
 
         const nvalues = item.value.map((content, key) => {
+            if (content.startsWith(HEADER_INITIAL)) {
+                return new Header(
+                    content,
+                    this.computeLine(key),
+                    this.computeNewLine(key, () => this.headerLine++)
+                )
+            }
+
             return new Added(
                 content,
-                this.line + key,
-                this.line + key - this.removedLine + this.addedLine
+                this.computeLine(key),
+                this.computeNewLine(key, () => this.addedLine++)
             )
         })
 
         this.result.push(...nvalues)
 
         this.line += nvalues.length
-        this.addedLine += nvalues.length
 
         return 1
     }
@@ -141,17 +194,24 @@ class Diffing {
         if (!this.peak(index, ['removed'])) return 0
 
         const nvalues = item.value.map((content, key) => {
+            if (content.startsWith(HEADER_INITIAL)) {
+                return new Header(
+                    content,
+                    this.computeLine(key),
+                    this.computeNewLine(key, () => this.headerLine++)
+                )
+            }
+
             return new Removed(
                 content,
-                this.line + key,
-                this.line + key - this.removedLine + this.addedLine
+                this.computeLine(key),
+                this.computeNewLine(key, () => this.removedLine++)
             )
         })
 
         this.result.push(...nvalues)
 
         this.line += nvalues.length
-        this.removedLine += nvalues.length
 
         return 1
     }
@@ -212,7 +272,14 @@ export default function Reducer(state: State, action: PayloadAction<Payload>) {
 
     if (!lines || !linesFd) return
 
-    const diff = new Diffing(lines, action.payload.lines).compute()
+    let nlines = action.payload.lines
+
+    nlines = nlines.map((line) => {
+        if (line.startsWith('~')) return `${HEADER_INITIAL}${line.slice(1)}`
+        return line
+    })
+
+    const diff = new Diffing(lines, nlines).compute()
 
     const instance = state.instances.find(
         (item) => item.workspace === action.payload.workspaceId
@@ -229,54 +296,60 @@ export default function Reducer(state: State, action: PayloadAction<Payload>) {
     const genId = (line: number, content: string) =>
         String(cyrb53(`${line}${content}`))
 
-    const remapId = (id: string, nid: string) => {
+    const SyncActions: Array<LinesSync> = []
+
+    const remapId = (id: string, nid: string, line: number) => {
         if (id === nid) return
-        console.log('remaping ', id, 'to', nid)
+        SyncActions.push({ type: 'remap', id, nid, line: line + 1 })
+    }
+
+    const add = (id: string, line: number) => {
+        SyncActions.push({ type: 'add', id, line: line + 1 })
+    }
+
+    const remove = (id: string) => {
+        SyncActions.push({ type: 'remove', id })
     }
 
     for (const item of diff) {
-        if (item instanceof Consistent) {
+        if (item instanceof Header) {
             const nid = genId(item.newline, item.content)
-            remapId(genId(item.line, item.content), nid)
+            newlines.push({
+                id: nid,
+                content: item.content,
+            })
+        } else if (item instanceof Consistent) {
+            const nid = genId(item.newline, item.content)
+            remapId(genId(item.line, item.content), nid, item.newline)
 
             newlines.push({
                 id: nid,
                 content: item.content,
             })
         } else if (item instanceof Added) {
+            const nid = genId(item.newline, item.content)
+            add(nid, item.line)
             newlines.push({
-                id: genId(item.newline, item.content),
+                id: nid,
                 content: item.content,
             })
         } else if (item instanceof Updated) {
             const nid = genId(item.newline, item.content)
-            remapId(genId(item.line, item.original), nid)
+            remapId(genId(item.line, item.original), nid, item.newline)
 
             newlines.push({
                 id: nid,
                 content: item.content,
             })
         } else if (item instanceof Removed) {
-            const id = genId(item.line, item.content)
-            console.log(id, 'deleted')
+            const nid = genId(item.newline, item.content)
+            remove(nid)
         }
     }
 
+    const conjuction = cyrb53(SyncActions.map((item) => item.id).join(''))
+
+    console.log(conjuction)
+
     variant.lines = newlines
-
-    //console.log(
-    //    JSON.stringify(
-    //        diff.filter((i) => !(i instanceof Removed)),
-    //        null,
-    //        2
-    //    )
-    //)
-
-    //console.log(JSON.stringify(newlines, null, 2))
-    //console.log('---')
-
-    //variant.lines = action.payload.lines.map((i) => ({
-    //    id: uuidv4(),
-    //    content: i,
-    //}))
 }

@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useRef, useState as useReactState } from 'react'
+import { useEffect, useRef, useState as useReactState, useState } from 'react'
 import { redirect } from 'next/navigation'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { HEADER_INITIAL, syncLines, useLines } from '@/store/stores/lyrics'
@@ -66,7 +66,8 @@ function Editor() {
                 onChange={(e) => {
                     const lines = e.target.value.split('\n')
 
-                    // console.log(lines)
+                    if (textarea.current)
+                        setPreviousCursor(textarea.current.selectionEnd)
 
                     dispatch(
                         syncLines({
@@ -91,6 +92,7 @@ function Lines() {
 
     // Redirect function should ensure this isn't undefined
     const lines = useAppSelector(useLines(workspace, variant))!
+    let ln = 0
 
     const LineNumber = ({ num }: { num: string; id: string }) => (
         <div className="flex min-w-[80px] justify-end items-center w-full min-h-[60px] pr-[25px]">
@@ -101,6 +103,7 @@ function Lines() {
     return (
         <div className="flex flex-col w-[85px] h-full">
             {lines.map((line, idx) => {
+                if (line.content.startsWith(HEADER_INITIAL)) ln++
                 return (
                     <LineNumber
                         key={idx}
@@ -108,7 +111,7 @@ function Lines() {
                         num={
                             line.content.startsWith(HEADER_INITIAL)
                                 ? '~'
-                                : String(idx + 1)
+                                : String(idx + 1 - ln)
                         }
                     />
                 )

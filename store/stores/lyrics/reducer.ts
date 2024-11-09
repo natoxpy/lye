@@ -26,9 +26,16 @@ export type Variant = {
     editing?: 'languages' | 'name'
 }
 
+export type LinesSync =
+    | { type: 'add'; id: string; line: number }
+    | { type: 'remove'; id: string }
+    | { type: 'remap'; id: string; nid: string; line: number }
+
 export type Instance = {
     id: string
     workspace: string
+    primary: string
+    linesSync: LinesSync[]
     variants: Variant[]
 }
 
@@ -39,6 +46,8 @@ const initialState: State = {
         {
             id: uuidv4(),
             workspace: TemporaryWorkspaceID,
+            primary: 'original',
+            linesSync: [],
             variants: [],
         },
     ],
