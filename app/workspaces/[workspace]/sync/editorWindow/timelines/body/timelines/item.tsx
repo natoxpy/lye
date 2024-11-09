@@ -56,7 +56,7 @@ export function MoveTemplate({ timeline }: { timeline: string }) {
     const start = locationTarget
     const duration = line.durationMs
 
-    if (start == null || removeTarget) return <></>
+    if (start == null) return <></>
 
     const left = timeToPx(start) + 'px'
     const width = timeToPx(duration) + 'px'
@@ -67,6 +67,7 @@ export function MoveTemplate({ timeline }: { timeline: string }) {
             style={{
                 left,
                 width,
+                border: removeTarget ? '2px solid var(--color-accent-red)' : '',
             }}
             className="pointer-events-none z-20 flex cursor-pointer items-center justify-center absolute rounded-[6px] h-[32px] bg-bg-4 border-2 border-accent-1 opacity-50"
         ></div>

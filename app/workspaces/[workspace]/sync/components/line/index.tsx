@@ -60,7 +60,7 @@ export default function Component({
                     ? 'var(--color-txt-2)'
                     : 'var(--color-txt-3)',
             }}
-            className="flex bg-bg-4 text-[1rem] select-none gap-[3px] min-w-[1000px] h-[46px] rounded-[4px] overflow-hidden"
+            className="flex cursor-pointer bg-bg-4 text-[1rem] select-none gap-[3px] min-w-[1000px] h-[46px] rounded-[4px] overflow-hidden"
         >
             <div
                 style={{
