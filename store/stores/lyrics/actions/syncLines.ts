@@ -49,7 +49,6 @@ class Diffing {
     result: Array<DiffItem>
     line: number = 0
     removedLine: number = 0
-    addedLine: number = 0
     headerLine: number = 0
     skipCount: number = 0
 
@@ -66,12 +65,7 @@ class Diffing {
     }
 
     public computeNewLine(key = 0, postComputeCB?: () => void) {
-        const value =
-            key +
-            this.line -
-            this.removedLine +
-            this.addedLine -
-            this.headerLine
+        const value = key + this.line - this.removedLine - this.headerLine
 
         if (postComputeCB) postComputeCB()
         return value
@@ -116,7 +110,7 @@ class Diffing {
             return new Added(
                 content,
                 this.computeLine(key),
-                this.computeNewLine(key, () => this.addedLine++)
+                this.computeNewLine(key)
             )
         }
 
@@ -137,12 +131,13 @@ class Diffing {
                 this.computeLine(key),
                 this.computeNewLine(key, () => this.removedLine++)
             )
-        } else
+        } else {
             return new Added(
                 content!,
                 this.computeLine(key),
-                this.computeNewLine(key, () => this.addedLine++)
+                this.computeNewLine(key)
             )
+        }
     }
 
     updated(item: Diff.ArrayChange<string>, index: number) {
@@ -179,7 +174,7 @@ class Diffing {
             return new Added(
                 content,
                 this.computeLine(key),
-                this.computeNewLine(key, () => this.addedLine++)
+                this.computeNewLine(key)
             )
         })
 
