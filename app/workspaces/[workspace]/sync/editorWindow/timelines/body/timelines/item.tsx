@@ -44,6 +44,7 @@ export function MoveTemplate({ timeline }: { timeline: string }) {
         locationTarget,
         targetItem,
         levelTarget,
+        removeTarget,
     } = useLocalState()
     const timeToPx = (t: number) => Math.floor((t / timeWidth) * canvasWidthPx)
     const lines = useAppSelector((state) => state.syncLines.lines)
@@ -55,7 +56,7 @@ export function MoveTemplate({ timeline }: { timeline: string }) {
     const start = locationTarget
     const duration = line.durationMs
 
-    if (start == null) return <></>
+    if (start == null || removeTarget) return <></>
 
     const left = timeToPx(start) + 'px'
     const width = timeToPx(duration) + 'px'
@@ -86,6 +87,7 @@ export default function Item({
         canvasWidthPx,
         targetItem,
         resizeType,
+        removeTarget,
         setTargetItem,
         setTargetOffsetPx,
         setResizeType,
@@ -108,7 +110,9 @@ export default function Item({
                     targetItem == number && resizeType === null ? '0.5' : '1',
                 border:
                     targetItem == number && resizeType == null
-                        ? '2px solid var(--color-accent-1)'
+                        ? removeTarget
+                            ? '2px solid var(--color-accent-red)'
+                            : '2px solid var(--color-accent-1)'
                         : '',
             }}
             className="flex cursor-pointer overflow-hidden items-center justify-center absolute rounded-[6px] h-[32px]"

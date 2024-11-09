@@ -1,6 +1,7 @@
 'use client'
 import { useAppSelector } from '@/store/hooks'
 import LineComponent from './components/line'
+import { HEADER_INITIAL } from '@/store/stores/lyrics'
 
 function Layout({ children }: { children: React.ReactNode }) {
     return (
@@ -26,11 +27,11 @@ export default function Page() {
         )
 
         return variant?.lines ?? []
-    })
+    }).filter((line) => !line.content.startsWith(HEADER_INITIAL))
 
-    const lines = Array.from(
-        useAppSelector((state) => state.syncLines.lines)
-    ).sort((a, b) => a.lineNumber - b.lineNumber)
+    // const lines = Array.from(
+    //     useAppSelector((state) => state.syncLines.lines)
+    // ).sort((a, b) => a.lineNumber - b.lineNumber)
 
     return (
         <Layout>

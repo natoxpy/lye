@@ -13,13 +13,26 @@ export type State = {
 }
 
 const initialState: State = {
-    lines: [],
+    lines: [
+        {
+            id: '100',
+            startMs: 1000,
+            durationMs: 5000,
+            timeline: 'primary',
+            lineNumber: 1,
+        },
+    ],
 }
 
 export const Slice = createSlice({
     name: 'synclines',
     initialState,
     reducers: {
+        removeLine(state, action: PayloadAction<{ lineNumber: number }>) {
+            state.lines = state.lines.filter(
+                (item) => item.lineNumber !== action.payload.lineNumber
+            )
+        },
         setStartMs(
             state,
             action: PayloadAction<{ lineNumber: number; value: number }>
@@ -63,6 +76,7 @@ export const Slice = createSlice({
     },
 })
 
-export const { setStartMs, setDurationMs, setTimeline } = Slice.actions
+export const { setStartMs, setDurationMs, setTimeline, removeLine } =
+    Slice.actions
 
 export default Slice.reducer

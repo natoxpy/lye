@@ -5,6 +5,7 @@ import { setStartMs } from '@/store/stores/synclines'
 import { usePlayerState } from '@/app/player/state'
 import {
     Line,
+    removeLine,
     setDurationMs,
     setTimeline,
 } from '@/store/stores/synclines/reducer'
@@ -116,6 +117,7 @@ export default function Handler() {
         cursorLevelTarget,
         levelTarget,
         resizeType,
+        removeTarget,
         setTargetOffsetPx,
         setTargetItem,
         setLocationTarget,
@@ -123,6 +125,7 @@ export default function Handler() {
         setLevelTarget,
         setCursorLevelTarget,
         setResizeType,
+        setRemoveTarget,
     } = useLocalState()
     const { duration } = usePlayerState()
     const lines = useAppSelector((state) => state.syncLines.lines)
@@ -268,6 +271,9 @@ export default function Handler() {
             const offset = 96
             const docHeight = document.body.getBoundingClientRect().height
 
+            if (docHeight - 256 > y) setRemoveTarget(true)
+            else setRemoveTarget(false)
+
             if (docHeight - offset > y) {
                 setCursorLevelTarget('primary')
             } else {
@@ -325,6 +331,7 @@ export default function Handler() {
             setResizeType(null)
             setTargetOffsetPx(0)
             setCursorLevelTarget(null)
+            setRemoveTarget(false)
 
             if (
                 targetItem == null ||
@@ -332,6 +339,16 @@ export default function Handler() {
                 levelTarget == null
             )
                 return
+
+            if (removeTarget) {
+                dispatch(
+                    removeLine({
+                        lineNumber: targetItem,
+                    })
+                )
+
+                return
+            }
 
             dispatch(
                 setTimeline({

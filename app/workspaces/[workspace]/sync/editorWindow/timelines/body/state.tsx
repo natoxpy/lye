@@ -20,6 +20,7 @@ type State = {
     levelTarget: 'primary' | 'secondary' | null
     cursorLevelTarget: 'primary' | 'secondary' | null
     resizeType: 'left' | 'right' | null
+    removeTarget: boolean
     setTimeOffset: Dispatch<SetStateAction<number>>
     setTimeWidth: Dispatch<SetStateAction<number>>
     setCanvasWidthPx: Dispatch<SetStateAction<number>>
@@ -34,6 +35,7 @@ type State = {
         SetStateAction<'primary' | 'secondary' | null>
     >
     setResizeType: Dispatch<SetStateAction<'left' | 'right' | null>>
+    setRemoveTarget: Dispatch<SetStateAction<boolean>>
 }
 const Context = createContext<State>({} as State)
 
@@ -56,6 +58,7 @@ export default function Provider({ children }: { children: React.ReactNode }) {
     const [cursorLevelTarget, setCursorLevelTarget] = useState<
         'primary' | 'secondary' | null
     >(null)
+    const [removeTarget, setRemoveTarget] = useState<boolean>(false)
 
     return (
         <Context.Provider
@@ -84,6 +87,8 @@ export default function Provider({ children }: { children: React.ReactNode }) {
                 setLevelTarget,
                 cursorLevelTarget,
                 setCursorLevelTarget,
+                removeTarget,
+                setRemoveTarget,
             }}
         >
             {children}
