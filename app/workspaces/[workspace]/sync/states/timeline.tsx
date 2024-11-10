@@ -39,7 +39,7 @@ type State = {
 }
 const Context = createContext<State>({} as State)
 
-export const useLocalState = () => useContext(Context)
+export const useLocalTimelineState = () => useContext(Context)
 
 export default function Provider({ children }: { children: React.ReactNode }) {
     const [timeOffset, setTimeOffset] = useState(0)

@@ -28,6 +28,9 @@ export const Slice = createSlice({
     name: 'synclines',
     initialState,
     reducers: {
+        addLine(state, action: PayloadAction<Line>) {
+            state.lines.push(action.payload)
+        },
         removeLine(state, action: PayloadAction<{ lineNumber: number }>) {
             state.lines = state.lines.filter(
                 (item) => item.lineNumber !== action.payload.lineNumber

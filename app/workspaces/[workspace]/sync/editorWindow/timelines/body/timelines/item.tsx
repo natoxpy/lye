@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { useLocalState } from '../state'
+import { useLocalTimelineState } from '../../../../states/timeline'
 import { useAppSelector } from '@/store/hooks'
 
 export function TrueMoveTemplate({ timeline }: { timeline: string }) {
@@ -9,7 +9,7 @@ export function TrueMoveTemplate({ timeline }: { timeline: string }) {
         targetItem,
         cursorLocation,
         cursorLevelTarget,
-    } = useLocalState()
+    } = useLocalTimelineState()
     const timeToPx = (t: number) => Math.floor((t / timeWidth) * canvasWidthPx)
     const lines = useAppSelector((state) => state.syncLines.lines)
     const rootRef = useRef<HTMLDivElement>(null)
@@ -45,7 +45,7 @@ export function MoveTemplate({ timeline }: { timeline: string }) {
         targetItem,
         levelTarget,
         removeTarget,
-    } = useLocalState()
+    } = useLocalTimelineState()
     const timeToPx = (t: number) => Math.floor((t / timeWidth) * canvasWidthPx)
     const lines = useAppSelector((state) => state.syncLines.lines)
     const rootRef = useRef<HTMLDivElement>(null)
@@ -92,7 +92,7 @@ export default function Item({
         setTargetItem,
         setTargetOffsetPx,
         setResizeType,
-    } = useLocalState()
+    } = useLocalTimelineState()
     const timeToPx = (t: number) => Math.floor((t / timeWidth) * canvasWidthPx)
     const rootRef = useRef<HTMLDivElement>(null)
 

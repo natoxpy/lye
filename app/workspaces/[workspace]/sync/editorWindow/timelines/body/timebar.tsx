@@ -1,12 +1,12 @@
 import { usePlayerState } from '@/app/player/state'
 import redraw from './timebar-canvas'
 import { useEffect, useRef } from 'react'
-import { useLocalState } from './state'
+import { useLocalTimelineState } from '../../../states/timeline'
 
 export default function Component() {
     const canvas = useRef<HTMLCanvasElement>(null)
     const { duration } = usePlayerState()
-    const { timeOffset, timeWidth, setVisibleMarks } = useLocalState()
+    const { timeOffset, timeWidth, setVisibleMarks } = useLocalTimelineState()
 
     useEffect(() => {
         const canvaselement = canvas.current

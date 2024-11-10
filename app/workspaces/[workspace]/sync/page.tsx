@@ -1,6 +1,8 @@
 'use client'
 import { useAppSelector } from '@/store/hooks'
 import LineComponent from './components/line'
+import LineHandler from './components/line/handler'
+
 import { HEADER_INITIAL } from '@/store/stores/lyrics'
 
 function Layout({ children }: { children: React.ReactNode }) {
@@ -35,6 +37,8 @@ export default function Page() {
 
     return (
         <Layout>
+            <LineHandler />
+
             <LineByLineLayout>
                 {lyrics.map((line, key) => (
                     <LineComponent

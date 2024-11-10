@@ -1,13 +1,13 @@
 import Handler from './handler'
 import { usePlayerState } from '@/app/player/state'
 import { useEffect, useRef } from 'react'
-import { useLocalState } from '../state'
+import { useLocalTimelineState } from '../../../../states/timeline'
 
 export default function Timelines({ children }: { children: React.ReactNode }) {
     const elementRef = useRef<HTMLDivElement>(null)
     const childElementRef = useRef<HTMLDivElement>(null)
     const { setTimeOffset, setTimeWidth, setCanvasWidthPx, setScrollWidthPx } =
-        useLocalState()
+        useLocalTimelineState()
     const { duration } = usePlayerState()
 
     useEffect(() => {

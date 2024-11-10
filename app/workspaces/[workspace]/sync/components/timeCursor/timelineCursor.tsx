@@ -1,6 +1,6 @@
 import { usePlayerDispatch, usePlayerState } from '@/app/player/state'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useLocalState } from '../../editorWindow/timelines/body/state'
+import { useLocalTimelineState } from '../../states/timeline'
 
 function IconCursor(props: React.ComponentProps<'svg'>) {
     return (
@@ -28,7 +28,7 @@ export default function Component() {
     const rootRef = useRef<HTMLDivElement>(null)
     const { duration, currentTime, paused } = usePlayerState()
     const playerDispatch = usePlayerDispatch()
-    const { timeOffset, scrollWidthPx, canvasWidthPx } = useLocalState()
+    const { timeOffset, scrollWidthPx, canvasWidthPx } = useLocalTimelineState()
     const [mouseDown, setMouseDown] = useState(false)
     const [cursorTimeMs, setCursorTimeMS] = useState(0)
 

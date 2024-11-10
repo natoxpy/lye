@@ -2,7 +2,6 @@
 
 import TimelineCursor from '../../../components/timeCursor/timelineCursor'
 import Timebar from './timebar'
-import State from './state'
 import Timelines from './timelines'
 import TimelineItem from './timelines/item'
 import { MoveTemplate, TrueMoveTemplate } from './timelines/item'
@@ -15,38 +14,36 @@ export default function Layout() {
 
     return (
         <div className="relative flex flex-col w-[calc(100%-96px)]">
-            <State>
-                <TimelineCursor />
-                <Timebar />
-                <Timelines>
-                    <div className="flex w-full items-center grow">
-                        {primaryLines.map((line, idx) => (
-                            <TimelineItem
-                                key={idx}
-                                number={line.lineNumber}
-                                start={line.startMs}
-                                duration={line.durationMs}
-                            />
-                        ))}
+            <TimelineCursor />
+            <Timebar />
+            <Timelines>
+                <div className="flex w-full items-center grow">
+                    {primaryLines.map((line, idx) => (
+                        <TimelineItem
+                            key={idx}
+                            number={line.lineNumber}
+                            start={line.startMs}
+                            duration={line.durationMs}
+                        />
+                    ))}
 
-                        <MoveTemplate timeline="primary" />
-                        <TrueMoveTemplate timeline="primary" />
-                    </div>
-                    <div className="flex w-full items-center grow">
-                        {secondaryLines.map((line, idx) => (
-                            <TimelineItem
-                                key={idx}
-                                number={line.lineNumber}
-                                start={line.startMs}
-                                duration={line.durationMs}
-                            />
-                        ))}
+                    <MoveTemplate timeline="primary" />
+                    <TrueMoveTemplate timeline="primary" />
+                </div>
+                <div className="flex w-full items-center grow">
+                    {secondaryLines.map((line, idx) => (
+                        <TimelineItem
+                            key={idx}
+                            number={line.lineNumber}
+                            start={line.startMs}
+                            duration={line.durationMs}
+                        />
+                    ))}
 
-                        <MoveTemplate timeline="secondary" />
-                        <TrueMoveTemplate timeline="secondary" />
-                    </div>
-                </Timelines>
-            </State>
+                    <MoveTemplate timeline="secondary" />
+                    <TrueMoveTemplate timeline="secondary" />
+                </div>
+            </Timelines>
         </div>
     )
 }

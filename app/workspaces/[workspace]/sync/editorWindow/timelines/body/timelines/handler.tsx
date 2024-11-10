@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useLocalState } from '../state'
+import { useLocalTimelineState } from '../../../../states/timeline'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { setStartMs } from '@/store/stores/synclines'
 import { usePlayerState } from '@/app/player/state'
@@ -126,7 +126,7 @@ export default function Handler() {
         setCursorLevelTarget,
         setResizeType,
         setRemoveTarget,
-    } = useLocalState()
+    } = useLocalTimelineState()
     const { duration } = usePlayerState()
     const lines = useAppSelector((state) => state.syncLines.lines)
     const dispatch = useAppDispatch()
