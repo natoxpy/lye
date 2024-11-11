@@ -1,6 +1,7 @@
 'use client'
 import { useAppSelector } from '@/store/hooks'
 import LineComponent from './components/line'
+import LineCastShadow from './components/line/castShadow'
 import LineHandler from './components/line/handler'
 
 import { HEADER_INITIAL } from '@/store/stores/lyrics'
@@ -31,23 +32,33 @@ export default function Page() {
         return variant?.lines ?? []
     }).filter((line) => !line.content.startsWith(HEADER_INITIAL))
 
-    // const lines = Array.from(
-    //     useAppSelector((state) => state.syncLines.lines)
-    // ).sort((a, b) => a.lineNumber - b.lineNumber)
+    const lines = Array.from(
+        useAppSelector((state) => state.syncLines.lines)
+    ).sort((a, b) => a.lineNumber - b.lineNumber)
 
     return (
         <Layout>
             <LineHandler />
+            <LineCastShadow />
 
             <LineByLineLayout>
-                {lyrics.map((line, key) => (
-                    <LineComponent
-                        key={key}
-                        lineNumber={line.line}
-                        text={line.content}
-                        notIntimeLine={false}
-                    />
-                ))}
+                {lyrics.map((line, key) => {
+                    let timeframe: [number, number] | undefined = undefined
+
+                    const ln = lines.find((ln) => ln.lineNumber === line.line)
+                    if (ln) timeframe = [ln.startMs, ln.startMs + ln.durationMs]
+
+                    return (
+                        <LineComponent
+                            key={key}
+                            lineId={line.id}
+                            lineNumber={line.line}
+                            text={line.content}
+                            inTimeLine={true}
+                            timeframe={timeframe}
+                        />
+                    )
+                })}
             </LineByLineLayout>
         </Layout>
     )

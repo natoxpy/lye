@@ -9,12 +9,24 @@ export function TrueMoveTemplate({ timeline }: { timeline: string }) {
         targetItem,
         cursorLocation,
         cursorLevelTarget,
+        outsideLineTarget,
     } = useLocalTimelineState()
     const timeToPx = (t: number) => Math.floor((t / timeWidth) * canvasWidthPx)
     const lines = useAppSelector((state) => state.syncLines.lines)
     const rootRef = useRef<HTMLDivElement>(null)
 
-    const line = lines.find((item) => item.lineNumber == targetItem)
+    let line = lines.find((item) => item.lineNumber == targetItem)
+
+    if (line == undefined && outsideLineTarget !== null) {
+        line = {
+            id: '',
+            durationMs: 5000,
+            lineNumber: outsideLineTarget,
+            timeline: 'primary',
+            startMs: 0,
+        }
+    }
+
     if (line == undefined || timeline !== cursorLevelTarget) return <></>
 
     const start = cursorLocation
@@ -44,14 +56,30 @@ export function MoveTemplate({ timeline }: { timeline: string }) {
         locationTarget,
         targetItem,
         levelTarget,
+        cursorLevelTarget,
         removeTarget,
+        outsideLineTarget,
     } = useLocalTimelineState()
     const timeToPx = (t: number) => Math.floor((t / timeWidth) * canvasWidthPx)
     const lines = useAppSelector((state) => state.syncLines.lines)
     const rootRef = useRef<HTMLDivElement>(null)
 
-    const line = lines.find((item) => item.lineNumber == targetItem)
-    if (line == undefined || levelTarget !== timeline) return <></>
+    let line = lines.find((item) => item.lineNumber == targetItem)
+
+    let leveltg = levelTarget
+
+    if (line == undefined && outsideLineTarget !== null) {
+        line = {
+            id: '',
+            durationMs: 5000,
+            lineNumber: outsideLineTarget,
+            timeline: 'primary',
+            startMs: 0,
+        }
+        leveltg = cursorLevelTarget
+    }
+
+    if (line == undefined || leveltg !== timeline) return <></>
 
     const start = locationTarget
     const duration = line.durationMs

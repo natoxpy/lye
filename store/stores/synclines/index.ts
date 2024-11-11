@@ -1,1 +1,7 @@
-export { removeLine, setStartMs, setDurationMs, setTimeline } from './reducer'
+export {
+    removeLine,
+    setStartMs,
+    setDurationMs,
+    setTimeline,
+    addLine,
+} from './reducer'

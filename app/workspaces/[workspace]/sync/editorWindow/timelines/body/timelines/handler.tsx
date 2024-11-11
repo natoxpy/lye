@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { setStartMs } from '@/store/stores/synclines'
 import { usePlayerState } from '@/app/player/state'
 import {
+    addLine,
     Line,
     removeLine,
     setDurationMs,
@@ -118,6 +119,10 @@ export default function Handler() {
         levelTarget,
         resizeType,
         removeTarget,
+        outsideLineTarget,
+        outsideLineTargetId,
+        setHideOutsideShadow,
+        setOutsideLineTarget,
         setTargetOffsetPx,
         setTargetItem,
         setLocationTarget,
@@ -126,12 +131,12 @@ export default function Handler() {
         setCursorLevelTarget,
         setResizeType,
         setRemoveTarget,
+        setOutsideLineTargetId,
     } = useLocalTimelineState()
     const { duration } = usePlayerState()
     const lines = useAppSelector((state) => state.syncLines.lines)
     const dispatch = useAppDispatch()
     const clamp = (v: number) => {
-        if (targetItem == null) return
         const items = visibleMarks.map((item, id) => [Math.abs(v - item), id])
 
         items.sort((a, b) => a[0] - b[0])
@@ -141,18 +146,29 @@ export default function Handler() {
 
     useEffect(() => {
         const mousemove = (e: MouseEvent) => {
-            if (targetItem == null || targetOffsetPx == null) return
-
             const process = (v: number) => {
                 if (v < 0) v = 0
                 if (canvasWidthPx < v) v = canvasWidthPx
                 return Math.floor((v / canvasWidthPx) * timeWidth)
             }
 
-            const x = e.clientX - leftOffset - targetOffsetPx
+            let x = e.clientX - leftOffset
             const cursor = e.clientX - leftOffset
 
             computeCursorLevel(e.clientY)
+
+            if (outsideLineTarget !== null) {
+                const docHeight = document.body.getBoundingClientRect().height
+                if (docHeight - 168 > e.clientY) {
+                    setHideOutsideShadow(false)
+                    setLocationTarget(null)
+                    setCursorLocation(null)
+                } else computeOutsideLineTarget(process(x - 41.5))
+            }
+
+            if (targetItem == null || targetOffsetPx == null) return
+
+            x -= targetOffsetPx
 
             if (resizeType !== null) {
                 if (resizeType == 'right') {
@@ -167,6 +183,35 @@ export default function Handler() {
 
             const levelCompute = moveElement(process(x), process(cursor))
             if (levelCompute !== null) computeLevel(e.clientY)
+        }
+
+        const computeOutsideLineTarget = (time: number) => {
+            const ctime = clamp(time)
+            if (ctime == undefined) return
+
+            const vr = new VR(
+                ctime,
+                ctime,
+                cursorLevelTarget!,
+                duration,
+                {
+                    id: '999',
+                    lineNumber: outsideLineTarget!,
+                    startMs: ctime,
+                    durationMs: 5000,
+                    timeline: cursorLevelTarget!,
+                },
+                lines
+            )
+
+            const vrComputed = vr.moveCompute()
+
+            if (vrComputed !== ctime) {
+                setCursorLocation(ctime)
+            } else setCursorLocation(null)
+
+            setHideOutsideShadow(true)
+            setLocationTarget(vrComputed)
         }
 
         const resizeRight = (time: number) => {
@@ -332,6 +377,27 @@ export default function Handler() {
             setTargetOffsetPx(0)
             setCursorLevelTarget(null)
             setRemoveTarget(false)
+            setHideOutsideShadow(false)
+            setOutsideLineTarget(null)
+            setOutsideLineTargetId(null)
+
+            if (
+                outsideLineTarget !== null &&
+                cursorLevelTarget !== null &&
+                locationTarget !== null &&
+                outsideLineTargetId !== null
+            ) {
+                dispatch(
+                    addLine({
+                        durationMs: 5000,
+                        lineNumber: outsideLineTarget,
+                        timeline: cursorLevelTarget,
+                        startMs: locationTarget,
+                        id: outsideLineTargetId,
+                    })
+                )
+                return
+            }
 
             if (
                 targetItem == null ||

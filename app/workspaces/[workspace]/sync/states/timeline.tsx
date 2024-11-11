@@ -13,6 +13,9 @@ type State = {
     scrollWidthPx: number
     timeWidth: number
     targetItem: number | null
+    outsideLineTarget: number | null
+    outsideLineTargetId: string | null
+    hideOutsideShadow: boolean
     targetOffsetPx: number | null
     visibleMarks: number[]
     locationTarget: number | null
@@ -27,6 +30,9 @@ type State = {
     setScrollWidthPx: Dispatch<SetStateAction<number>>
     setTargetItem: Dispatch<SetStateAction<number | null>>
     setTargetOffsetPx: Dispatch<SetStateAction<number | null>>
+    setOutsideLineTarget: Dispatch<SetStateAction<number | null>>
+    setOutsideLineTargetId: Dispatch<SetStateAction<string | null>>
+    setHideOutsideShadow: Dispatch<SetStateAction<boolean>>
     setVisibleMarks: Dispatch<SetStateAction<number[]>>
     setLocationTarget: Dispatch<SetStateAction<number | null>>
     setCursorLocation: Dispatch<SetStateAction<number | null>>
@@ -47,6 +53,13 @@ export default function Provider({ children }: { children: React.ReactNode }) {
     const [canvasWidthPx, setCanvasWidthPx] = useState(0)
     const [scrollWidthPx, setScrollWidthPx] = useState(0)
     const [targetItem, setTargetItem] = useState<number | null>(null)
+    const [outsideLineTarget, setOutsideLineTarget] = useState<number | null>(
+        null
+    )
+    const [outsideLineTargetId, setOutsideLineTargetId] = useState<
+        string | null
+    >(null)
+    const [hideOutsideShadow, setHideOutsideShadow] = useState<boolean>(false)
     const [targetOffsetPx, setTargetOffsetPx] = useState<number | null>(0)
     const [visibleMarks, setVisibleMarks] = useState<number[]>([])
     const [locationTarget, setLocationTarget] = useState<number | null>(null)
@@ -73,6 +86,12 @@ export default function Provider({ children }: { children: React.ReactNode }) {
                 setScrollWidthPx,
                 targetItem,
                 setTargetItem,
+                outsideLineTarget,
+                setOutsideLineTarget,
+                outsideLineTargetId,
+                setOutsideLineTargetId,
+                hideOutsideShadow,
+                setHideOutsideShadow,
                 targetOffsetPx,
                 setTargetOffsetPx,
                 visibleMarks,

@@ -1,6 +1,7 @@
 import { usePlayerState } from '@/app/player/state'
 import { formatMS } from '@/app/utils/time'
 import { useEffect, useRef, useState } from 'react'
+import { useLocalTimelineState } from '../../states/timeline'
 
 function DoubleSidedIcon(props: React.ComponentProps<'svg'>) {
     return (
@@ -23,19 +24,23 @@ function DoubleSidedIcon(props: React.ComponentProps<'svg'>) {
 }
 
 export default function Component({
+    lineId,
     lineNumber,
     text,
-    notIntimeLine,
+    inTimeLine,
     timeframe,
 }: {
+    lineId: string
     text: string
     lineNumber: number
-    notIntimeLine: boolean
+    inTimeLine: boolean
     timeframe?: [number, number]
 }) {
     const rootRef = useRef<HTMLDivElement>(null)
     const [left, setLeft] = useState(-10)
     const { currentTime, duration } = usePlayerState()
+    const { setOutsideLineTarget, setOutsideLineTargetId } =
+        useLocalTimelineState()
 
     useEffect(() => {
         const root = rootRef.current
@@ -51,16 +56,21 @@ export default function Component({
         setLeft(value - offset - 4)
     }, [currentTime, duration, timeframe])
 
-    const bg = notIntimeLine ? 'var(--color-bg-5)' : 'var(--color-bg-2)'
+    const bg = inTimeLine ? 'var(--color-bg-5)' : 'var(--color-bg-2)'
 
     return (
         <div
             style={{
-                color: notIntimeLine
-                    ? 'var(--color-txt-2)'
-                    : 'var(--color-txt-3)',
+                color: inTimeLine ? 'var(--color-txt-2)' : 'var(--color-txt-3)',
+                cursor: !inTimeLine ? 'pointer' : '',
             }}
-            className="flex cursor-pointer bg-bg-4 text-[1rem] select-none gap-[3px] min-w-[1000px] h-[46px] rounded-[4px] overflow-hidden"
+            onMouseDown={() => {
+                if (!inTimeLine) return
+
+                setOutsideLineTarget(lineNumber)
+                setOutsideLineTargetId(lineId)
+            }}
+            className="flex bg-bg-4 text-[1rem] select-none gap-[3px] min-w-[1000px] h-[46px] rounded-[4px] overflow-hidden"
         >
             <div
                 style={{

@@ -13,15 +13,7 @@ export type State = {
 }
 
 const initialState: State = {
-    lines: [
-        {
-            id: '100',
-            startMs: 1000,
-            durationMs: 5000,
-            timeline: 'primary',
-            lineNumber: 1,
-        },
-    ],
+    lines: [],
 }
 
 export const Slice = createSlice({
@@ -79,7 +71,7 @@ export const Slice = createSlice({
     },
 })
 
-export const { setStartMs, setDurationMs, setTimeline, removeLine } =
+export const { setStartMs, setDurationMs, setTimeline, removeLine, addLine } =
     Slice.actions
 
 export default Slice.reducer
