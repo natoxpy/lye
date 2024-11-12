@@ -84,6 +84,7 @@ export default function Component() {
                     type: 'sync-currentTime',
                     payload: timeConverter.MStoS(xms),
                 })
+
                 playerDispatch({
                     type: 'set-currentTime',
                     payload: xms,
@@ -98,6 +99,7 @@ export default function Component() {
                 type: 'sync-currentTime',
                 payload: timeConverter.MStoS(cursorTime),
             })
+
             playerDispatch({
                 type: 'set-currentTime',
                 payload: cursorTime,

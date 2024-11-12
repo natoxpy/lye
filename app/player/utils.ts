@@ -6,7 +6,7 @@ export const timeConverter = {
     },
 
     MStoS(ms: Milliseconds): Seconds {
-        return ms as number as Seconds
+        return (ms / 1000) as number as Seconds
     },
 }
 
