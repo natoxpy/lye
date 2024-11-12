@@ -54,7 +54,7 @@ export default function Page() {
                             lineId={line.id}
                             lineNumber={line.line}
                             text={line.content}
-                            inTimeLine={true}
+                            inTimeLine={!!ln}
                             timeframe={timeframe}
                         />
                     )

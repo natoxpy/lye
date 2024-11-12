@@ -40,8 +40,8 @@ function ticks({
 
     const J = Tw,
         H = To,
-        p = 20_000,
-        b = 40,
+        p = 10_000,
+        b = 25,
         pt = p / b,
         K = pt,
         Pi = Math.floor(H / p) * p + p - H,

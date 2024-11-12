@@ -65,7 +65,7 @@ export default function Component({
                 cursor: !inTimeLine ? 'pointer' : '',
             }}
             onMouseDown={() => {
-                if (!inTimeLine) return
+                if (inTimeLine) return
 
                 setOutsideLineTarget(lineNumber)
                 setOutsideLineTargetId(lineId)

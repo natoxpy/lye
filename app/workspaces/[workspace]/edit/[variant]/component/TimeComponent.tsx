@@ -1,11 +1,13 @@
+import { Milliseconds } from '@/app/utils/units'
+
 export default function TimeComponent({
-    milliseconds,
+    ms,
     includeMs,
 }: {
-    milliseconds: number
+    ms: Milliseconds
     includeMs?: boolean
 }) {
-    const format = (ms: number) => {
+    const format = (ms: Milliseconds) => {
         const ps = Math.floor(ms / 10) % 100
         const s = Math.floor(ms / 1000) % 60
         const m = Math.floor(ms / 1000 / 60)
@@ -26,7 +28,7 @@ export default function TimeComponent({
             className="flex items-center justify-center h-full"
         >
             <span className="text-txt-1 text-[12px] select-none">
-                {format(milliseconds)}
+                {format(ms)}
             </span>
         </div>
     )

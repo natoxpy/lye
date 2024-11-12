@@ -1,6 +1,8 @@
 import { usePlayerDispatch, usePlayerState } from '@/app/player/state'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useLocalTimelineState } from '../../states/timeline'
+import { Milliseconds } from '@/app/utils/units'
+import { timeConverter } from '@/app/player/utils'
 
 function IconCursor(props: React.ComponentProps<'svg'>) {
     return (
@@ -30,7 +32,7 @@ export default function Component() {
     const playerDispatch = usePlayerDispatch()
     const { timeOffset, scrollWidthPx, canvasWidthPx } = useLocalTimelineState()
     const [mouseDown, setMouseDown] = useState(false)
-    const [cursorTimeMs, setCursorTimeMS] = useState(0)
+    const [cursorTime, setCursorTimeMS] = useState(0 as Milliseconds)
 
     const setPosition = useCallback(
         (time: number) => {
@@ -72,7 +74,7 @@ export default function Component() {
             const leftPxDpmt = (timeOffset / duration) * scrollWidthPx
             const x = leftPxDpmt + relX
 
-            const xms = (x / scrollWidthPx) * duration
+            const xms = ((x / scrollWidthPx) * duration) as Milliseconds
 
             setCursorTimeMS(xms)
             setPosition(xms)
@@ -80,7 +82,7 @@ export default function Component() {
             if (paused) {
                 playerDispatch({
                     type: 'sync-currentTime',
-                    payload: xms / 1_000,
+                    payload: timeConverter.MStoS(xms),
                 })
                 playerDispatch({
                     type: 'set-currentTime',
@@ -94,11 +96,11 @@ export default function Component() {
 
             playerDispatch({
                 type: 'sync-currentTime',
-                payload: cursorTimeMs / 1_000,
+                payload: timeConverter.MStoS(cursorTime),
             })
             playerDispatch({
                 type: 'set-currentTime',
-                payload: cursorTimeMs,
+                payload: cursorTime,
             })
 
             setMouseDown(false)
@@ -113,7 +115,7 @@ export default function Component() {
         }
     }, [
         paused,
-        cursorTimeMs,
+        cursorTime,
         canvasWidthPx,
         duration,
         mouseDown,

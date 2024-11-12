@@ -1,27 +1,28 @@
 import { createContext, Dispatch, useContext, useReducer } from 'react'
+import { Milliseconds, Seconds } from '../utils/units'
 
 export type State = {
-    targetCurrentTime: number | null
-    currentTime: number
-    duration: number
+    targetCurrentTime: Seconds | null
+    currentTime: Milliseconds
+    duration: Milliseconds
     playbackRate: number
     paused: boolean
     volume: number
     src: string | null
 }
 type Actions =
-    | { type: 'set-currentTime'; payload: number }
-    | { type: 'set-duration'; payload: number }
+    | { type: 'set-currentTime'; payload: Milliseconds }
+    | { type: 'set-duration'; payload: Milliseconds }
     | { type: 'set-playbackRate'; payload: number }
     | { type: 'set-paused'; payload: boolean }
     | { type: 'set-volume'; payload: number }
     | { type: 'set-src'; payload: string }
-    | { type: 'sync-currentTime'; payload: number | null }
+    | { type: 'sync-currentTime'; payload: Seconds | null }
 
 const defaultState: State = {
     targetCurrentTime: null,
-    currentTime: 0,
-    duration: 0,
+    currentTime: 0 as Milliseconds,
+    duration: 0 as Milliseconds,
     playbackRate: 1,
     paused: true,
     volume: 1,

@@ -1,6 +1,8 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { usePlayerDispatch, usePlayerState } from './state'
+import { timeConverter, floor } from './utils'
+import { Seconds } from '../utils/units'
 
 type Props = { children: React.ReactNode }
 
@@ -23,7 +25,7 @@ export default function Component({ children }: Props) {
         audio.ondurationchange = () =>
             dispatch({
                 type: 'set-duration',
-                payload: Math.floor(audio.duration * 1000),
+                payload: floor(timeConverter.StoMS(audio.duration as Seconds)),
             })
 
         dispatch({ type: 'set-src', payload: '/music2.mp3' })
@@ -55,7 +57,9 @@ export default function Component({ children }: Props) {
 
             dispatch({
                 type: 'set-currentTime',
-                payload: Math.floor(audio.currentTime * 1000),
+                payload: floor(
+                    timeConverter.StoMS(audio.currentTime as Seconds)
+                ),
             })
         }, 10)
 
