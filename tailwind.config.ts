@@ -21,6 +21,7 @@ const config: Config = {
                 'accent-1': 'var(--color-accent-1)',
                 'accent-red': 'var(--color-accent-red)',
                 'accent-green': 'var(--color-accent-green)',
+                'accent-blue': 'var(--color-accent-blue)',
                 'unaccent-1': 'var(--color-unaccent-1)',
                 'unaccent-accent-1': 'var(--color-unaccent-accent-1)',
                 'unaccent-accent-2': 'var(--color-unaccent-accent-2)',
