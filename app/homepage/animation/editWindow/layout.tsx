@@ -1,4 +1,4 @@
-import { forwardRef, ReactNode } from 'react'
+import React, { forwardRef, ReactNode } from 'react'
 import AddFileIcon from '@/app/icons/addFile'
 import FullFileIcon from '@/app/icons/fullFile'
 
@@ -51,7 +51,9 @@ const Layout = forwardRef<HTMLDivElement, Props>((props, ref) => {
                 className="w-full h-full bg-red-400"
             >
                 <div>{/*TOP nav*/}</div>
-                {props.body}
+                <div className="overflow-y-hidden h-full" id="window-edit-body">
+                    {props.body}
+                </div>
                 <div>{/*player*/}</div>
             </div>
         </div>
@@ -60,14 +62,14 @@ const Layout = forwardRef<HTMLDivElement, Props>((props, ref) => {
 
 Layout.displayName = 'layout'
 
-const Line = forwardRef<
-    HTMLDivElement,
-    ({ line: number; header?: undefined } | { header: boolean }) & {
-        children: ReactNode
-    }
->((props, ref) => {
+function Line(props: {
+    header?: boolean
+    line: number
+    children: ReactNode
+    className?: React.ComponentProps<'div'>['className']
+}) {
     return (
-        <div className="flex w-full" ref={ref}>
+        <div className={(props.className ?? '') + ' flex w-full'}>
             <div className="flex opacity-75 text-txt-1 text-[14px] justify-end items-center px-[25px] w-[70px] h-[40px]">
                 {props.header == undefined ? props.line : '~'}
             </div>
@@ -84,9 +86,7 @@ const Line = forwardRef<
             </div>
         </div>
     )
-})
-
-Line.displayName = 'line'
+}
 
 const Variant = forwardRef<
     HTMLDivElement,

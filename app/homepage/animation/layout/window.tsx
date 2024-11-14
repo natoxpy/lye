@@ -63,9 +63,7 @@ export function Header() {
                 </div>
             </div>
             <div className="flex items-center justify-center w-full opacity-75 gap-[10px]">
-                <span className="text-txt-2 text-[12px]">
-                    In Hell We Live, Lament
-                </span>
+                <span className="text-txt-2 text-[12px]">Iron Lotus</span>
                 <IconCarrot className="stroke-txt-2" />
             </div>
             <div className="w-full"></div>
@@ -86,8 +84,6 @@ export function Window({ children }: { children: React.ReactNode }) {
         </div>
     )
 }
-
-export function Body() {}
 
 export function Navigation() {
     const Item = ({

@@ -6,9 +6,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <Frame>
                 <Window>
                     <Header />
-
                     {children}
-
                     <Navigation />
                 </Window>
             </Frame>
