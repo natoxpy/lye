@@ -36,7 +36,7 @@ function Description() {
 
 export default function Layout() {
     return (
-        <div className="flex flex-col items-center w-screen h-screen bg-bg-2 text-txt-2 overflow-auto">
+        <div className="flex flex-col items-center w-screen h-screen bg-bg-2 text-txt-2 overflow-y-auto overflow-x-hidden">
             <Header />
             <Title />
             <Description />

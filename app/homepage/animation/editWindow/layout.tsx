@@ -6,6 +6,7 @@ type Props = {
     cursor: ReactNode
     navigation: ReactNode
     variantNavigation: ReactNode
+    body: ReactNode
 }
 
 const Layout = forwardRef<HTMLDivElement, Props>((props, ref) => {
@@ -50,7 +51,7 @@ const Layout = forwardRef<HTMLDivElement, Props>((props, ref) => {
                 className="w-full h-full bg-red-400"
             >
                 <div>{/*TOP nav*/}</div>
-                <div>{/*body*/}</div>
+                {props.body}
                 <div>{/*player*/}</div>
             </div>
         </div>
@@ -58,6 +59,34 @@ const Layout = forwardRef<HTMLDivElement, Props>((props, ref) => {
 })
 
 Layout.displayName = 'layout'
+
+const Line = forwardRef<
+    HTMLDivElement,
+    ({ line: number; header?: undefined } | { header: boolean }) & {
+        children: ReactNode
+    }
+>((props, ref) => {
+    return (
+        <div className="flex w-full" ref={ref}>
+            <div className="flex opacity-75 text-txt-1 text-[14px] justify-end items-center px-[25px] w-[70px] h-[40px]">
+                {props.header == undefined ? props.line : '~'}
+            </div>
+            <div
+                style={{
+                    color:
+                        props.header == undefined
+                            ? 'var(--color-txt-2)'
+                            : 'var(--color-txt-1)',
+                }}
+                className="flex opacity-75 text-[16px] items-center w-full h-[40px]"
+            >
+                {props.children}
+            </div>
+        </div>
+    )
+})
+
+Line.displayName = 'line'
 
 const Variant = forwardRef<
     HTMLDivElement,
@@ -83,6 +112,7 @@ Variant.displayName = 'variant'
 const Elements = {
     root: Layout,
     variant: Variant,
+    line: Line,
 }
 
 export default Elements
