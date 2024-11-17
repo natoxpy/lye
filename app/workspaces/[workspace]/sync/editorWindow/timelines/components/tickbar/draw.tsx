@@ -22,6 +22,7 @@ export function draw(
     canvas: HTMLCanvasElement,
     timeWidth: Milliseconds,
     timeOffset: Milliseconds,
+    duration: Milliseconds,
     options: { tickLength: Milliseconds; inbetweenTicks: number } = {
         tickLength: 10_000 as Milliseconds,
         inbetweenTicks: 10,
@@ -39,7 +40,7 @@ export function draw(
             inbetweenTicks,
         },
         player: {
-            duration: 100_000 as Milliseconds,
+            duration,
         },
         window: {
             timeOffset,
@@ -68,8 +69,12 @@ export function draw(
 }
 
 export function useDraw(canvas: RefObject<HTMLCanvasElement>) {
-    return () => {
+    return (
+        width: Milliseconds,
+        offset: Milliseconds,
+        playerDuration: Milliseconds
+    ) => {
         if (!canvas.current) return
-        draw(canvas.current, 100_000 as Milliseconds, 0 as Milliseconds)
+        draw(canvas.current, width, offset, playerDuration)
     }
 }

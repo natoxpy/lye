@@ -22,6 +22,12 @@ export type Actions =
 
 export function reducer(draft: LocalState.State, actions: LocalState.Actions) {
     switch (actions.type) {
+        case 'boardSpecs/offset':
+            draft.boardManager.offset = actions.payload.offset
+            break
+        case 'boardSpecs/width':
+            draft.boardManager.width = actions.payload.width
+            break
         case 'register':
             if (
                 new Set(draft.boardManager.timelines.map((v) => v.name)).has(

@@ -1,11 +1,66 @@
-import { Pixels } from '@/app/utils/units'
+'use client'
+import { Milliseconds, Pixels } from '@/app/utils/units'
 import { Layout, Board } from './layout'
-import { ReactNode } from 'react'
+import { ReactNode, useCallback, useEffect, useRef } from 'react'
+import { useResizeEvent } from '../../events/resize'
+import { useBoardManager } from '../../../../states/boardManager'
+import { usePlayerState } from '@/app/player/state'
 
 export default function Component({ children }: { children: ReactNode }) {
+    const layoutRef = useRef<HTMLDivElement>(null)
+    const boardRef = useRef<HTMLDivElement>(null)
+    const [onResize] = useResizeEvent()
+    const boardManager = useBoardManager()
+    const player = usePlayerState()
+
+    const dispatchBoardOffset = () => {
+        const layout = layoutRef.current
+        const board = boardRef.current
+        if (!layout || !board) return
+        const boardWidth = board.getBoundingClientRect().width
+
+        const boardOffsetToTime = () =>
+            Math.floor(
+                (layout.scrollLeft / boardWidth) * player.duration
+            ) as Milliseconds
+
+        boardManager.setOffset(boardOffsetToTime())
+    }
+
+    const dispatchBoardWidth = useCallback(() => {
+        const layout = layoutRef.current
+        const board = boardRef.current
+        if (!layout || !board) return
+        const layoutWidth = layout.getBoundingClientRect().width
+        const boardWidth = board.getBoundingClientRect().width
+
+        const boardWidthToTime = () =>
+            ((layoutWidth / boardWidth) * player.duration) as Milliseconds
+
+        boardManager.setWidth(boardWidthToTime())
+    }, [player.duration, boardManager])
+
+    onResize(() => {
+        dispatchBoardOffset()
+    })
+
+    useEffect(() => {
+        dispatchBoardWidth()
+    }, [dispatchBoardWidth])
+
+    useEffect(() => {
+        const layout = layoutRef.current
+        if (!layout) return
+
+        layout.addEventListener('scroll', dispatchBoardOffset)
+        return () => layout.removeEventListener('scroll', dispatchBoardOffset)
+    })
+
     return (
-        <Layout>
-            <Board width={4000 as Pixels}>{children}</Board>
+        <Layout ref={layoutRef}>
+            <Board ref={boardRef} width={4000 as Pixels}>
+                {children}
+            </Board>
         </Layout>
     )
 }
