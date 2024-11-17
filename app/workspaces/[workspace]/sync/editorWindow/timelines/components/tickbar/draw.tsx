@@ -50,6 +50,7 @@ export function draw(
     const timeToPx = (t: number) => (t / timeWidth) * canvas.width
 
     ctx.font = '12px Inter, serif'
+
     for (const tick of ticks) {
         if (tick instanceof SmallTick)
             ctx.fillRect(timeToPx(tick.value), 0, 1, 6)

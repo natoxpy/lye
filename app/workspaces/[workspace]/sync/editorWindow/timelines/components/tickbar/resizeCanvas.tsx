@@ -29,18 +29,22 @@ export function useCanvasResize(
         if (canvas == null || parent == null) return
 
         const resize = () => {
-            dispatch()
             fitCanvasOnParent(parent, canvas)
+            dispatch()
         }
 
         resize()
 
         window.addEventListener('resize', resize)
-        return () => window.removeEventListener('resize', resize)
+        return () => {
+            window.removeEventListener('resize', resize)
+        }
     }, [parentref, canvasref, dispatch])
 
     return (event: () => void) => {
         const set = new Set(events.current)
-        if (set.has(event)) events.current.push(event)
+        if (set.has(event)) return
+
+        events.current.push(event)
     }
 }

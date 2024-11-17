@@ -1,3 +1,4 @@
+'use client'
 import { useRef } from 'react'
 import { Layout, Canvas } from './layout'
 import { useCanvasResize } from './resizeCanvas'
@@ -9,7 +10,9 @@ export default function Component() {
     const onResize = useCanvasResize(layout, canvas)
     const draw = useDraw(canvas)
 
-    onResize(() => draw())
+    onResize(() => {
+        draw()
+    })
 
     return (
         <Layout ref={layout}>
