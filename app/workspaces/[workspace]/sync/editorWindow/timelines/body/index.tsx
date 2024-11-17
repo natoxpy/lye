@@ -1,7 +1,7 @@
 'use client'
 
 import TimelineCursor from '../../../components/timeCursor/timelineCursor'
-import Timebar from './timebar'
+import TickBar from './components/tickbar'
 import Timelines from './timelines'
 import TimelineItem from './timelines/item'
 import { MoveTemplate, TrueMoveTemplate } from './timelines/item'
@@ -15,7 +15,7 @@ export default function Layout() {
     return (
         <div className="relative flex flex-col w-[calc(100%-96px)]">
             <TimelineCursor />
-            <Timebar />
+            <TickBar />
             <Timelines>
                 <div className="flex w-full items-center grow">
                     {primaryLines.map((line, idx) => (

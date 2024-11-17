@@ -1,13 +1,9 @@
-import { Milliseconds, Pixels } from '@/app/utils/units'
+import { Milliseconds } from '@/app/utils/units'
 
 type Props = {
     config: {
         tickLength: Milliseconds
         inbetweenTicks: number
-    }
-    canvas: {
-        width: Pixels
-        height: Pixels
     }
     player: {
         duration: Milliseconds
@@ -18,11 +14,11 @@ type Props = {
     }
 }
 
-class SmallTick {
+export class SmallTick {
     constructor(public value: Milliseconds) {}
 }
 
-class BigTick {
+export class BigTick {
     constructor(public value: Milliseconds) {}
 }
 

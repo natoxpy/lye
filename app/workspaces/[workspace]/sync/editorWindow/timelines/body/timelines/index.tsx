@@ -1,4 +1,4 @@
-import Handler from './handler'
+import Handler from './_handler'
 import { usePlayerState } from '@/app/player/state'
 import { useEffect, useRef } from 'react'
 import { useLocalTimelineState } from '../../../../states/timeline'

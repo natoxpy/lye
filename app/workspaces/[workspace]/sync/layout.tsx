@@ -1,6 +1,6 @@
 'use client'
 import EditorWindow from './editorWindow'
-import PageLocalStates from './states'
+import PageLocalStates from './states/timeline'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     return (

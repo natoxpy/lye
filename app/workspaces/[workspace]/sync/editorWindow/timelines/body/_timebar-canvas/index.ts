@@ -1,7 +1,7 @@
 import { formatMS } from '@/app/utils/time'
 import { Dispatch, SetStateAction } from 'react'
 
-const colors = {
+export const colors = {
     unaccented_1: 'rgb(45,51,57)',
     text_3: 'rgb(101,115,125)',
 }
