@@ -12,6 +12,7 @@ export type State = {
         timelines: Timeline[]
         offset: { ms: Milliseconds; px: Pixels }
         width: { ms: Milliseconds; px: Pixels }
+        area: Pixels
     }
 }
 
@@ -19,11 +20,16 @@ export type Actions =
     | LocalState.Action<'register', Timeline>
     | LocalState.Action<'boardSpecs/width', { ms: Milliseconds; px: Pixels }>
     | LocalState.Action<'boardSpecs/offset', { ms: Milliseconds; px: Pixels }>
+    | LocalState.Action<'boardSpecs/area', Pixels>
 
 export function reducer(draft: LocalState.State, actions: LocalState.Actions) {
     switch (actions.type) {
+        case 'boardSpecs/area':
+            draft.boardManager.area = actions.payload
+            break
         case 'boardSpecs/offset':
-            draft.boardManager.offset = { ...actions.payload }
+            draft.boardManager.offset.ms = actions.payload.ms
+            draft.boardManager.offset.px = actions.payload.px
             break
         case 'boardSpecs/width':
             draft.boardManager.width.ms = actions.payload.ms
@@ -51,6 +57,7 @@ export function useBoardManager() {
 
     return {
         timelines: state.boardManager.timelines,
+        area: state.boardManager.area,
         width: {
             ms: state.boardManager.width.ms,
             px: state.boardManager.width.px,
@@ -69,6 +76,12 @@ export function useBoardManager() {
             dispatch({
                 type: 'boardSpecs/width',
                 payload: { ms, px },
+            })
+        },
+        setArea: (px: Pixels) => {
+            dispatch({
+                type: 'boardSpecs/area',
+                payload: px,
             })
         },
         registerTimeline: (

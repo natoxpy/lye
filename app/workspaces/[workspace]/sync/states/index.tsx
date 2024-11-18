@@ -10,6 +10,7 @@ export type Actions = TimelineManager.Actions
 
 const initialState: State = {
     boardManager: {
+        area: 0 as Pixels,
         width: {
             ms: 0 as Milliseconds,
             px: 0 as Pixels,

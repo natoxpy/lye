@@ -10,7 +10,7 @@ export default function Component({ children }: { children: ReactNode }) {
     const layoutRef = useRef<HTMLDivElement>(null)
     const boardRef = useRef<HTMLDivElement>(null)
     const [onResize] = useResizeEvent()
-    const { setOffset, setWidth } = useBoardManager()
+    const { setOffset, setWidth, setArea } = useBoardManager()
     const player = usePlayerState()
 
     const setBoardWidth = useCallback(
@@ -39,17 +39,19 @@ export default function Component({ children }: { children: ReactNode }) {
         const board = boardRef.current
         if (!layout || !board) return
         const layoutWidth = layout.getBoundingClientRect().width as Pixels
-        const boardWidth = board.getBoundingClientRect().width
+        const boardWidth = board.getBoundingClientRect().width as Pixels
 
         const boardWidthToTime = () =>
             ((layoutWidth / boardWidth) * player.duration) as Milliseconds
 
         setBoardWidth(boardWidthToTime(), layoutWidth)
-    }, [setBoardWidth, player.duration])
+        setArea(boardWidth)
+    }, [setBoardWidth, setArea, player.duration])
 
     useEffect(() => {
+        dispatchBoardOffset()
         dispatchBoardWidth()
-    }, [dispatchBoardWidth])
+    }, [dispatchBoardWidth, dispatchBoardOffset])
 
     onResize(() => {
         dispatchBoardOffset()

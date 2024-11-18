@@ -1,26 +1,53 @@
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { Layout } from './layout'
-import useMouseMoveHolding from '../../events/mouseMoveHolding'
 import { useBoardManager } from '../../../../states/boardManager'
-import { usePlayerState } from '@/app/player/state'
+import { usePlayerDispatch, usePlayerState } from '@/app/player/state'
+import { Milliseconds, Seconds } from '@/app/utils/units'
+import useMouseMoveHolding from '../../events/mouseMoveHolding'
 
 export default function Component({ leftOffset }: { leftOffset: number }) {
     const layoutRef = useRef<HTMLDivElement>(null)
     const { setOnMove } = useMouseMoveHolding(layoutRef)
-    // const player = usePlayerState()
-    // const boardManager = useBoardManager()
+    const player = usePlayerState()
+    const dispatchPlayer = usePlayerDispatch()
+    const boardManager = useBoardManager()
 
-    // setOnMove((x) => {
-    //     const layout = layoutRef.current
-    //     if (!layout) return
-    //     const offset = layout.getBoundingClientRect().width / 2 + leftOffset
+    setOnMove((absX) => {
+        const layout = layoutRef.current
+        if (!layout) return
 
-    //     // console.log(
-    //     //     (boardManager.width.ms / player.duration) * boardManager.width.px
-    //     // )
+        const relX = Math.min(
+            Math.max(absX - leftOffset + boardManager.offset.px, 0),
+            boardManager.area
+        )
 
-    //     layout.style.left = x - offset + 'px'
-    // })
+        const time = ((relX / boardManager.area) *
+            player.duration) as Milliseconds
+
+        dispatchPlayer({
+            type: 'sync-currentTime',
+            payload: (time / 1000) as Seconds,
+        })
+
+        dispatchPlayer({
+            type: 'set-currentTime',
+            payload: time,
+        })
+    })
+
+    useEffect(() => {
+        const layout = layoutRef.current
+        if (!layout) return
+        const widthOffset = layout.getBoundingClientRect().width / 2
+
+        const leftOffset =
+            (boardManager.offset.ms / player.duration) * -boardManager.area
+        const xs = (player.currentTime / player.duration) * boardManager.area
+
+        const left = xs - widthOffset + leftOffset
+
+        layout.style.left = left + 'px'
+    })
 
     return <Layout ref={layoutRef} />
 }
