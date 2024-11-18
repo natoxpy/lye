@@ -14,10 +14,10 @@ export default function Component() {
     const { offset, width } = useBoardManager()
     const player = usePlayerState()
 
-    onResize(() => draw(width, offset, player.duration))
+    onResize(() => draw(width.ms, offset.ms, player.duration))
 
     useEffect(() => {
-        draw(width, offset, player.duration)
+        draw(width.ms, offset.ms, player.duration)
     }, [offset, width, draw, player.duration])
 
     return (

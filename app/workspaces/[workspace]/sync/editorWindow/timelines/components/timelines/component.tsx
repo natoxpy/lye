@@ -10,10 +10,17 @@ export default function Component({ children }: { children: ReactNode }) {
     const layoutRef = useRef<HTMLDivElement>(null)
     const boardRef = useRef<HTMLDivElement>(null)
     const [onResize] = useResizeEvent()
-    const boardManager = useBoardManager()
+    const { setOffset, setWidth } = useBoardManager()
     const player = usePlayerState()
 
-    const dispatchBoardOffset = () => {
+    const setBoardWidth = useCallback(
+        (ms: Milliseconds, px: Pixels) => {
+            setWidth(ms, px)
+        },
+        [setWidth]
+    )
+
+    const dispatchBoardOffset = useCallback(() => {
         const layout = layoutRef.current
         const board = boardRef.current
         if (!layout || !board) return
@@ -24,29 +31,29 @@ export default function Component({ children }: { children: ReactNode }) {
                 (layout.scrollLeft / boardWidth) * player.duration
             ) as Milliseconds
 
-        boardManager.setOffset(boardOffsetToTime())
-    }
+        setOffset(boardOffsetToTime(), layout.scrollLeft as Pixels)
+    }, [setOffset, player.duration])
 
     const dispatchBoardWidth = useCallback(() => {
         const layout = layoutRef.current
         const board = boardRef.current
         if (!layout || !board) return
-        const layoutWidth = layout.getBoundingClientRect().width
+        const layoutWidth = layout.getBoundingClientRect().width as Pixels
         const boardWidth = board.getBoundingClientRect().width
 
         const boardWidthToTime = () =>
             ((layoutWidth / boardWidth) * player.duration) as Milliseconds
 
-        boardManager.setWidth(boardWidthToTime())
-    }, [player.duration, boardManager])
-
-    onResize(() => {
-        dispatchBoardOffset()
-    })
+        setBoardWidth(boardWidthToTime(), layoutWidth)
+    }, [setBoardWidth, player.duration])
 
     useEffect(() => {
         dispatchBoardWidth()
     }, [dispatchBoardWidth])
+
+    onResize(() => {
+        dispatchBoardOffset()
+    })
 
     useEffect(() => {
         const layout = layoutRef.current

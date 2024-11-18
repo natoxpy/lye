@@ -1,7 +1,7 @@
 import { ReactNode } from 'react'
 import TimelinesComponent from '../components/timelines/component'
 import TickBarComponent from '../components/tickbar/component'
-import TimelineCursorComponent from '../../../components/timeCursor/timelineCursor'
+import TimelineCursorComponent from '../components/timeCursor/component'
 
 export function Layout({
     timelineCursor,
@@ -26,7 +26,7 @@ export function TickBar() {
 }
 
 export function TimelineCursor() {
-    return <TimelineCursorComponent />
+    return <TimelineCursorComponent leftOffset={96} />
 }
 
 export function Timelines({ children }: { children: ReactNode }) {

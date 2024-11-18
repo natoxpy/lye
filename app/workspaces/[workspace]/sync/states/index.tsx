@@ -1,6 +1,7 @@
 import { Dispatch, ReactNode, createContext, useContext } from 'react'
 import * as TimelineManager from './boardManager'
 import { useImmerReducer } from 'use-immer'
+import { Milliseconds, Pixels } from '@/app/utils/units'
 
 export type Action<N, T> = { type: N; payload: T }
 
@@ -9,6 +10,14 @@ export type Actions = TimelineManager.Actions
 
 const initialState: State = {
     boardManager: {
+        width: {
+            ms: 0 as Milliseconds,
+            px: 0 as Pixels,
+        },
+        offset: {
+            ms: 0 as Milliseconds,
+            px: 0 as Pixels,
+        },
         timelines: [],
     },
 }

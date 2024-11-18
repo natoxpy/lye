@@ -1,6 +1,6 @@
 import { usePlayerDispatch, usePlayerState } from '@/app/player/state'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useLocalTimelineState } from '../../states/timeline'
+import { useLocalTimelineState } from '../../../../states/timeline'
 import { Milliseconds } from '@/app/utils/units'
 import { timeConverter } from '@/app/player/utils'
 

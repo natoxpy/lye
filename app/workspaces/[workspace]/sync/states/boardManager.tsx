@@ -1,4 +1,4 @@
-import { Milliseconds } from '@/app/utils/units'
+import { Milliseconds, Pixels } from '@/app/utils/units'
 import * as LocalState from './index'
 
 export type Timeline = {
@@ -10,23 +10,24 @@ export type Timeline = {
 export type State = {
     boardManager: {
         timelines: Timeline[]
-        offset: Milliseconds
-        width: Milliseconds
+        offset: { ms: Milliseconds; px: Pixels }
+        width: { ms: Milliseconds; px: Pixels }
     }
 }
 
 export type Actions =
     | LocalState.Action<'register', Timeline>
-    | LocalState.Action<'boardSpecs/width', { width: Milliseconds }>
-    | LocalState.Action<'boardSpecs/offset', { offset: Milliseconds }>
+    | LocalState.Action<'boardSpecs/width', { ms: Milliseconds; px: Pixels }>
+    | LocalState.Action<'boardSpecs/offset', { ms: Milliseconds; px: Pixels }>
 
 export function reducer(draft: LocalState.State, actions: LocalState.Actions) {
     switch (actions.type) {
         case 'boardSpecs/offset':
-            draft.boardManager.offset = actions.payload.offset
+            draft.boardManager.offset = { ...actions.payload }
             break
         case 'boardSpecs/width':
-            draft.boardManager.width = actions.payload.width
+            draft.boardManager.width.ms = actions.payload.ms
+            draft.boardManager.width.px = actions.payload.px
             break
         case 'register':
             if (
@@ -50,18 +51,24 @@ export function useBoardManager() {
 
     return {
         timelines: state.boardManager.timelines,
-        width: state.boardManager.width,
-        offset: state.boardManager.offset,
-        setOffset: (offset: Milliseconds) => {
+        width: {
+            ms: state.boardManager.width.ms,
+            px: state.boardManager.width.px,
+        },
+        offset: {
+            ms: state.boardManager.offset.ms,
+            px: state.boardManager.offset.px,
+        },
+        setOffset: (ms: Milliseconds, px: Pixels) => {
             dispatch({
                 type: 'boardSpecs/offset',
-                payload: { offset },
+                payload: { ms, px },
             })
         },
-        setWidth: (width: Milliseconds) => {
+        setWidth: (ms: Milliseconds, px: Pixels) => {
             dispatch({
                 type: 'boardSpecs/width',
-                payload: { width },
+                payload: { ms, px },
             })
         },
         registerTimeline: (
