@@ -54,7 +54,7 @@ export default function Component({ children }: { children: ReactNode }) {
     }, [dispatchBoardWidth, dispatchBoardOffset])
 
     onResize(() => {
-        dispatchBoardOffset()
+        dispatchBoardWidth()
     })
 
     useEffect(() => {
