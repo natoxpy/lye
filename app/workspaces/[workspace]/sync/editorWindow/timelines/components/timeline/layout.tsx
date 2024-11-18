@@ -1,3 +1,9 @@
-export function Layout() {
-    return <div className="flex w-full items-center grow"></div>
+import { ReactNode } from 'react'
+
+export function Layout({ children }: { children: ReactNode }) {
+    return (
+        <div className="flex relative w-full h-[36px] items-center grow">
+            {children}
+        </div>
+    )
 }

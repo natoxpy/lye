@@ -5,7 +5,7 @@ export const Layout = forwardRef<HTMLDivElement, { children: ReactNode }>(
     (props, ref) => {
         return (
             <div
-                className="grow min-w-full h-full no-scrollbar overflow-auto overscroll-none border-t-[1px] border-bg-2"
+                className="grow min-w-full h-full no-scrollbar overflow-y-hidden overflow-x-auto overscroll-none border-t-[1px] border-bg-2"
                 ref={ref}
             >
                 {props.children}
@@ -25,7 +25,7 @@ export const Board = forwardRef<
             style={{
                 width: props.width + 'px',
             }}
-            className="grow min-w-full h-full no-scrollbar overflow-auto overscroll-none border-t-[1px] border-bg-2"
+            className="grow py-[9px] min-w-full h-full no-scrollbar overflow-y-hidden overflow-x-auto overscroll-none border-t-[1px] border-bg-2"
             ref={ref}
         >
             {props.children}

@@ -1,18 +1,18 @@
 'use client'
+import { Layout } from './layout'
 import Timeline from '../components/timeline/component'
-import { Layout, TimelineCursor, Timelines, TickBar } from './layout'
+import TickBar from '../components/tickbar/component'
+import TimelineCursor from '../components/timeCursor/component'
+import Timelines from '../components/timelines/component'
 
 export default function Component() {
     return (
         <Layout
-            timelineCursor={<TimelineCursor />}
+            timelineCursor={<TimelineCursor leftOffset={96} />}
             tickbar={<TickBar />}
             board={
                 <Timelines>
                     <Timeline name="main" />
-                    <Timeline name="secondary" />
-                    <Timeline name="third" />
-                    <Timeline name="fourth" />
                 </Timelines>
             }
         ></Layout>

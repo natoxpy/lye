@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react'
 import { Layout } from './layout'
 import { useBoardManager } from '@/app/workspaces/[workspace]/sync/states/boardManager'
+import BoardItem from '../boardItem/component'
 
 export default function Component({ name }: { name: string }) {
     const manager = useBoardManager()
@@ -10,5 +11,9 @@ export default function Component({ name }: { name: string }) {
         manager.registerTimeline(name)
     })
 
-    return <Layout></Layout>
+    return (
+        <Layout>
+            <BoardItem />
+        </Layout>
+    )
 }
