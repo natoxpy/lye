@@ -5,8 +5,10 @@ import { formatMS } from '@/app/utils/time'
 
 function Timeline() {
     return (
-        <div className="flex gap-[18px] stroke-txt-1 items-center justify-center w-full min-h-[36px] border-bg-2">
-            <LockedIcon />
+        <div className="flex gap-[18px] stroke-bg-6 items-center justify-center w-full min-h-[36px] border-bg-2">
+            <div className="cursor-not-allowed">
+                <LockedIcon />
+            </div>
         </div>
     )
 }

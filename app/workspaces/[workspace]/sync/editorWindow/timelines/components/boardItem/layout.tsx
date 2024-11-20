@@ -7,8 +7,7 @@ export const Layout = forwardRef<
     return (
         <div
             ref={ref}
-            style={{ left: '10px' }}
-            className="flex cursor-pointer items-center justify-center bg-unaccent-accent-1 w-[100px] h-[30px] rounded-[6px]"
+            className="flex absolute cursor-pointer items-center justify-center bg-unaccent-accent-1 w-[100px] h-[30px] rounded-[6px]"
         >
             {children}
         </div>

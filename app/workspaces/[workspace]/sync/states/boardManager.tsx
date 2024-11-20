@@ -5,6 +5,7 @@ export type Timeline = {
     name: string
     visible: boolean
     unblock: boolean
+    height: Pixels
 }
 
 export type State = {
@@ -13,6 +14,8 @@ export type State = {
         offset: { ms: Milliseconds; px: Pixels }
         width: { ms: Milliseconds; px: Pixels }
         area: Pixels
+        tickLength: Milliseconds
+        inbetweenTicks: number
     }
 }
 
@@ -21,6 +24,8 @@ export type Actions =
     | LocalState.Action<'boardSpecs/width', { ms: Milliseconds; px: Pixels }>
     | LocalState.Action<'boardSpecs/offset', { ms: Milliseconds; px: Pixels }>
     | LocalState.Action<'boardSpecs/area', Pixels>
+    | LocalState.Action<'boardSpecs/tickLength', Milliseconds>
+    | LocalState.Action<'boardSpecs/inbetweenTicks', number>
 
 export function reducer(draft: LocalState.State, actions: LocalState.Actions) {
     switch (actions.type) {
@@ -34,6 +39,12 @@ export function reducer(draft: LocalState.State, actions: LocalState.Actions) {
         case 'boardSpecs/width':
             draft.boardManager.width.ms = actions.payload.ms
             draft.boardManager.width.px = actions.payload.px
+            break
+        case 'boardSpecs/tickLength':
+            draft.boardManager.tickLength = actions.payload
+            break
+        case 'boardSpecs/inbetweenTicks':
+            draft.boardManager.inbetweenTicks = actions.payload
             break
         case 'register':
             if (
@@ -56,6 +67,8 @@ export function useBoardManager() {
     const dispatch = LocalState.useDispatch()
 
     return {
+        tickLength: state.boardManager.tickLength,
+        inbetweenTicks: state.boardManager.inbetweenTicks,
         timelines: state.boardManager.timelines,
         area: state.boardManager.area,
         width: {
@@ -86,7 +99,13 @@ export function useBoardManager() {
         },
         registerTimeline: (
             name: string,
-            config: { visible?: boolean; unblock?: boolean } = {}
+            config: {
+                visible?: boolean
+                unblock?: boolean
+                height: Pixels
+            } = {
+                height: 64 as Pixels,
+            }
         ) => {
             dispatch({
                 type: 'register',
@@ -94,6 +113,7 @@ export function useBoardManager() {
                     name,
                     visible: config.visible ?? true,
                     unblock: config.unblock ?? true,
+                    height: config.height,
                 },
             })
         },

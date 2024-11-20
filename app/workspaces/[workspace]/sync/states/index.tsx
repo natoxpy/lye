@@ -10,6 +10,8 @@ export type Actions = TimelineManager.Actions
 
 const initialState: State = {
     boardManager: {
+        inbetweenTicks: 10,
+        tickLength: 10_000 as Milliseconds,
         area: 0 as Pixels,
         width: {
             ms: 0 as Milliseconds,

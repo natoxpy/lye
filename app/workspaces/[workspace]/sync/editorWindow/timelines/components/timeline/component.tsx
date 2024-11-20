@@ -12,7 +12,7 @@ export default function Component({ name }: { name: string }) {
     })
 
     return (
-        <Layout>
+        <Layout height={36}>
             <BoardItem />
         </Layout>
     )

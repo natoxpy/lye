@@ -10,6 +10,7 @@ export default function useMouseMoveHolding(ref: RefObject<HTMLElement>) {
     const [mouseDown, setMouseDown] = useState<boolean>(false)
     const onMoveRef = useRef<OnMove | null>(null)
     const onMouseUpRef = useRef<OnMouseUp | null>(null)
+    const [centerOffset, setCenterOffset] = useState(0)
 
     const mousemove = useCallback(
         (e: MouseEvent) => {
@@ -25,9 +26,16 @@ export default function useMouseMoveHolding(ref: RefObject<HTMLElement>) {
         onMouseUpRef.current()
     }, [])
 
-    const refMouseDown = useCallback(() => {
-        setMouseDown(true)
-    }, [setMouseDown])
+    const refMouseDown = useCallback(
+        (e: MouseEvent) => {
+            const left = ref.current?.getBoundingClientRect().left
+            if (left) setCenterOffset(e.clientX - left)
+            else setCenterOffset(0)
+
+            setMouseDown(true)
+        },
+        [ref]
+    )
 
     useEffect(() => {
         const element = ref.current
@@ -45,6 +53,9 @@ export default function useMouseMoveHolding(ref: RefObject<HTMLElement>) {
     }, [refMouseDown, mousemove, mouseup, ref])
 
     return {
+        targetOffset: {
+            x: centerOffset,
+        },
         setOnMove: (callback: OnMove) => {
             onMoveRef.current = callback
         },
