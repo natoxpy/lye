@@ -1,4 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { v4 as uuiv4 } from 'uuid'
+import { TemporaryWorkspaceID } from '../workspaces/reducer'
 
 export type Line = {
     id: string
@@ -8,12 +10,24 @@ export type Line = {
     lineNumber: number
 }
 
-export type State = {
+export type Instance = {
+    id: string
+    workspace: string
     lines: Line[]
 }
 
+export type State = {
+    instances: Instance[]
+}
+
 const initialState: State = {
-    lines: [],
+    instances: [
+        {
+            id: uuiv4(),
+            workspace: TemporaryWorkspaceID,
+            lines: [],
+        },
+    ],
 }
 
 export const Slice = createSlice({
@@ -21,24 +35,22 @@ export const Slice = createSlice({
     initialState,
     reducers: {
         addLine(state, action: PayloadAction<Line>) {
-            state.lines.push(action.payload)
+            // state.lines.push(action.payload)
         },
         removeLine(state, action: PayloadAction<{ lineNumber: number }>) {
-            state.lines = state.lines.filter(
-                (item) => item.lineNumber !== action.payload.lineNumber
-            )
+            // state.lines = state.lines.filter(
+            //     (item) => item.lineNumber !== action.payload.lineNumber
+            // )
         },
         setStartMs(
             state,
             action: PayloadAction<{ lineNumber: number; value: number }>
         ) {
-            const index = state.lines.findIndex(
-                (item) => item.lineNumber === action.payload.lineNumber
-            )
-
-            if (index == -1) return
-
-            state.lines[index].startMs = action.payload.value
+            // const index = state.lines.findIndex(
+            //     (item) => item.lineNumber === action.payload.lineNumber
+            // )
+            // if (index == -1) return
+            // state.lines[index].startMs = action.payload.value
         },
 
         setTimeline(
@@ -48,25 +60,21 @@ export const Slice = createSlice({
                 value: 'primary' | 'secondary'
             }>
         ) {
-            const index = state.lines.findIndex(
-                (item) => item.lineNumber === action.payload.lineNumber
-            )
-
-            if (index == -1) return
-
-            state.lines[index].timeline = action.payload.value
+            // const index = state.lines.findIndex(
+            //     (item) => item.lineNumber === action.payload.lineNumber
+            // )
+            // if (index == -1) return
+            // state.lines[index].timeline = action.payload.value
         },
         setDurationMs(
             state,
             action: PayloadAction<{ lineNumber: number; value: number }>
         ) {
-            const index = state.lines.findIndex(
-                (item) => item.lineNumber === action.payload.lineNumber
-            )
-
-            if (index == -1) return
-
-            state.lines[index].durationMs = action.payload.value
+            // const index = state.lines.findIndex(
+            //     (item) => item.lineNumber === action.payload.lineNumber
+            // )
+            // if (index == -1) return
+            // state.lines[index].durationMs = action.payload.value
         },
     },
 })

@@ -32,9 +32,9 @@ export default function Page() {
         return variant?.lines ?? []
     }).filter((line) => !line.content.startsWith(HEADER_INITIAL))
 
-    const lines = Array.from(
-        useAppSelector((state) => state.syncLines.lines)
-    ).sort((a, b) => a.lineNumber - b.lineNumber)
+    const lines = Array.from([] as any).sort(
+        (a, b) => a.lineNumber - b.lineNumber
+    )
 
     return (
         <Layout>

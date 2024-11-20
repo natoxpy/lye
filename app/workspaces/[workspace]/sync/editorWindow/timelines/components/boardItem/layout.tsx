@@ -1,15 +1,20 @@
-import { ReactNode } from 'react'
+import { forwardRef, ReactNode } from 'react'
 
-export function Layout({ children }: { children: ReactNode; variant: 'main' }) {
+export const Layout = forwardRef<
+    HTMLDivElement,
+    { children: ReactNode; variant: 'main' }
+>(({ children }, ref) => {
     return (
         <div
+            ref={ref}
             style={{ left: '10px' }}
             className="flex cursor-pointer items-center justify-center bg-unaccent-accent-1 w-[100px] h-[30px] rounded-[6px]"
         >
             {children}
         </div>
     )
-}
+})
+Layout.displayName = 'layout'
 
 export const Line = ({ number }: { number: number }) => {
     return <span className="text-txt-2 text-[16px]">{number}</span>
