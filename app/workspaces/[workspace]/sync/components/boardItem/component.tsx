@@ -1,11 +1,59 @@
-import { useCallback, useEffect, useRef } from 'react'
-import { Layout, Line } from './layout'
+import { RefObject, useCallback, useEffect, useRef } from 'react'
+import { Layout, Line, ResizeTip } from './layout'
 import { useTicks } from '../tickbar/useTicks'
 import { Milliseconds, Pixels } from '@/app/utils/units'
 import { usePlayerState } from '@/app/player/state'
 import { useSpecialKey } from '../../actionEvents/useSpecialKey'
 import { useBoardManager, useTimeline } from '../../states/boardManager'
 import useMouseMoveHolding from '../../actionEvents/mouseMoveHolding'
+
+const boardOffset = 96 as Pixels
+
+function LeftResize({
+    timelineName,
+    layoutRef,
+}: {
+    timelineName: string
+    layoutRef: RefObject<HTMLDivElement>
+}) {
+    const resizeTipRef = useRef<HTMLDivElement>(null)
+    const boardManager = useBoardManager()
+    const timeline = useTimeline(timelineName)
+    const player = usePlayerState()
+    const { setOnMove, downOnTarget } = useMouseMoveHolding(resizeTipRef)
+
+    const toMs = useCallback(
+        (value: Pixels) =>
+            Math.round(
+                (value / boardManager.area) * player.duration
+            ) as Milliseconds,
+        [boardManager.area, player.duration]
+    )
+
+    const toPx = useCallback(
+        (value: Milliseconds) =>
+            ((value / player.duration) * boardManager.area) as Pixels,
+        [boardManager.area, player.duration]
+    )
+
+    setOnMove(
+        useCallback((abs: Pixels | number) => {
+            console.log(abs)
+        }, [])
+    )
+
+    return <ResizeTip ref={resizeTipRef} />
+}
+
+function RightResize({ timelineName }: { timelineName: string }) {
+    const layoutRef = useRef<HTMLDivElement>(null)
+    const boardManager = useBoardManager()
+    const timeline = useTimeline(timelineName)
+    const player = usePlayerState()
+    const { setOnMove, downOnTarget } = useMouseMoveHolding(layoutRef)
+
+    return <ResizeTip ref={layoutRef} />
+}
 
 export default function Component({
     line,
@@ -18,7 +66,6 @@ export default function Component({
     left: Milliseconds
     timelineName: string
 }) {
-    const boardOffset = 96 as Pixels
     const layoutRef = useRef<HTMLDivElement>(null)
     const boardManager = useBoardManager()
     const timeline = useTimeline(timelineName)
@@ -156,7 +203,9 @@ export default function Component({
 
     return (
         <Layout ref={layoutRef} holding={downOnTarget}>
+            <LeftResize layoutRef={layoutRef} timelineName={timelineName} />
             <Line number={line} />
+            <RightResize timelineName={timelineName} />
         </Layout>
     )
 }

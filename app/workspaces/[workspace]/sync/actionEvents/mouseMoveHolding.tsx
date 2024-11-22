@@ -28,6 +28,7 @@ export default function useMouseMoveHolding(ref: RefObject<HTMLElement>) {
 
     const refMouseDown = useCallback(
         (e: MouseEvent) => {
+            e.stopPropagation()
             const left = ref.current?.getBoundingClientRect().left
             if (left) setCenterOffset(e.clientX - left)
             else setCenterOffset(0)
