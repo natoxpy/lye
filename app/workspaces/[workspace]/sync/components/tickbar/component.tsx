@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react'
 import { Layout, Canvas } from './layout'
 import { useCanvasResize } from './resizeCanvas'
 import { useDraw } from './draw'
-import { useBoardManager } from '../../../../states/boardManager'
+import { useBoardManager } from '../../states/boardManager'
 import { usePlayerState } from '@/app/player/state'
 
 export default function Component() {

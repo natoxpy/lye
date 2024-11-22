@@ -1,6 +1,6 @@
 import { usePlayerState } from '@/app/player/state'
-import { useBoardManager } from '../../../../states/boardManager'
-import generateTicks from '../../../../utils/generateCanvasTicks'
+import { useBoardManager } from '../../states/boardManager'
+import generateTicks from '../../utils/generateCanvasTicks'
 
 export function useTicks() {
     const { offset, width, tickLength, inbetweenTicks } = useBoardManager()

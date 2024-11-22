@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { useLocalTimelineState } from '../../../../states/timeline'
+import { useLocalTimelineState } from '../../states/timeline'
 import { useAppSelector } from '@/store/hooks'
 
 export function TrueMoveTemplate({ timeline }: { timeline: string }) {

@@ -2,8 +2,8 @@
 import { Milliseconds, Pixels } from '@/app/utils/units'
 import { Layout, Board } from './layout'
 import { ReactNode, useCallback, useEffect, useRef } from 'react'
-import { useResizeEvent } from '../../events/resize'
-import { useBoardManager } from '../../../../states/boardManager'
+import { useResizeEvent } from '../../actionEvents/resize'
+import { useBoardManager } from '../../states/boardManager'
 import { usePlayerState } from '@/app/player/state'
 
 export default function Component({ children }: { children: ReactNode }) {

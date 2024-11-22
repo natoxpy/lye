@@ -1,11 +1,53 @@
 import { Milliseconds, Pixels } from '@/app/utils/units'
 import * as LocalState from './index'
 
-export type Timeline = {
-    name: string
-    visible: boolean
-    unblock: boolean
-    height: Pixels
+type TimelineItem = { line: number; width: Milliseconds; left: Milliseconds }
+
+export class Timeline {
+    constructor(
+        public name: string,
+        public unblock: boolean,
+        public height: Pixels,
+        public items: TimelineItem[] = [
+            { line: 1, width: 5_000 as Milliseconds, left: 0 as Milliseconds },
+            {
+                line: 2,
+                width: 5_000 as Milliseconds,
+                left: 7000 as Milliseconds,
+            },
+            {
+                line: 3,
+                width: 5_000 as Milliseconds,
+                left: 14000 as Milliseconds,
+            },
+            {
+                line: 4,
+                width: 5_000 as Milliseconds,
+                left: 21000 as Milliseconds,
+            },
+            {
+                line: 5,
+                width: 5_000 as Milliseconds,
+                left: 28000 as Milliseconds,
+            },
+        ]
+    ) {}
+
+    public register(line: number, weight: Milliseconds, left: Milliseconds) {
+        if (this.items.find((item) => item.line === line) !== undefined) return
+
+        this.items.push({
+            line,
+            width: weight,
+            left,
+        })
+    }
+
+    public update(line: number, weight: Milliseconds, left: Milliseconds) {
+        const index = this.items.findIndex((i) => i.line == line)
+        this.items[index].width = weight
+        this.items[index].left = left
+    }
 }
 
 export type State = {
@@ -20,7 +62,10 @@ export type State = {
 }
 
 export type Actions =
-    | LocalState.Action<'register', Timeline>
+    | LocalState.Action<
+          'register',
+          { name: string; unblock: boolean; height: Pixels }
+      >
     | LocalState.Action<'boardSpecs/width', { ms: Milliseconds; px: Pixels }>
     | LocalState.Action<'boardSpecs/offset', { ms: Milliseconds; px: Pixels }>
     | LocalState.Action<'boardSpecs/area', Pixels>
@@ -54,12 +99,23 @@ export function reducer(draft: LocalState.State, actions: LocalState.Actions) {
             )
                 return
 
-            draft.boardManager.timelines.push(actions.payload)
+            draft.boardManager.timelines.push(
+                new Timeline(
+                    actions.payload.name,
+                    actions.payload.unblock,
+                    actions.payload.height
+                )
+            )
             break
         default:
             break
     }
     return draft
+}
+
+export function useTimeline(name: string) {
+    const state = LocalState.useState()
+    return state.boardManager.timelines.find((t) => t.name == name)
 }
 
 export function useBoardManager() {
@@ -78,6 +134,9 @@ export function useBoardManager() {
         offset: {
             ms: state.boardManager.offset.ms,
             px: state.boardManager.offset.px,
+        },
+        getTimeline: (name: string) => {
+            return state.boardManager.timelines.find((tl) => tl.name === name)
         },
         setOffset: (ms: Milliseconds, px: Pixels) => {
             dispatch({
@@ -111,7 +170,6 @@ export function useBoardManager() {
                 type: 'register',
                 payload: {
                     name,
-                    visible: config.visible ?? true,
                     unblock: config.unblock ?? true,
                     height: config.height,
                 },

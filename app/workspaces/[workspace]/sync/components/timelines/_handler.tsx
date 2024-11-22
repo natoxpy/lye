@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useLocalTimelineState } from '../../../../states/timeline'
+import { useLocalTimelineState } from '../../states/timeline'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { setStartMs } from '@/store/stores/synclines'
 import { usePlayerState } from '@/app/player/state'

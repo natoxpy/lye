@@ -1,10 +1,11 @@
+import { Pixels } from '@/app/utils/units'
 import { forwardRef } from 'react'
 
 function IconCursor(props: React.ComponentProps<'svg'>) {
     return (
         <svg
             width="10"
-            height="120"
+            height="100%"
             viewBox="0 0 10 120"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -22,15 +23,20 @@ function IconCursor(props: React.ComponentProps<'svg'>) {
     )
 }
 
-export const Layout = forwardRef<HTMLDivElement>((_, ref) => {
-    return (
-        <div
-            ref={ref}
-            className="flex justify-center cursor-pointer group absolute z-20 w-[20px] h-[120px]"
-        >
-            <IconCursor className="transition-all stroke-accent-1 fill-accent-1 group-hover:opacity-100 opacity-40" />
-        </div>
-    )
-})
+export const Layout = forwardRef<HTMLDivElement, { height: Pixels }>(
+    (props, ref) => {
+        return (
+            <div
+                ref={ref}
+                style={{
+                    height: props.height + 'px',
+                }}
+                className="flex justify-center cursor-pointer group absolute z-20 w-[20px] "
+            >
+                <IconCursor className="transition-all stroke-accent-1 fill-accent-1 group-hover:opacity-100 opacity-40" />
+            </div>
+        )
+    }
+)
 
 Layout.displayName = 'layout'

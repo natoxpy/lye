@@ -1,11 +1,17 @@
 import { useEffect, useRef } from 'react'
 import { Layout } from './layout'
-import { useBoardManager } from '../../../../states/boardManager'
+import { useBoardManager } from '../../states/boardManager'
 import { usePlayerDispatch, usePlayerState } from '@/app/player/state'
-import { Milliseconds, Seconds } from '@/app/utils/units'
-import useMouseMoveHolding from '../../events/mouseMoveHolding'
+import { Milliseconds, Pixels, Seconds } from '@/app/utils/units'
+import useMouseMoveHolding from '../../actionEvents/mouseMoveHolding'
 
-export default function Component({ leftOffset }: { leftOffset: number }) {
+export default function Component({
+    leftOffset,
+    height,
+}: {
+    leftOffset: number
+    height: Pixels
+}) {
     const layoutRef = useRef<HTMLDivElement>(null)
     const { setOnMove } = useMouseMoveHolding(layoutRef)
     const player = usePlayerState()
@@ -49,5 +55,5 @@ export default function Component({ leftOffset }: { leftOffset: number }) {
         layout.style.left = left + 'px'
     })
 
-    return <Layout ref={layoutRef} />
+    return <Layout height={height} ref={layoutRef} />
 }
