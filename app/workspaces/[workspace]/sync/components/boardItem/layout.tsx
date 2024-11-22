@@ -9,7 +9,7 @@ export const Layout = forwardRef<
             ref={ref}
             style={{
                 height: 'calc(100%)',
-                borderColor: props.holding ? 'var(--color-accent-1)' : '',
+                borderColor: props.holding ? 'var(--color-accent-blue)' : '',
             }}
             className="flex border-unaccent-accent-1 hover:border-accent-1 border-2 absolute cursor-pointer items-center justify-center bg-bg-4 w-[100px] rounded-[8px]"
         >

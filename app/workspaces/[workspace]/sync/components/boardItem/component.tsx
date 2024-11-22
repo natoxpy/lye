@@ -42,16 +42,20 @@ export default function Component({
         [boardManager.area, player.duration]
     )
 
-    const dispatchItemUpdate = useCallback(() => {
-        const layout = layoutRef.current
-        if (!layout || !timeline) return
+    const dispatchItemUpdate = useCallback(
+        (optLeft?: Milliseconds) => {
+            const layout = layoutRef.current
+            if (!layout || !timeline) return
 
-        const boundary = layout.getBoundingClientRect()
+            const boundary = layout.getBoundingClientRect()
+            const left = optLeft
+                ? optLeft
+                : toMs((boundary.left - boardOffset) as Pixels)
 
-        const left = (boundary.left - boardOffset) as Pixels
-
-        timeline.update(line, toMs(boundary.width as Pixels), toMs(left))
-    }, [line, timeline, toMs])
+            timeline.update(line, toMs(boundary.width as Pixels), left)
+        },
+        [line, timeline, toMs]
+    )
 
     const clampToTick = useCallback(
         (value: Milliseconds) => {
@@ -124,7 +128,7 @@ export default function Component({
             }
 
             layout.style.left = toPx(final) + 'px'
-            dispatchItemUpdate()
+            dispatchItemUpdate(final)
         },
         [
             boardManager.offset.ms,
