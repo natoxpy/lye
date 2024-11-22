@@ -23,7 +23,8 @@ export default function Component({
     const boardManager = useBoardManager()
     const timeline = useTimeline(timelineName)
     const player = usePlayerState()
-    const { setOnMove, targetOffset } = useMouseMoveHolding(layoutRef)
+    const { setOnMove, targetOffset, downOnTarget } =
+        useMouseMoveHolding(layoutRef)
     const specialKeys = useSpecialKey()
     const { ticks } = useTicks()
 
@@ -150,7 +151,7 @@ export default function Component({
     }, [layoutRef, left, toPx, weight])
 
     return (
-        <Layout ref={layoutRef} variant="main">
+        <Layout ref={layoutRef} holding={downOnTarget}>
             <Line number={line} />
         </Layout>
     )

@@ -53,6 +53,7 @@ export default function useMouseMoveHolding(ref: RefObject<HTMLElement>) {
     }, [refMouseDown, mousemove, mouseup, ref])
 
     return {
+        downOnTarget: mouseDown,
         targetOffset: {
             x: centerOffset,
         },

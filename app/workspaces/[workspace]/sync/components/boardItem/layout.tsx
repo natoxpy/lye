@@ -1,18 +1,20 @@
-import { ComponentProps, forwardRef } from 'react'
+import { forwardRef, ReactNode } from 'react'
 
 export const Layout = forwardRef<
     HTMLDivElement,
-    { variant: 'main' } | ComponentProps<'div'>
+    { holding: boolean; children: ReactNode }
 >((props, ref) => {
     return (
         <div
             ref={ref}
             style={{
                 height: 'calc(100%)',
+                borderColor: props.holding ? 'var(--color-accent-1)' : '',
             }}
-            className="flex border-unaccent-accent-2 border-2 absolute cursor-pointer items-center justify-center bg-unaccent-accent-1 w-[100px] rounded-[5px]"
-            {...props}
-        />
+            className="flex border-unaccent-accent-1 hover:border-accent-1 border-2 absolute cursor-pointer items-center justify-center bg-bg-4 w-[100px] rounded-[8px]"
+        >
+            {props.children}
+        </div>
     )
 })
 Layout.displayName = 'layout'
