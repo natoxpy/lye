@@ -1,7 +1,7 @@
 import { Milliseconds, Pixels } from '@/app/utils/units'
 import * as LocalState from './index'
 
-type TimelineItem = { line: number; width: Milliseconds; left: Milliseconds }
+type TimelineItem = { line: number; right: Milliseconds; left: Milliseconds }
 
 export class Timeline {
     constructor(
@@ -9,25 +9,25 @@ export class Timeline {
         public unblock: boolean,
         public height: Pixels,
         public items: TimelineItem[] = [
-            { line: 1, width: 5_000 as Milliseconds, left: 0 as Milliseconds },
+            { line: 1, right: 5_000 as Milliseconds, left: 0 as Milliseconds },
             {
                 line: 2,
-                width: 5_000 as Milliseconds,
+                right: (7000 + 5_000) as Milliseconds,
                 left: 7000 as Milliseconds,
             },
             {
                 line: 3,
-                width: 5_000 as Milliseconds,
+                right: (14000 + 5_000) as Milliseconds,
                 left: 14000 as Milliseconds,
             },
             {
                 line: 4,
-                width: 5_000 as Milliseconds,
+                right: (21000 + 5_000) as Milliseconds,
                 left: 21000 as Milliseconds,
             },
             {
                 line: 5,
-                width: 5_000 as Milliseconds,
+                right: (28000 + 5_000) as Milliseconds,
                 left: 28000 as Milliseconds,
             },
         ]
@@ -38,15 +38,31 @@ export class Timeline {
 
         this.items.push({
             line,
-            width: weight,
+            right: weight,
             left,
         })
     }
 
-    public update(line: number, weight: Milliseconds, left: Milliseconds) {
+    getItem(line: number) {
+        return this.items.find((i) => i.line == line)
+    }
+
+    public update(line: number, left: Milliseconds, right: Milliseconds) {
         const index = this.items.findIndex((i) => i.line == line)
-        this.items[index].width = weight
+        this.items[index].right = right
         this.items[index].left = left
+    }
+
+    public updateLeft(line: number, left: Milliseconds) {
+        const index = this.items.findIndex((i) => i.line == line)
+        if (index === -1) return
+        this.items[index].left = left
+    }
+
+    public updateRight(line: number, right: Milliseconds) {
+        const index = this.items.findIndex((i) => i.line == line)
+        if (index === -1) return
+        this.items[index].right = right
     }
 }
 

@@ -6,6 +6,7 @@ import {
     useTimeline,
 } from '@/app/workspaces/[workspace]/sync/states/boardManager'
 import BoardItem from '../boardItem/component'
+import { Milliseconds } from '@/app/utils/units'
 
 export default function Component({ name }: { name: string }) {
     const manager = useBoardManager()
@@ -27,7 +28,7 @@ export default function Component({ name }: { name: string }) {
                         key={key}
                         line={item.line}
                         timelineName={timeline.name}
-                        weight={item.width}
+                        width={(item.right - item.left) as Milliseconds}
                         left={item.left}
                     />
                 ))}

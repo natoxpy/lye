@@ -11,16 +11,21 @@ const boardOffset = 96 as Pixels
 
 function LeftResize({
     timelineName,
+    line,
     layoutRef,
 }: {
     timelineName: string
+    line: number
     layoutRef: RefObject<HTMLDivElement>
 }) {
     const resizeTipRef = useRef<HTMLDivElement>(null)
     const boardManager = useBoardManager()
     const timeline = useTimeline(timelineName)
     const player = usePlayerState()
-    const { setOnMove, downOnTarget } = useMouseMoveHolding(resizeTipRef)
+    const { ticks } = useTicks()
+    const { setOnMove, downOnTarget, targetOffset } =
+        useMouseMoveHolding(resizeTipRef)
+    const specialKeys = useSpecialKey()
 
     const toMs = useCallback(
         (value: Pixels) =>
@@ -36,33 +41,215 @@ function LeftResize({
         [boardManager.area, player.duration]
     )
 
-    setOnMove(
-        useCallback((abs: Pixels | number) => {
-            console.log(abs)
-        }, [])
+    const updateLeft = useCallback(
+        (left: Milliseconds) => {
+            const layout = layoutRef.current
+            const item = timeline?.getItem(line)
+            if (!timeline || !layout || !item) return
+
+            layout.style.width =
+                toPx((item.right - left) as Milliseconds) + 'px'
+            layout.style.left = toPx(left) + 'px'
+
+            timeline.updateLeft(line, left)
+        },
+        [layoutRef, timeline, line, toPx]
     )
 
-    return <ResizeTip ref={resizeTipRef} />
+    const clampToSiblings = useCallback(
+        (value: Milliseconds): Milliseconds => {
+            if (!timeline) return value
+
+            const leftItem = timeline.items
+                .filter((item) => item.line < line)
+                .map((item) => {
+                    return { item, delta: Math.abs(item.line - line) }
+                })
+                .sort((a, b) => b.delta - a.delta)
+                .pop()?.item
+
+            if (
+                leftItem &&
+                value < leftItem.left + (leftItem.right - leftItem.left)
+            )
+                return (leftItem.left +
+                    (leftItem.right - leftItem.left)) as Milliseconds
+
+            return value as Milliseconds
+        },
+        [line, timeline]
+    )
+
+    const clampToTick = useCallback(
+        (value: Milliseconds) => {
+            return ticks
+                .map((t) => ({
+                    value: t.value,
+                    delta: Math.abs(value - t.value),
+                }))
+                .sort((a, b) => a.delta - b.delta)[0].value
+        },
+        [ticks]
+    )
+
+    setOnMove(
+        useCallback(
+            (absX: number) => {
+                const item = timeline?.getItem(line)
+                if (!timeline || !item) return
+
+                let x = toMs((absX - boardOffset - targetOffset.x) as Pixels)
+
+                if (!specialKeys.shift) x = clampToTick(x)
+
+                let final = (x + boardManager.offset.ms) as Milliseconds
+
+                final = clampToSiblings(final)
+
+                if (final < 0) final = 0 as Milliseconds
+                if (item.right - final < 2_000)
+                    final = (item.right - 2000) as Milliseconds
+
+                updateLeft(final)
+            },
+            [
+                timeline,
+                line,
+                toMs,
+                targetOffset.x,
+                specialKeys.shift,
+                clampToTick,
+                boardManager.offset.ms,
+                clampToSiblings,
+                updateLeft,
+            ]
+        )
+    )
+
+    return <ResizeTip holding={downOnTarget} ref={resizeTipRef} />
 }
 
-function RightResize({ timelineName }: { timelineName: string }) {
-    const layoutRef = useRef<HTMLDivElement>(null)
+function RightResize({
+    timelineName,
+    line,
+    layoutRef,
+}: {
+    timelineName: string
+    line: number
+    layoutRef: RefObject<HTMLDivElement>
+}) {
+    const resizeTipRef = useRef<HTMLDivElement>(null)
     const boardManager = useBoardManager()
     const timeline = useTimeline(timelineName)
     const player = usePlayerState()
-    const { setOnMove, downOnTarget } = useMouseMoveHolding(layoutRef)
+    const { ticks } = useTicks()
+    const { setOnMove, downOnTarget, targetOffset } =
+        useMouseMoveHolding(resizeTipRef)
+    const specialKeys = useSpecialKey()
 
-    return <ResizeTip ref={layoutRef} />
+    const toMs = useCallback(
+        (value: Pixels) =>
+            Math.round(
+                (value / boardManager.area) * player.duration
+            ) as Milliseconds,
+        [boardManager.area, player.duration]
+    )
+
+    const toPx = useCallback(
+        (value: Milliseconds) =>
+            ((value / player.duration) * boardManager.area) as Pixels,
+        [boardManager.area, player.duration]
+    )
+
+    const clampToSiblings = useCallback(
+        (value: Milliseconds): Milliseconds => {
+            if (!timeline) return value
+
+            const rightItem = timeline.items
+                .filter((item) => item.line > line)
+                .map((item) => {
+                    return { item, delta: Math.abs(item.line - line) }
+                })
+                .sort((a, b) => b.delta - a.delta)
+                .pop()?.item
+
+            if (rightItem && value > rightItem.left)
+                return rightItem.left as Milliseconds
+
+            return value as Milliseconds
+        },
+        [timeline, line]
+    )
+
+    const clampToTick = useCallback(
+        (value: Milliseconds) => {
+            return ticks
+                .map((t) => ({
+                    value: t.value,
+                    delta: Math.abs(value - t.value),
+                }))
+                .sort((a, b) => a.delta - b.delta)[0].value
+        },
+        [ticks]
+    )
+
+    const updateRight = useCallback(
+        (right: Milliseconds) => {
+            const layout = layoutRef.current
+            const item = timeline?.getItem(line)
+            if (!timeline || !layout || !item) return
+
+            layout.style.width =
+                toPx((right - item.left) as Milliseconds) + 'px'
+            timeline.updateRight(line, right)
+        },
+        [line, timeline, layoutRef, toPx]
+    )
+
+    setOnMove(
+        useCallback(
+            (absX: number) => {
+                const item = timeline?.getItem(line)
+                if (!timeline || !item) return
+
+                let x = toMs((absX - boardOffset - targetOffset.x) as Pixels)
+
+                if (!specialKeys.shift) x = clampToTick(x)
+
+                let final = (x + boardManager.offset.ms) as Milliseconds
+
+                final = clampToSiblings(final)
+
+                if (final - item.left < 2000)
+                    final = (item.left + 2000) as Milliseconds
+
+                updateRight(final)
+            },
+            [
+                timeline,
+                line,
+                toMs,
+                targetOffset.x,
+                specialKeys.shift,
+                clampToTick,
+                boardManager.offset.ms,
+                clampToSiblings,
+                updateRight,
+            ]
+        )
+    )
+
+    return <ResizeTip holding={downOnTarget} ref={resizeTipRef} />
 }
 
 export default function Component({
     line,
-    weight,
+    width,
     left,
     timelineName,
 }: {
     line: number
-    weight: Milliseconds
+    width: Milliseconds
     left: Milliseconds
     timelineName: string
 }) {
@@ -99,7 +286,11 @@ export default function Component({
                 ? optLeft
                 : toMs((boundary.left - boardOffset) as Pixels)
 
-            timeline.update(line, toMs(boundary.width as Pixels), left)
+            timeline.update(
+                line,
+                left,
+                (left + toMs(boundary.width as Pixels)) as Milliseconds
+            )
         },
         [line, timeline, toMs]
     )
@@ -140,8 +331,12 @@ export default function Component({
                 .sort((a, b) => b.delta - a.delta)
                 .pop()?.item
 
-            if (leftItem && value < leftItem.left + leftItem.width)
-                return (leftItem.left + leftItem.width) as Milliseconds
+            if (
+                leftItem &&
+                value < leftItem.left + (leftItem.right - leftItem.left)
+            )
+                return (leftItem.left +
+                    (leftItem.right - leftItem.left)) as Milliseconds
 
             if (rightItem && value + itemWidth > rightItem.left)
                 return (rightItem.left - itemWidth) as Milliseconds
@@ -197,15 +392,23 @@ export default function Component({
         const layout = layoutRef.current
         if (!layout) return
 
-        layout.style.width = toPx(weight) + 'px'
         layout.style.left = toPx(left) + 'px'
-    }, [layoutRef, left, toPx, weight])
+        layout.style.width = toPx(width) + 'px'
+    }, [layoutRef, left, toPx, width])
 
     return (
         <Layout ref={layoutRef} holding={downOnTarget}>
-            <LeftResize layoutRef={layoutRef} timelineName={timelineName} />
+            <LeftResize
+                line={line}
+                layoutRef={layoutRef}
+                timelineName={timelineName}
+            />
             <Line number={line} />
-            <RightResize timelineName={timelineName} />
+            <RightResize
+                line={line}
+                layoutRef={layoutRef}
+                timelineName={timelineName}
+            />
         </Layout>
     )
 }

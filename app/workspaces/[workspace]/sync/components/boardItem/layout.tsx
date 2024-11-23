@@ -1,6 +1,6 @@
 import { forwardRef, ReactNode } from 'react'
 
-export const Layout = forwardRef<
+const Layout = forwardRef<
     HTMLDivElement,
     { holding: boolean; children: ReactNode }
 >((props, ref) => {
@@ -17,9 +17,9 @@ export const Layout = forwardRef<
         </div>
     )
 })
-Layout.displayName = 'layout'
+Layout.displayName = 'Layout'
 
-export const Line = ({ number }: { number: number }) => {
+const Line = ({ number }: { number: number }) => {
     return (
         <span className="text-txt-2 select-none text-[16px] pointer-events-none">
             {number}
@@ -27,13 +27,22 @@ export const Line = ({ number }: { number: number }) => {
     )
 }
 
-export const ResizeTip = forwardRef<HTMLDivElement>((_, ref) => {
-    return (
-        <div
-            ref={ref}
-            className="w-[6px] cursor-ew-resize h-full bg-red-500"
-        ></div>
-    )
-})
+const ResizeTip = forwardRef<HTMLDivElement, { holding: boolean }>(
+    (props, ref) => {
+        return (
+            <div
+                ref={ref}
+                style={{
+                    backgroundColor: props.holding
+                        ? 'var(--color-unaccent-1)'
+                        : '',
+                }}
+                className="w-[6px] min-w-[6px] cursor-ew-resize h-full hover:bg-unaccent-1"
+            ></div>
+        )
+    }
+)
 
 ResizeTip.displayName = 'resize'
+
+export { Line, ResizeTip, Layout }
