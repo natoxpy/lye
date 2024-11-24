@@ -6,10 +6,17 @@ export function fitCanvasOnParent(
 ) {
     const parentBoundaryBox = parent.getBoundingClientRect()
     const width = parentBoundaryBox.width
-    const height = parentBoundaryBox.height
+    const staticHeight = 28
+    const ctx = canvas.getContext('2d')
 
-    canvas.width = width
-    canvas.height = height
+    const dpr = window.devicePixelRatio ?? 1
+
+    canvas.width = width * dpr
+    canvas.height = staticHeight * dpr
+
+    canvas.style.height = staticHeight + 'px'
+
+    ctx?.scale(dpr, dpr)
 }
 
 export function useCanvasResize(
@@ -18,10 +25,9 @@ export function useCanvasResize(
 ) {
     const events = useRef<Array<() => void>>([])
 
-    const dispatch = useCallback(
-        () => events.current.map((event) => event()),
-        [events]
-    )
+    const dispatch = useCallback(() => {
+        events.current.map((event) => event())
+    }, [events])
 
     useEffect(() => {
         const canvas = canvasref.current

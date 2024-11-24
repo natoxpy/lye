@@ -28,6 +28,7 @@ export function draw(
         inbetweenTicks: 10,
     }
 ) {
+    const dpr = window.devicePixelRatio
     const { tickLength, inbetweenTicks } = options
     clear(canvas)
 
@@ -48,7 +49,7 @@ export function draw(
         },
     })
 
-    const timeToPx = (t: number) => (t / timeWidth) * canvas.width
+    const timeToPx = (t: number) => (t / timeWidth) * (canvas.width / dpr)
 
     ctx.font = '12px Inter, serif'
 

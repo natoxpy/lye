@@ -1,6 +1,7 @@
 'use client'
+import { Layout } from './Layout'
+import { Canvas } from './Canvas'
 import { useEffect, useRef } from 'react'
-import { Layout, Canvas } from './layout'
 import { useCanvasResize } from './resizeCanvas'
 import { useDraw } from './draw'
 import { useBoardManager } from '../../states/boardManager'
@@ -14,7 +15,9 @@ export default function Component() {
     const { offset, width } = useBoardManager()
     const player = usePlayerState()
 
-    onResize(() => draw(width.ms, offset.ms, player.duration))
+    onResize(() => {
+        draw(width.ms, offset.ms, player.duration)
+    })
 
     useEffect(() => {
         draw(width.ms, offset.ms, player.duration)
