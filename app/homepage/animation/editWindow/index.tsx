@@ -75,8 +75,8 @@ export default function Window() {
         const tl = gsap.timeline()
 
         tl.add(CursorAnimation(cursor, cursorRepeat))
-        tl.add(constantType(line, content, 0.02))
-        tl.to(cursor, { opacity: 1, duration: 0.2 })
+        tl.add(constantType(line, content, 0.012))
+        tl.to(cursor, { opacity: 1, duration: 0.1 })
         tl.to(cursor, { opacity: 0, duration: 0 })
 
         return tl
@@ -88,6 +88,23 @@ export default function Window() {
             duration: 0,
             scrollTo: 0,
         })
+
+        // Reset line visiblity
+        for (let i = 0; i < lyrics.length; i++) {
+            const line = lyrics[i]
+
+            tl.call(() => {
+                const linerootId = line.header
+                    ? '.line-header-' + line.line
+                    : '.line-' + line.line
+
+                const el = root.current?.querySelector<HTMLDivElement>(
+                    `${linerootId}`
+                )
+                if (!el) return
+                el.style.visibility = 'hidden'
+            })
+        }
 
         let cursorRepeat = 1
         for (let i = 0; i < lyrics.length; i++) {
@@ -134,7 +151,7 @@ export default function Window() {
         () => {
             gsap.registerPlugin(TextPlugin)
             gsap.registerPlugin(ScrollToPlugin)
-            const tl = gsap.timeline({ repeat: -1, repeatDelay: 5 })
+            const tl = gsap.timeline({ repeat: -1, repeatDelay: 3 })
 
             tl.add(TypingLines())
         },
