@@ -1,6 +1,6 @@
 'use client'
-import Navigation from './components/navigation'
-import Header from './components/header'
+import Navigation from '../components/workspaces-navigation'
+import Header from '../components/workspaces-header'
 // import StateProvider from './[workspace]/edit/state/provider'
 import AppProvider from '@/store/provider'
 import PlayerAudioProvider from '@/app/components/player/component'

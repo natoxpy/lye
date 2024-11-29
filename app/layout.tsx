@@ -1,6 +1,5 @@
+import '../themes/globals.scss'
 import type { Metadata } from 'next'
-import './globals.scss'
-
 export const metadata: Metadata = {
     title: 'Lye',
     description: 'The best editor to sync your lyrics',

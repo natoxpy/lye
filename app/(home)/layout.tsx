@@ -1,8 +1,7 @@
-import Header from './header'
-import Animation from './animation'
 import SyncGradientBG from './gradients/syncGradient'
+import { ReactNode } from 'react'
 
-function Title() {
+export function Title() {
     return (
         <div className="flex justify-center text-center flex-col pt-[40px]">
             <span className="text-[64px] text-txt-2 font-bold tracking-wide">
@@ -22,7 +21,7 @@ function Title() {
     )
 }
 
-function Description() {
+export function Description() {
     return (
         <div className="flex max-w-[800px] text-center py-[25px]">
             <span className="text-txt-1 text-[20px] leading-loose">
@@ -34,13 +33,10 @@ function Description() {
     )
 }
 
-export default function Layout() {
+export default function Layout({ children }: { children: ReactNode }) {
     return (
         <div className="flex flex-col items-center w-screen h-screen bg-bg-2 text-txt-2 overflow-y-auto overflow-x-hidden">
-            <Header />
-            <Title />
-            <Description />
-            <Animation />
+            {children}
         </div>
     )
 }
