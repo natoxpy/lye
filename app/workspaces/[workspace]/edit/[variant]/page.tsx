@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useRef, useState as useReactState, useState } from 'react'
+import { useEffect, useRef, useState as useReactState } from 'react'
 import { redirect } from 'next/navigation'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { HEADER_INITIAL, syncLines, useLines } from '@/store/stores/lyrics'

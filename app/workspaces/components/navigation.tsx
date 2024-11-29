@@ -1,7 +1,7 @@
 'use client'
 import IconEditLyrics from '@/app/icons/editLyrics'
 import IconSyncLines from '@/app/icons/syncLines'
-import IconSyncLyrics from '@/app/icons/syncLyrics'
+// import IconSyncLyrics from '@/app/icons/syncLyrics'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
@@ -47,7 +47,7 @@ export default function Component() {
         <div className="flex justify-center w-full min-h-[48px] bg-bg-2 border-[1px] border-bg-2">
             <LinkItem name="edit" pathname="/original" Icon={IconEditLyrics} />
             <LinkItem name="sync" Icon={IconSyncLines} />
-            <LinkItem name="perfect-sync" Icon={IconSyncLyrics} />
+            {/* <LinkItem name="perfect-sync" Icon={IconSyncLyrics} /> */}
         </div>
     )
 }

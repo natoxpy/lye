@@ -597,7 +597,7 @@ export default function Navigation() {
         <div
             aria-label="Variants"
             role="navigation"
-            className="outline-none bg-bg-3 flex flex-col w-[calc(100%-60px)]"
+            className="outline-none bg-bg-3 flex flex-col w-[260px]"
         >
             <div className="flex justify-between px-[20px] items-center w-full h-[50px]">
                 <span className="select-none text-txt-2 text-[14px]">

@@ -1,16 +1,17 @@
 'use client'
 
+import { useParams, useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
-export default function Page({ children }: { children: React.ReactNode }) {
-    // const dispatch = useEditLyricsDispatch()
+export default function Page() {
+    const { workspace } = useParams<{
+        workspace: string
+    }>()
+    const router = useRouter()
 
     useEffect(() => {
-        // dispatch({
-        //     type: 'set-active-workspace',
-        //     payload: { id: undefined },
-        // })
+        router.push(`/workspaces/${workspace}/edit/original`)
     })
 
-    return <div className="w-full h-full">{children}</div>
+    return <div className="w-full h-full"></div>
 }
