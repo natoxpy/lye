@@ -53,6 +53,7 @@ export default function Component({
         const left = xs - widthOffset + leftOffset
 
         layout.style.left = left + 'px'
+        layout.style.visibility = 'visible'
     })
 
     return <Layout height={height} ref={layoutRef} />

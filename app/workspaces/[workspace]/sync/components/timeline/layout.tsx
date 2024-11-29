@@ -12,6 +12,7 @@ export function Layout({
         <div
             style={{
                 height: height + 'px',
+                maxHeight: height + 'px',
             }}
             className="flex relative w-full items-center grow"
         >

@@ -16,12 +16,8 @@ export default function Component({ name }: { name: string }) {
         manager.registerTimeline(name)
     })
 
-    useEffect(() => {
-        console.log(timeline)
-    }, [timeline])
-
     return (
-        <Layout height={36}>
+        <Layout height={65}>
             {timeline &&
                 timeline.items.map((item, key) => (
                     <BoardItem

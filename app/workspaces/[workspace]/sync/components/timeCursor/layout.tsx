@@ -31,7 +31,7 @@ export const Layout = forwardRef<HTMLDivElement, { height: Pixels }>(
                 style={{
                     height: props.height + 'px',
                 }}
-                className="flex justify-center cursor-pointer group absolute z-20 w-[20px] "
+                className="flex justify-center cursor-pointer group absolute z-20 w-[20px] invisible"
             >
                 <IconCursor className="transition-all stroke-accent-1 fill-accent-1 group-hover:opacity-100 opacity-40" />
             </div>

@@ -8,7 +8,7 @@ const Layout = forwardRef<
         <div
             ref={ref}
             style={{
-                height: 'calc(100%)',
+                height: '50px',
                 borderColor: props.holding ? 'var(--color-accent-blue)' : '',
             }}
             className="flex overflow-hidden justify-between border-unaccent-accent-1 hover:border-accent-1 border-2 absolute cursor-pointer items-center bg-bg-4 w-[100px] rounded-[8px]"

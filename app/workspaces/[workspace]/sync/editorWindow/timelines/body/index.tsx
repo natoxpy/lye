@@ -10,7 +10,7 @@ export default function Component() {
     return (
         <Layout
             timelineCursor={
-                <TimelineCursor height={85 as Pixels} leftOffset={96} />
+                <TimelineCursor height={111 as Pixels} leftOffset={96} />
             }
             tickbar={<TickBar />}
             board={
