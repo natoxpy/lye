@@ -1,4 +1,4 @@
-import { usePlayerState } from '@/app/player/state'
+import { usePlayerState } from '@/app/components/player/state'
 import { useBoardManager } from '../../states/boardManager'
 import generateTicks from '../../utils/generateCanvasTicks'
 

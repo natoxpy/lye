@@ -5,9 +5,12 @@ import Scrubber from './scrubber'
 import TimeComponent from './TimeComponent'
 import PLayPause from './playpause'
 import Volume from './volume'
-import { usePlayerDispatch, usePlayerState } from '@/app/player/state'
-import { Milliseconds } from '@/app/utils/units'
-import { timeConverter } from '@/app/player/utils'
+import {
+    usePlayerDispatch,
+    usePlayerState,
+} from '@/app/components/player/state'
+import { Milliseconds } from '@/utils/units'
+import { timeConverter } from '@/app/components/player/utils'
 
 export default function Component() {
     const { duration, currentTime } = usePlayerState()

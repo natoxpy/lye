@@ -1,6 +1,6 @@
 import React, { forwardRef, ReactNode } from 'react'
-import AddFileIcon from '@/app/icons/addFile'
-import FullFileIcon from '@/app/icons/fullFile'
+import AddFileIcon from '@/app/components/icons/addFile'
+import FullFileIcon from '@/app/components/icons/fullFile'
 
 type Props = {
     cursor: ReactNode

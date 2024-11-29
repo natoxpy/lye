@@ -1,7 +1,7 @@
 'use client'
-import LockedIcon from '@/app/icons/locked'
-import { usePlayerState } from '@/app/player/state'
-import { formatMS } from '@/app/utils/time'
+import LockedIcon from '@/app/components/icons/locked'
+import { usePlayerState } from '@/app/components/player/state'
+import { formatMS } from '@/utils/time'
 
 function Timeline() {
     return (

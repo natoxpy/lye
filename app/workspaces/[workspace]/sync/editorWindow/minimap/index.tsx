@@ -1,6 +1,6 @@
 'use client'
-import { usePlayerState } from '@/app/player/state'
-import { formatMS } from '@/app/utils/time'
+import { usePlayerState } from '@/app/components/player/state'
+import { formatMS } from '@/utils/time'
 
 export default function Component() {
     const { currentTime } = usePlayerState()

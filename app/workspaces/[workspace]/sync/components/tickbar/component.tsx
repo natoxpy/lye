@@ -5,7 +5,7 @@ import { useEffect, useRef } from 'react'
 import { useCanvasResize } from './resizeCanvas'
 import { useDraw } from './draw'
 import { useBoardManager } from '../../states/boardManager'
-import { usePlayerState } from '@/app/player/state'
+import { usePlayerState } from '@/app/components/player/state'
 
 export default function Component() {
     const layout = useRef<HTMLDivElement>(null)

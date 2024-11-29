@@ -6,7 +6,7 @@ import {
     useTimeline,
 } from '@/app/workspaces/[workspace]/sync/states/boardManager'
 import BoardItem from '../boardItem/component'
-import { Milliseconds } from '@/app/utils/units'
+import { Milliseconds } from '@/utils/units'
 
 export default function Component({ name }: { name: string }) {
     const manager = useBoardManager()

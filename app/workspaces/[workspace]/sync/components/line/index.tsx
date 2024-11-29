@@ -1,9 +1,9 @@
-import { usePlayerState } from '@/app/player/state'
+import { usePlayerState } from '@/app/components/player/state'
 // import { formatMS } from '@/app/utils/time'
 import { useEffect, useRef, useState } from 'react'
 // import { useLocalTimelineState } from '../../states/timeline'
 import { Layout } from './layout'
-import { Milliseconds } from '@/app/utils/units'
+import { Milliseconds } from '@/utils/units'
 
 export default function Component({
     lineNumber,

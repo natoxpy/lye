@@ -1,5 +1,8 @@
-import PlaybackIcon from '@/app/icons/playback'
-import { usePlayerDispatch, usePlayerState } from '@/app/player/state'
+import PlaybackIcon from '@/app/components/icons/playback'
+import {
+    usePlayerDispatch,
+    usePlayerState,
+} from '@/app/components/player/state'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 export default function PlaybackRate() {

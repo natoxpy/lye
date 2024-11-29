@@ -3,7 +3,7 @@ import TopGradient from '../../gradients/TopGradient'
 import EditLogo from '../../gradients/EditLogo'
 import SyncLogo from '../../gradients/SyncLogo'
 import PerfectSyncLogo from '../../gradients/perfectSyncLogo'
-import IconCarrot from '@/app/icons/carrot'
+import IconCarrot from '@/app/components/icons/carrot'
 
 export function Frame({ children }: { children: React.ReactNode }) {
     return (

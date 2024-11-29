@@ -1,7 +1,7 @@
 import { PayloadAction } from '@reduxjs/toolkit'
 import { Line, LinesSync, State } from '../reducer'
 import * as Diff from 'diff'
-import { cyrb53 } from '@/app/utils/hash'
+import { cyrb53 } from '@/utils/hash'
 import { HEADER_INITIAL } from '..'
 
 class DiffItem {
@@ -52,10 +52,7 @@ class Diffing {
     headerLine: number = 0
     skipCount: number = 0
 
-    constructor(
-        public preLines: string[],
-        public newLines: string[]
-    ) {
+    constructor(public preLines: string[], public newLines: string[]) {
         this.diff = Diff.diffArrays(preLines, newLines)
         this.result = []
     }

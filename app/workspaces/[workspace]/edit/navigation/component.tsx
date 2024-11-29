@@ -1,4 +1,4 @@
-import FolderIcon from '@/app/icons/folder'
+import FolderIcon from '@/app/components/icons/folder'
 // import VariantNavigation from './variantNavigation'
 
 export default function Component() {

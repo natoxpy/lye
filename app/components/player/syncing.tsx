@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import { usePlayerDispatch, usePlayerState } from './state'
 import { timeConverter, floor } from './utils'
-import { Seconds } from '../utils/units'
+import { Seconds } from '../../../utils/units'
 
 type Props = { children: React.ReactNode }
 

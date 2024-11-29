@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useLocalTimelineState } from '../../states/timeline'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { setStartMs } from '@/store/stores/synclines'
-import { usePlayerState } from '@/app/player/state'
+import { usePlayerState } from '@/app/components/player/state'
 import {
     addLine,
     Line,

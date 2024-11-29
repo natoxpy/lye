@@ -1,7 +1,7 @@
 'use client'
-import PlayIcon from '@/app/icons/play'
-import PauseIcon from '@/app/icons/pause'
-import { usePlayerDispatch, usePlayerState } from '@/app/player/state'
+import PlayIcon from '@/app/components/icons/play'
+import PauseIcon from '@/app/components/icons/pause'
+import { usePlayerDispatch, usePlayerState } from '@/app/components/player/state'
 
 export default function PlayPause() {
     const { paused } = usePlayerState()

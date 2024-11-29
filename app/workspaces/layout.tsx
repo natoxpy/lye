@@ -3,7 +3,7 @@ import Navigation from './components/navigation'
 import Header from './components/header'
 // import StateProvider from './[workspace]/edit/state/provider'
 import AppProvider from '@/store/provider'
-import PlayerAudioProvider from '../player/component'
+import PlayerAudioProvider from '@/app/components/player/component'
 
 export default function layout({ children }: { children: React.ReactNode }) {
     return (

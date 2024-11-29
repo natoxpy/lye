@@ -3,8 +3,8 @@ import generateTicks, {
     BigTick,
     SmallTick,
 } from '@/app/workspaces/[workspace]/sync/utils/generateCanvasTicks'
-import { Milliseconds } from '@/app/utils/units'
-import { formatMS } from '@/app/utils/time'
+import { Milliseconds } from '@/utils/units'
+import { formatMS } from '@/utils/time'
 
 const colors = {
     unaccented_1: 'rgb(45,51,57)',

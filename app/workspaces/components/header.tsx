@@ -1,6 +1,6 @@
-import IconCarrot from '@/app/icons/carrot'
-import IconLinked from '@/app/icons/linked'
-import IconFile from '@/app/icons/file'
+import IconCarrot from '@/app/components/icons/carrot'
+import IconLinked from '@/app/components/icons/linked'
+import IconFile from '@/app/components/icons/file'
 
 export default function Header() {
     return (

@@ -1,8 +1,11 @@
 'use client'
 
-import VolumeMaxIcon from '@/app/icons/volumeMax'
+import VolumeMaxIcon from '@/app/components/icons/volumeMax'
 import Scrubber from './scrubber'
-import { usePlayerDispatch, usePlayerState } from '@/app/player/state'
+import {
+    usePlayerDispatch,
+    usePlayerState,
+} from '@/app/components/player/state'
 
 export default function Volume() {
     const { volume } = usePlayerState()

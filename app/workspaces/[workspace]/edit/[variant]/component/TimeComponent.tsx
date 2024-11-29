@@ -1,4 +1,4 @@
-import { Milliseconds } from '@/app/utils/units'
+import { Milliseconds } from '@/utils/units'
 
 export default function TimeComponent({
     ms,

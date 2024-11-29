@@ -1,6 +1,6 @@
 'use client'
-import IconEditLyrics from '@/app/icons/editLyrics'
-import IconSyncLines from '@/app/icons/syncLines'
+import IconEditLyrics from '@/app/components/icons/editLyrics'
+import IconSyncLines from '@/app/components/icons/syncLines'
 // import IconSyncLyrics from '@/app/icons/syncLyrics'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'

@@ -1,8 +1,11 @@
 import { useEffect, useRef } from 'react'
 import { Layout } from './layout'
 import { useBoardManager } from '../../states/boardManager'
-import { usePlayerDispatch, usePlayerState } from '@/app/player/state'
-import { Milliseconds, Pixels, Seconds } from '@/app/utils/units'
+import {
+    usePlayerDispatch,
+    usePlayerState,
+} from '@/app/components/player/state'
+import { Milliseconds, Pixels, Seconds } from '@/utils/units'
 import useMouseMoveHolding from '../../actionEvents/mouseMoveHolding'
 
 export default function Component({

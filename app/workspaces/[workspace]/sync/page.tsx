@@ -5,6 +5,7 @@ import LineCastShadow from './components/line/castShadow'
 import LineHandler from './components/line/handler'
 
 import { HEADER_INITIAL } from '@/store/stores/lyrics'
+import { Milliseconds } from '@/utils/units'
 
 function Layout({ children }: { children: React.ReactNode }) {
     return (
@@ -43,9 +44,11 @@ export default function Page() {
 
             <LineByLineLayout>
                 {lyrics.map((line, key) => {
-                    let timeframe: [number, number] | undefined = undefined
+                    let timeframe: Milliseconds[] = []
 
-                    const ln = lines.find((ln) => ln.lineNumber === line.line)
+                    const ln = (lines as any).find(
+                        (ln) => ln.lineNumber === line.line
+                    )
                     if (ln) timeframe = [ln.startMs, ln.startMs + ln.durationMs]
 
                     return (
@@ -55,7 +58,8 @@ export default function Page() {
                             lineNumber={line.line}
                             text={line.content}
                             inTimeLine={!!ln}
-                            timeframe={timeframe}
+                            start={timeframe[0]}
+                            end={timeframe[1]}
                         />
                     )
                 })}

@@ -1,4 +1,4 @@
-import { Pixels } from '@/app/utils/units'
+import { Pixels } from '@/utils/units'
 import { forwardRef } from 'react'
 
 function IconCursor(props: React.ComponentProps<'svg'>) {

@@ -1,5 +1,5 @@
 import Style from './scrollable.module.scss'
-import DownArrowIcon from '@/app/icons/downArrow'
+import DownArrowIcon from '@/app/components/icons/downArrow'
 import { useEffect, useRef } from 'react'
 
 export default function Scrollable({

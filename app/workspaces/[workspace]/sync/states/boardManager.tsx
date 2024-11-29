@@ -1,4 +1,4 @@
-import { Milliseconds, Pixels } from '@/app/utils/units'
+import { Milliseconds, Pixels } from '@/utils/units'
 import * as LocalState from './index'
 
 type TimelineItem = { line: number; right: Milliseconds; left: Milliseconds }

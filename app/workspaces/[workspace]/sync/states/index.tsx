@@ -1,7 +1,7 @@
 import { Dispatch, ReactNode, createContext, useContext } from 'react'
 import * as TimelineManager from './boardManager'
 import { useImmerReducer } from 'use-immer'
-import { Milliseconds, Pixels } from '@/app/utils/units'
+import { Milliseconds, Pixels } from '@/utils/units'
 
 export type Action<N, T> = { type: N; payload: T }
 

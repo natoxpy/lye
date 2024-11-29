@@ -1,4 +1,4 @@
-import { Pixels } from '@/app/utils/units'
+import { Pixels } from '@/utils/units'
 import React from 'react'
 
 export const Canvas = React.forwardRef<HTMLCanvasElement, { height?: Pixels }>(

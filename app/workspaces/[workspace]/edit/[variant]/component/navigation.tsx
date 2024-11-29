@@ -1,5 +1,5 @@
-import FullFileIcon from '@/app/icons/fullFile'
-import XIcon from '@/app/icons/x'
+import FullFileIcon from '@/app/components/icons/fullFile'
+import XIcon from '@/app/components/icons/x'
 
 function Variant({ name, selected }: { name: string; selected?: boolean }) {
     return (

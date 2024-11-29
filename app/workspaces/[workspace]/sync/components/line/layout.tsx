@@ -1,5 +1,5 @@
-import { formatMS } from '@/app/utils/time'
-import { Milliseconds } from '@/app/utils/units'
+import { formatMS } from '@/utils/time'
+import { Milliseconds } from '@/utils/units'
 
 function DoubleSidedIcon(props: React.ComponentProps<'svg'>) {
     return (
