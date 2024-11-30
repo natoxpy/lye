@@ -45,7 +45,7 @@ export default function Component() {
 
     return (
         <div className="flex justify-center w-full min-h-[48px] bg-bg-2 border-[1px] border-bg-2">
-            <LinkItem name="edit" pathname="/original" Icon={IconEditLyrics} />
+            <LinkItem name="edit" Icon={IconEditLyrics} />
             <LinkItem name="sync" Icon={IconSyncLines} />
             {/* <LinkItem name="perfect-sync" Icon={IconSyncLyrics} /> */}
         </div>

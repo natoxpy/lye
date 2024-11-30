@@ -1,0 +1,195 @@
+Folder PATH listing
+Volume serial number is E82C-1824
+C:\USERS\NATOX\PROJECTS\TLYP\LYE\APP
+|   favicon.ico
+|   layout.tsx
+|   
++---(home)
+|   |   header.tsx
+|   |   layout.tsx
+|   |   page.tsx
+|   |   
+|   +---animation
+|   |   |   index.tsx
+|   |   |   
+|   |   +---assets
+|   |   |   \---icons
+|   |   |           cursor.tsx
+|   |   |           typingCursor.tsx
+|   |   |           
+|   |   +---editWindow
+|   |   |       index.tsx
+|   |   |       layout.tsx
+|   |   |       
+|   |   \---layout
+|   |           index.tsx
+|   |           window.tsx
+|   |           
+|   \---gradients
+|           circleGradient.tsx
+|           EditLogo.tsx
+|           perfectSyncLogo.tsx
+|           syncGradient.tsx
+|           SyncLogo.tsx
+|           TopGradient.tsx
+|           
++---components
+|   |   workspaces-header.tsx
+|   |   workspaces-navigation.tsx
+|   |   
+|   +---icons
+|   |   |   addFile.tsx
+|   |   |   carrot.tsx
+|   |   |   check.tsx
+|   |   |   downArrow.tsx
+|   |   |   editLyrics.tsx
+|   |   |   eyeClose.tsx
+|   |   |   eyeOpen.tsx
+|   |   |   file.tsx
+|   |   |   folder.tsx
+|   |   |   fullFile.tsx
+|   |   |   globe.tsx
+|   |   |   leftStickArrow.tsx
+|   |   |   linked.tsx
+|   |   |   locked.tsx
+|   |   |   logo.tsx
+|   |   |   pause.tsx
+|   |   |   play.tsx
+|   |   |   playback.tsx
+|   |   |   plus.tsx
+|   |   |   syncLines.tsx
+|   |   |   syncLyrics.tsx
+|   |   |   unlocked.tsx
+|   |   |   volumeMax.tsx
+|   |   |   x.tsx
+|   |   |   
+|   |   \---utils
+|   |           hash.ts
+|   |           time.ts
+|   |           units.ts
+|   |           
+|   \---player
+|           component.tsx
+|           state.tsx
+|           syncing.tsx
+|           utils.ts
+|           
++---hooks
+\---workspaces
+    |   layout.tsx
+    |   page.tsx
+    |   
+    \---[workspace]
+        |   layout.tsx
+        |   page.tsx
+        |   
+        +---@header
+        |       default.tsx
+        |       page.tsx
+        |       
+        +---@navigation
+        |       default.tsx
+        |       page.tsx
+        |       
+        +---edit
+        |   |   layout.tsx
+        |   |   page.tsx
+        |   |   
+        |   +---@sidebar
+        |   |       default.tsx
+        |   |       page.tsx
+        |   |       
+        |   +---nav
+        |   |       default.tsx
+        |   |       page.tsx
+        |   |       scrollable.module.scss
+        |   |       scrollable.tsx
+        |   |       variantNav.module.scss
+        |   |       variantNavigation.tsx
+        |   |       
+        |   \---[variant]
+        |       |   layout.tsx
+        |       |   page.tsx
+        |       |   
+        |       \---component
+        |               navigation.tsx
+        |               playbackRate.tsx
+        |               player.tsx
+        |               playpause.tsx
+        |               scrubber.tsx
+        |               TimeComponent.tsx
+        |               volume.tsx
+        |               
+        +---sync
+        |   |   layout.tsx
+        |   |   page.tsx
+        |   |   
+        |   +---actionEvents
+        |   |       index.ts
+        |   |       mouseMoveHolding.tsx
+        |   |       mousePosition.tsx
+        |   |       resize.tsx
+        |   |       useSpecialKey.tsx
+        |   |       
+        |   +---components
+        |   |   +---boardItem
+        |   |   |       component.tsx
+        |   |   |       layout.tsx
+        |   |   |       
+        |   |   +---line
+        |   |   |       castShadow.tsx
+        |   |   |       handler.tsx
+        |   |   |       index.tsx
+        |   |   |       layout.tsx
+        |   |   |       
+        |   |   +---tickbar
+        |   |   |       Canvas.tsx
+        |   |   |       component.tsx
+        |   |   |       draw.tsx
+        |   |   |       Layout.tsx
+        |   |   |       resizeCanvas.tsx
+        |   |   |       useTicks.tsx
+        |   |   |       
+        |   |   +---timeCursor
+        |   |   |       component.tsx
+        |   |   |       layout.tsx
+        |   |   |       
+        |   |   +---timeline
+        |   |   |       component.tsx
+        |   |   |       layout.tsx
+        |   |   |       
+        |   |   \---timelines
+        |   |           component.tsx
+        |   |           layout.tsx
+        |   |           _handler.tsx
+        |   |           
+        |   +---editorWindow
+        |   |   |   index.tsx
+        |   |   |   
+        |   |   +---controls
+        |   |   |       index.tsx
+        |   |   |       playpause.tsx
+        |   |   |       
+        |   |   +---minimap
+        |   |   |       index.tsx
+        |   |   |       
+        |   |   \---timelines
+        |   |       |   index.tsx
+        |   |       |   options.tsx
+        |   |       |   
+        |   |       \---body
+        |   |               index.tsx
+        |   |               layout.tsx
+        |   |               
+        |   +---states
+        |   |       boardManager.tsx
+        |   |       index.tsx
+        |   |       timeline.tsx
+        |   |       
+        |   \---utils
+        |           generateCanvasTicks.ts
+        |           
+        \---_perfect-sync
+                layout.tsx
+                page.tsx
+                

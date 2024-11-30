@@ -1,6 +1,3 @@
-// import Navigation from './navigation'
-// <Navigation />
-
 import Player from './component/player'
 
 export default function Layout({ children }: { children: React.ReactNode }) {

@@ -1,7 +1,6 @@
 import FolderIcon from '@/app/components/icons/folder'
-// import VariantNavigation from './variantNavigation'
 
-export default function Component() {
+export default function Page() {
     return (
         <div className="flex bg-bg-3">
             <div className="min-w-[60px] max-w-[60px] h-full bg-bg-2">
@@ -9,8 +8,6 @@ export default function Component() {
                     <FolderIcon className="stroke-txt-2" />
                 </div>
             </div>
-
-            {/*<VariantNavigation /> */}
         </div>
     )
 }
