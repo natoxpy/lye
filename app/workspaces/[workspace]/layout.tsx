@@ -24,14 +24,12 @@ export default function Layout({
     useEffect(() => {
         const lines = lyrics.find((i) => i.workspace === ('main' as UNAME))
         if (lines === undefined) return
-
-        console.log(lines)
     }, [lyrics])
 
     return (
         <AppProvider>
             <PlayerAudioProvider>
-                <div className="flex-col w-screen h-screen bg-bg-4 flex overflow-hidden">
+                <div className="flex-col w-screen max-h-screen h-screen bg-bg-4 flex overflow-hidden">
                     {header}
                     {children}
                     {navigation}

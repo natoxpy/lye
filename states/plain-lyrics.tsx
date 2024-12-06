@@ -49,3 +49,13 @@ export const usePlainLyrics = create<PlainLyricsStore>()(
         },
     }))
 )
+
+export function usePlainLyricsWorkspace(workspace: UNAME) {
+    const lyrics = usePlainLyrics((state) => state.lyrics).find(
+        (lyrics) => lyrics.workspace === workspace
+    )
+
+    if (!lyrics) return [''] // error handle this later
+
+    return lyrics.content.split('\n')
+}

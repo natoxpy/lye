@@ -1,13 +1,16 @@
 'use client'
 import Editor from '@/app/components/editor'
-import { usePlainLyrics } from '@/states/plain-lyrics'
+import { usePlainLyrics, usePlainLyricsWorkspace } from '@/states/plain-lyrics'
 import { UNAME } from '@/utils/units'
 import { useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 export default function Page() {
     const { workspace } = useParams<{ workspace: UNAME }>()
-    const [lines, setLines] = useState<string[]>([''])
+
+    const [lines, setLines] = useState<string[]>(
+        usePlainLyricsWorkspace(workspace)! // Error handle this
+    )
     const updateLyrics = usePlainLyrics((state) => state.actions.updateLyrics)
 
     useEffect(() => {

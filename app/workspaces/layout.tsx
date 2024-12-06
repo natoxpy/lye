@@ -6,7 +6,7 @@ export default function layout({ children }: { children: React.ReactNode }) {
     return (
         <AppProvider>
             <PlayerAudioProvider>
-                <div className="flex-col w-screen h-screen bg-bg-4 flex overflow-hidden">
+                <div className="flex-col w-screen max-h-screen h-screen bg-bg-4 flex overflow-hidden">
                     {children}
                 </div>
             </PlayerAudioProvider>
