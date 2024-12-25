@@ -1,3 +1,5 @@
 export default function Page() {
-    return <div>Hello</div>
+    return <div className="h-[128px] bg-blue-400">
+
+    </div>
 }

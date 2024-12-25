@@ -1,5 +1,4 @@
 'use client'
-
 import { usePlainLyricsWorkspace } from '@/states/plain-lyrics'
 import SyncLine from '@/app/components/sync-line'
 import { useParams } from 'next/navigation'
@@ -10,7 +9,7 @@ export default function Page() {
     const lines = usePlainLyricsWorkspace(workspace)
 
     return (
-        <div className='h-fit flex flex-col gap-4'>
+        <div className="h-fit flex flex-col gap-4">
             {lines.map((ln, key) => (
                 <SyncLine
                     key={key}
