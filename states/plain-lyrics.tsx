@@ -55,7 +55,7 @@ export function usePlainLyricsWorkspace(workspace: UNAME) {
         (lyrics) => lyrics.workspace === workspace
     )
 
-    if (!lyrics) return [''] // error handle this later
+    if (!lyrics) return [HEADER_PREFIX + 'Verse', ''] // error handle this later
 
     return lyrics.content.split('\n')
 }
