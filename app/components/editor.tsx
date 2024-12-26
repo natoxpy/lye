@@ -2,14 +2,14 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
-import { HEADER_INITIAL } from '@/store/stores/lyrics'
+export const HEADER_PREFIX = '\u200B'
 
 const LINE_HEIGHT = 60
 
 const HeaderLineNumberPlaceholder = '#'
 
 function isHeaderLine(v: string) {
-    return v.trim().startsWith('#') || v.trim().startsWith(HEADER_INITIAL)
+    return v.trim().startsWith('#') || v.trim().startsWith(HEADER_PREFIX)
 }
 
 function LineNumbers({ lines }: { lines: string[] }) {
@@ -166,7 +166,7 @@ export default function Editor({
                 setLines(
                     v.map((c) => {
                         if (c.startsWith('#'))
-                            return c.replace('#', HEADER_INITIAL)
+                            return c.replace('#', HEADER_PREFIX)
                         return c
                     })
                 )

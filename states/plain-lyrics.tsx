@@ -1,3 +1,4 @@
+import { HEADER_PREFIX } from '@/app/components/editor'
 import { UNAME } from '@/utils/units'
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
@@ -22,7 +23,6 @@ type PlainLyricsActions = {
 type PlainLyricsStore = PlainLyricsState & PlainLyricsActions
 
 export const usePlainLyrics = create<PlainLyricsStore>()(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     immer((set) => ({
         lyrics: [],
         actions: {
@@ -58,4 +58,19 @@ export function usePlainLyricsWorkspace(workspace: UNAME) {
     if (!lyrics) return [''] // error handle this later
 
     return lyrics.content.split('\n')
+}
+
+///
+/// Returns all the lyrics without the headers, to get everything with headers use `usePlainLyricsWorkspace`
+///
+export function usePlainLyricsLinesWorkspace(workspace: UNAME) {
+    const lyrics = usePlainLyrics((state) => state.lyrics).find(
+        (lyrics) => lyrics.workspace === workspace
+    )
+
+    if (!lyrics) return [''] // error handle this later
+
+    return lyrics.content
+        .split('\n')
+        .filter((a) => !a.startsWith(HEADER_PREFIX))
 }
