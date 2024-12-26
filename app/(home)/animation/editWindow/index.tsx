@@ -1,4 +1,3 @@
-'use client'
 import { useGSAP } from '@gsap/react'
 import Layout from './layout'
 import { useRef, useState } from 'react'
@@ -7,7 +6,11 @@ import CursorIcon from '../assets/icons/cursor'
 import TypingCursorIcon from '../assets/icons/typingCursor'
 import { ScrollToPlugin, TextPlugin } from 'gsap/all'
 
-export default function Window() {
+export default function Window({
+    nextAnimation,
+}: {
+    nextAnimation: () => void
+}) {
     const root = useRef<HTMLDivElement>(null)
     const [lyrics] = useState<
         { content: string; line: number; header?: boolean }[]
@@ -22,12 +25,12 @@ export default function Window() {
             line: 3,
             content: 'Dispite our promisees, here I am following your steps',
         },
-        { line: 4, content: 'Verse 2', header: true },
+        { line: 3, content: 'Verse 2', header: true },
         { line: 4, content: 'Drop by drop' },
         { line: 5, content: 'As your unchanging reality dampen my sleeve' },
         { line: 6, content: 'You kisssed them off' },
         { line: 7, content: 'Through the fibers of my handkercheif' },
-        { line: 8, content: 'Chorus', header: true },
+        { line: 7, content: 'Chorus', header: true },
         { line: 8, content: 'I am fire' },
         { line: 9, content: 'Burn those who dare to care for me' },
         {
@@ -151,9 +154,15 @@ export default function Window() {
         () => {
             gsap.registerPlugin(TextPlugin)
             gsap.registerPlugin(ScrollToPlugin)
-            const tl = gsap.timeline({ repeat: -1, repeatDelay: 3 })
+            const tl = gsap.timeline({ repeat: 0, repeatDelay: 3 })
 
             tl.add(TypingLines())
+
+            // Move to next animation
+            tl.add(() => {
+                setTimeout(() => nextAnimation())
+                tl.kill()
+            }, '>=3')
         },
         { scope: root }
     )

@@ -2,7 +2,7 @@ import CircleGradient from '../../gradients/circleGradient'
 import TopGradient from '../../gradients/TopGradient'
 import EditLogo from '../../gradients/EditLogo'
 import SyncLogo from '../../gradients/SyncLogo'
-import PerfectSyncLogo from '../../gradients/perfectSyncLogo'
+// import PerfectSyncLogo from '../../gradients/perfectSyncLogo'
 import IconCarrot from '@/app/components/icons/carrot'
 
 export function Frame({ children }: { children: React.ReactNode }) {
@@ -122,9 +122,11 @@ export function Navigation() {
             <Item>
                 <SyncLogo />
             </Item>
+            {/*}
             <Item>
                 <PerfectSyncLogo />
             </Item>
+            {*/}
         </div>
     )
 }
