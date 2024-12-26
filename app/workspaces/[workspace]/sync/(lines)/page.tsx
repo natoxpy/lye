@@ -33,9 +33,6 @@ function Lines() {
     const lines = usePlainLyricsLinesWorkspace(workspace)
 
     const hasNoLines = lines.filter((a) => a.trim() !== '').length == 0
-
-    console.log(lines)
-
     if (hasNoLines) return <NoLines />
 
     return (
