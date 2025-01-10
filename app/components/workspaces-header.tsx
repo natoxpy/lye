@@ -31,7 +31,7 @@ export default function Header({ dropdown }: Props) {
                         ? (getMaxHeight(), '0px')
                         : getMaxHeight(),
                 }}
-                className="z-30 absolute left-1/2 overflow-hidden -translate-x-1/2 text-white top-12 transition-all ease-in-out"
+                className="z-30 absolute left-1/2 overflow-hidden -translate-x-1/2 text-white top-12 transition-all ease-in-out shadow-xl"
             >
                 <div ref={childElement}>{dropdown}</div>
             </div>

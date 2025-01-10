@@ -46,7 +46,7 @@ const WorkspacesTab = forwardRef<HTMLDivElement, { selectItem: () => void }>(
         return (
             <div
                 ref={ref}
-                className="flex flex-col w-[500px] bg-bg-2 p-[15px] rounded-lg gap-[10px]"
+                className="flex flex-col w-[500px] p-[15px] rounded-lg gap-[10px]"
             >
                 <div className="flex items-center justify-between px-[10px]">
                     <div className="group cursor-pointer">

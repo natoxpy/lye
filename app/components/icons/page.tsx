@@ -17,6 +17,7 @@ import Play from './play'
 import Playback from './playback'
 import Plus from './plus'
 import PlusCircle from './plusCircle'
+import RightArrowSquare from './rightArrowSquare'
 import SyncLines from './syncLines'
 import SyncLyrics from './syncLyrics'
 import Unlocked from './unlocked'
@@ -108,6 +109,10 @@ export default function Page() {
                 <span className="flex flex-col items-center">
                     SyncLines
                     <SyncLines className="w-10 h-10 stroke-red-700" />
+                </span>
+                <span className="flex flex-col items-center">
+                    RightArrowSquare
+                    <RightArrowSquare className="w-10 h-10 stroke-red-700" />
                 </span>
                 <span className="flex flex-col items-center">
                     SyncLyrics

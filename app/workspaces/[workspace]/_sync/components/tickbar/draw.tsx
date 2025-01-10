@@ -2,7 +2,7 @@ import { RefObject } from 'react'
 import generateTicks, {
     BigTick,
     SmallTick,
-} from '@/app/workspaces/[workspace]/sync/utils/generateCanvasTicks'
+} from '@/app/workspaces/[workspace]/_sync/utils/generateCanvasTicks'
 import { Milliseconds } from '@/utils/units'
 import { formatMS } from '@/utils/time'
 

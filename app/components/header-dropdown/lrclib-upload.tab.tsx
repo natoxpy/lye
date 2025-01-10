@@ -6,7 +6,7 @@ const LrclibUploadTab = forwardRef<HTMLDivElement, { prevPage: () => void }>(
         return (
             <div
                 ref={ref}
-                className="flex flex-col w-[300px] h-fit p-[15px] bg-bg-2 rounded-lg gap-[10px]"
+                className="flex flex-col w-[300px] h-fit p-[15px] rounded-lg gap-[10px]"
             >
                 <div className="flex items-center justify-between px-[10px]">
                     <div className="flex items-center justify-start gap-[10px]">

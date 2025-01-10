@@ -1,5 +1,9 @@
-export default function Page() {
-    return <div className="h-[128px] bg-blue-400">
+import Tickbar from '@/app/components/tickbar'
 
-    </div>
+export default function Page() {
+    return (
+        <div className="h-[128px] bg-blue-800">
+            <Tickbar maxWidth={4000} />
+        </div>
+    )
 }

@@ -1,14 +1,17 @@
 export default function Layout({
     options,
-    children,
+    tickbar,
+    body,
 }: {
     options: React.ReactNode
-    children: React.ReactNode
+    tickbar: React.ReactNode
+    body: React.ReactNode
 }) {
     return (
         <div className="h-full bg-bg-4">
             {options}
-            {children}
+            {tickbar}
+            {body}
         </div>
     )
 }
