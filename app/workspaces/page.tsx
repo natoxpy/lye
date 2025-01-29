@@ -1,3 +1,3 @@
 export default function Page() {
-    return <></>
+    return <div className="w-full h-full"></div>
 }
