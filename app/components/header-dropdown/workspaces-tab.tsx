@@ -35,10 +35,14 @@ function WorkspaceItem({
                     className="w-[36px] h-[36px] bg-slate-700 rounded"
                 ></div>
             </div>
-            <div className="w-full overflow-hidden overflow-ellipsis whitespace-nowrap">
+            <div
+                style={{
+                    color: active ? 'var(--color-txt-2)' : '',
+                }}
+                className="w-full text-txt-1 overflow-hidden overflow-ellipsis whitespace-nowrap"
+            >
                 <span
                     style={{
-                        color: active ? 'var(--color-txt-2)' : '',
                         fontWeight: active ? '700' : '',
                     }}
                     className="text-[14px] text-txt-1 transition-all"
@@ -71,7 +75,7 @@ const WorkspacesTab = forwardRef<HTMLDivElement, { selectItem: () => void }>(
         return (
             <div
                 ref={ref}
-                className="flex flex-col w-[500px] h-fit p-[15px] rounded-lg gap-[10px]"
+                className="flex flex-col w-[350px] h-fit p-[15px] rounded-lg gap-[10px]"
             >
                 <div className="flex items-center justify-between px-[10px]">
                     <div className="group cursor-pointer">
