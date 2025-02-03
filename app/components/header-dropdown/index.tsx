@@ -9,6 +9,7 @@ import {
 import WorkspacesTab from './workspaces-tab'
 import WorkspaceItemTab from './workspace-item-tab'
 import LrclibUploadTab from './lrclib-upload.tab'
+import { useWorkspaces } from '@/states/hooks'
 
 export default function Dropdown({
     tab: [tabIndex, setTabIndex],
@@ -17,6 +18,7 @@ export default function Dropdown({
     tab: [number, Dispatch<SetStateAction<number>>]
     active: [boolean, Dispatch<SetStateAction<boolean>>]
 }) {
+    const workspaces = useWorkspaces((state) => state.workspaces)
     const transitionSpeed = '250ms'
 
     const tab1 = useRef<HTMLDivElement>(null)
@@ -45,7 +47,7 @@ export default function Dropdown({
 
             return [...n]
         })
-    }, [tab1, tab2, tab3, tabIndex])
+    }, [tab1, tab2, tab3, tabIndex, workspaces])
 
     const getOffset = useCallback(() => {
         return tabsize

@@ -1,4 +1,6 @@
+'use client'
 import PlusCircleIcon from '@/app/components/icons/plusCircle'
+import { useWorkspaces } from '@/states/hooks'
 import { forwardRef } from 'react'
 
 function WorkspaceItem({
@@ -43,10 +45,12 @@ function WorkspaceItem({
 
 const WorkspacesTab = forwardRef<HTMLDivElement, { selectItem: () => void }>(
     (props, ref) => {
+        const workspaces = useWorkspaces((state) => state.workspaces)
+
         return (
             <div
                 ref={ref}
-                className="flex flex-col w-[500px] p-[15px] rounded-lg gap-[10px]"
+                className="flex flex-col w-[500px] h-fit p-[15px] rounded-lg gap-[10px]"
             >
                 <div className="flex items-center justify-between px-[10px]">
                     <div className="group cursor-pointer">
@@ -60,37 +64,14 @@ const WorkspacesTab = forwardRef<HTMLDivElement, { selectItem: () => void }>(
                     <span className="text-[18px] text-txt-2">Workspaces</span>
                 </div>
                 <div className="flex flex-col">
-                    <WorkspaceItem
-                        active
-                        name="Iron Lotus"
-                        image="https://t2.genius.com/unsafe/474x474/https%3A%2F%2Fimages.genius.com%2F66179b862f9f1521b10319874d2bb522.1000x1000x1.jpg"
-                        onClick={props.selectItem}
-                    />
-                    <WorkspaceItem
-                        name="Through Patches of Violet"
-                        image="https://t2.genius.com/unsafe/474x474/https%3A%2F%2Fimages.genius.com%2F0d35c4ab953fe95571a0f9647fc705f4.741x741x1.png"
-                        onClick={props.selectItem}
-                    />
-                    <WorkspaceItem
-                        name="In Hell We Live, Lament"
-                        image="https://t2.genius.com/unsafe/474x474/https%3A%2F%2Fimages.genius.com%2F3ce0d6f8313b5417c572c2eb585ea4dd.1000x1000x1.png"
-                        onClick={props.selectItem}
-                    />
-                    <WorkspaceItem
-                        name="Iron Lotus"
-                        image="https://t2.genius.com/unsafe/474x474/https%3A%2F%2Fimages.genius.com%2F66179b862f9f1521b10319874d2bb522.1000x1000x1.jpg"
-                        onClick={props.selectItem}
-                    />
-                    <WorkspaceItem
-                        name="Through Patches of Violet"
-                        image="https://t2.genius.com/unsafe/474x474/https%3A%2F%2Fimages.genius.com%2F0d35c4ab953fe95571a0f9647fc705f4.741x741x1.png"
-                        onClick={props.selectItem}
-                    />
-                    <WorkspaceItem
-                        name="In Hell We Live, Lament"
-                        image="https://t2.genius.com/unsafe/474x474/https%3A%2F%2Fimages.genius.com%2F3ce0d6f8313b5417c572c2eb585ea4dd.1000x1000x1.png"
-                        onClick={props.selectItem}
-                    />
+                    {workspaces.map((workspace) => (
+                        <WorkspaceItem
+                            key={(console.log(workspace.id), workspace.id)}
+                            name={workspace.title}
+                            image="https://t2.genius.com/unsafe/474x474/https%3A%2F%2Fimages.genius.com%2F66179b862f9f1521b10319874d2bb522.1000x1000x1.jpg"
+                            onClick={props.selectItem}
+                        />
+                    ))}
                 </div>
             </div>
         )
