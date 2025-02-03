@@ -1,19 +1,26 @@
 'use client'
 import PlusCircleIcon from '@/app/components/icons/plusCircle'
-import { useWorkspaces } from '@/states/hooks'
+import OpenExternalLink from '@/app/components/icons/openExternalLink'
+import { useHeader, useWorkspaces } from '@/states/hooks'
 import { forwardRef } from 'react'
+import { useRouter } from 'next/navigation'
 
 function WorkspaceItem({
+    id,
     name,
     image,
     active,
     onClick,
 }: {
+    id: string
     name: string
     image: string
     active?: boolean
     onClick: () => void
 }) {
+    const router = useRouter()
+    const headerSetActive = useHeader((state) => state.actions.setActive)
+
     return (
         <div
             onClick={onClick}
@@ -38,6 +45,20 @@ function WorkspaceItem({
                 >
                     {name}
                 </span>
+            </div>
+            <div
+                className="flex justify-center rounded items-center group/open hover:bg-bg-5 w-[40px] h-[30px]"
+                onClick={(e) => {
+                    e.stopPropagation()
+                    router.push('/workspaces/' + id + '/edit')
+                    headerSetActive(false)
+                }}
+            >
+                <OpenExternalLink
+                    className="stroke-txt-1 group-hover/open:stroke-txt-2"
+                    widths={20}
+                    height={20}
+                />
             </div>
         </div>
     )
@@ -66,7 +87,8 @@ const WorkspacesTab = forwardRef<HTMLDivElement, { selectItem: () => void }>(
                 <div className="flex flex-col">
                     {workspaces.map((workspace) => (
                         <WorkspaceItem
-                            key={(console.log(workspace.id), workspace.id)}
+                            key={workspace.id}
+                            id={workspace.id}
                             name={workspace.title}
                             image="https://t2.genius.com/unsafe/474x474/https%3A%2F%2Fimages.genius.com%2F66179b862f9f1521b10319874d2bb522.1000x1000x1.jpg"
                             onClick={props.selectItem}

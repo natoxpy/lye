@@ -23,6 +23,7 @@ import SyncLyrics from './syncLyrics'
 import Unlocked from './unlocked'
 import VolumeMax from './volumeMax'
 import X from './x'
+import OpenExternalLink from './openExternalLink'
 
 export default function Page() {
     return (
@@ -129,6 +130,10 @@ export default function Page() {
                 <span className="flex flex-col items-center">
                     X
                     <X className="w-10 h-10 stroke-red-700" />
+                </span>
+                <span className="flex flex-col items-center">
+                    OpenExternalLink
+                    <OpenExternalLink className="w-10 h-10 stroke-red-700" />
                 </span>
             </div>
         </div>

@@ -1,11 +1,4 @@
-import {
-    Dispatch,
-    SetStateAction,
-    useCallback,
-    useEffect,
-    useRef,
-    useState,
-} from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import WorkspacesTab from './workspaces-tab'
 import WorkspaceItemTab from './workspace-item-tab'
 import LrclibUploadTab from './lrclib-upload.tab'
@@ -15,8 +8,8 @@ export default function Dropdown({
     tab: [tabIndex, setTabIndex],
     active: [active],
 }: {
-    tab: [number, Dispatch<SetStateAction<number>>]
-    active: [boolean, Dispatch<SetStateAction<boolean>>]
+    tab: [number, (tab: number) => void]
+    active: [boolean, (active: boolean) => void]
 }) {
     const workspaces = useWorkspaces((state) => state.workspaces)
     const transitionSpeed = '250ms'
@@ -74,16 +67,16 @@ export default function Dropdown({
                     className="relative flex left-5 transition-all ease-in-out"
                 >
                     <WorkspacesTab
-                        selectItem={() => setTabIndex((n) => n + 1)}
+                        selectItem={() => setTabIndex(tabIndex + 1)}
                         ref={tab1}
                     />
                     <WorkspaceItemTab
-                        prevPage={() => setTabIndex((n) => n - 1)}
-                        nextPage={() => setTabIndex((n) => n + 1)}
+                        prevPage={() => setTabIndex(tabIndex - 1)}
+                        nextPage={() => setTabIndex(tabIndex + 1)}
                         ref={tab2}
                     />
                     <LrclibUploadTab
-                        prevPage={() => setTabIndex((n) => n - 1)}
+                        prevPage={() => setTabIndex(tabIndex - 1)}
                         ref={tab3}
                     />
                 </div>
