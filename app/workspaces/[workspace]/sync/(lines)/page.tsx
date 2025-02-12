@@ -10,10 +10,10 @@ function Lines() {
 
     return (
         <>
-            {lines.map((ln, key) => (
+            {lines.map((content, key) => (
                 <SyncLine
                     key={key}
-                    content={ln}
+                    content={content}
                     inTimeLine={true}
                     left={-100}
                     line={1}

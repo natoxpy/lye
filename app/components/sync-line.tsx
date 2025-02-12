@@ -38,7 +38,7 @@ export default function Component({
     end?: Milliseconds
     onClick: () => void
 }) {
-    const bg = inTimeLine ? 'var(--color-bg-5)' : 'var(--color-bg-2)'
+    const bg = inTimeLine ? 'var(--color-bg-4)' : 'var(--color-bg-2)'
 
     return (
         <div
@@ -46,7 +46,7 @@ export default function Component({
                 color: inTimeLine ? 'var(--color-txt-2)' : 'var(--color-txt-3)',
                 cursor: !inTimeLine ? 'pointer' : '',
             }}
-            className="flex bg-bg-4 text-[1rem] select-none gap-[3px] min-w-[1000px] h-[46px] rounded-[4px] overflow-hidden"
+            className="flex bg-bg-3 text-[1rem] select-none gap-[3px] min-w-[1000px] h-[46px] rounded-[4px] overflow-hidden"
             onClick={onClick}
         >
             <div

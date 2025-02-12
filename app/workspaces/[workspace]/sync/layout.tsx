@@ -45,7 +45,7 @@ export default function Layout({
             style={{
                 height: 'calc(100% - (40px + 48px))',
             }}
-            className="grow flex flex-col bg-bg-2"
+            className="grow flex flex-col bg-bg-3"
         >
             <div className="grow flex flex-col items-center overflow-y-auto py-4 gap-4">
                 {hasNoLines ? <NoLines /> : children}

@@ -24,7 +24,23 @@ type PlainLyricsStore = PlainLyricsState & PlainLyricsActions
 
 export const usePlainLyrics = create<PlainLyricsStore>()(
     immer((set) => ({
-        lyrics: [],
+        lyrics: [
+            {
+                id: 'e5d1d5b9-4141-4797-a34e-0f53a914c4b9' as UNAME,
+                content: 'Iron Lotus Lyrics',
+                workspace: '50685e09' as UNAME,
+            },
+            {
+                id: '3bd43f69-d9d0-4715-bdaf-df6a45bbb183' as UNAME,
+                content: 'In Hell We Live, Lament Lyrics',
+                workspace: 'f122e5d2' as UNAME,
+            },
+            {
+                id: 'b5cc0d74-9d4f-4c21-b3ce-4407e2816985' as UNAME,
+                content: "Grown-up's paradise Lyrics",
+                workspace: '098cf7e1' as UNAME,
+            },
+        ],
         actions: {
             createLyrics(id, workspace, content) {
                 set((state) => {

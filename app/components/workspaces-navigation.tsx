@@ -1,17 +1,17 @@
 'use client'
 import IconEditLyrics from '@/app/components/icons/editLyrics'
 import IconSyncLines from '@/app/components/icons/syncLines'
-// import IconSyncLyrics from '@/app/icons/syncLyrics'
+import { UNAME } from '@/utils/units'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { useParams, usePathname } from 'next/navigation'
 
 export default function Component() {
+    const { workspace } = useParams<{ workspace: UNAME }>()
     const pathname = usePathname()
-    let page
+    let page = ''
 
-    if (pathname.startsWith('/workspaces/main/edit')) page = 'edit'
-    else if (pathname.startsWith('/workspaces/main/sync')) page = 'sync'
-    else page = 'perfect-sync'
+    if (pathname.endsWith(`/workspaces/${workspace}/edit`)) page = 'edit'
+    else if (pathname.startsWith(`/workspaces/${workspace}/sync`)) page = 'sync'
 
     const LinkItem = ({
         name,
@@ -24,7 +24,7 @@ export default function Component() {
         pathname?: string
     }) => (
         <Link
-            href={`/workspaces/main/${name}${pathname ?? ''}`}
+            href={`/workspaces/${workspace}/${name}${pathname ?? ''}`}
             style={{
                 backgroundColor: page == name ? 'var(--color-bg-4)' : '',
             }}

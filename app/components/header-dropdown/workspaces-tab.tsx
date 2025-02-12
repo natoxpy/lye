@@ -92,7 +92,7 @@ const WorkspacesTab = forwardRef<HTMLDivElement, { selectItem: () => void }>(
                     {workspaces.map((workspace) => (
                         <WorkspaceItem
                             key={workspace.id}
-                            id={workspace.id}
+                            id={workspace.shorthand_id}
                             name={workspace.title}
                             image="https://t2.genius.com/unsafe/474x474/https%3A%2F%2Fimages.genius.com%2F66179b862f9f1521b10319874d2bb522.1000x1000x1.jpg"
                             onClick={props.selectItem}
