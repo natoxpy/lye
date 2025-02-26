@@ -64,9 +64,7 @@ export default function Page() {
 
             if (!workspaceData) return
 
-            setTimeout(() => {
-                setLines(workspaceData.content.split('\n'))
-            }, 1500)
+            setLines(workspaceData.content.split('\n'))
         }
         PersistanceEmitter.addEventListener('rerender', handler)
         return () => PersistanceEmitter.removeEventListener('rerender', handler)

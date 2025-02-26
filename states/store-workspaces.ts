@@ -21,6 +21,7 @@ type WorkspaceActions = {
     actions: {
         setWorkspaces: (workspaces: Workspace[]) => void
         update: (workspace: Workspace) => void
+        add: (workspace: Workspace) => void
     }
 }
 
@@ -43,8 +44,11 @@ export const workspacesStore = createStore<WorkspaceStore>()(
                         )
 
                         if (index !== -1) state.workspaces[index] = workspace
-
-                        // if (index !== -1) state.workspaces[index].title = title
+                    })
+                },
+                add(workspace) {
+                    set((state) => {
+                        state.workspaces.push(workspace)
                     })
                 },
             },

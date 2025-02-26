@@ -19,7 +19,7 @@ const LrclibUploadTab = forwardRef<HTMLDivElement, { prevPage: () => void }>(
                         <span className="text-txt-2 text-[18px]">LRCLIB</span>
                     </div>
                     <div className="text-txt-1">
-                        <span className="text-[14px]">WebGPU</span>
+                        <span className="text-[14px]">{}</span>
                     </div>
                 </div>
                 <div className="flex items-center justify-center px-[10px] py-[30px]">
@@ -28,6 +28,17 @@ const LrclibUploadTab = forwardRef<HTMLDivElement, { prevPage: () => void }>(
                             background: 'var(--color-accent-blue)',
                             width: '138px',
                             color: 'var(--color-txt-2)',
+                        }}
+                        onClick={() => {
+                            const req = fetch(
+                                'http://localhost:3300/api/request-challenge',
+                                { method: 'post' }
+                            )
+
+                            req.then(async (r) => {
+                                const data = await r.json()
+                                console.log(data)
+                            })
                         }}
                         className="cursor-pointer font-semibold flex items-center rounded-[6px] justify-center h-[49px]"
                     >

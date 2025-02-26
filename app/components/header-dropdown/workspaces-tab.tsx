@@ -4,6 +4,8 @@ import OpenExternalLink from '@/app/components/icons/openExternalLink'
 import { useHeader, useWorkspaces } from '@/states/hooks'
 import { forwardRef } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
+import { addWorkspace } from '@/states/persistance'
+import { useLocalState } from '@/states'
 
 function WorkspaceItem({
     id,
@@ -75,6 +77,8 @@ const WorkspacesTab = forwardRef<
     { selectItem: () => void; setWorkspace: (workspace: string) => void }
 >((props, ref) => {
     const workspaces = useWorkspaces((state) => state.workspaces)
+    const { newWorkspace } = useLocalState()
+
     const pathname = usePathname()
     let subpage = 'edit'
     if (pathname.endsWith('sync')) subpage = 'sync'
@@ -85,7 +89,24 @@ const WorkspacesTab = forwardRef<
             className="flex flex-col w-[350px] h-fit p-[15px] rounded-lg gap-[10px]"
         >
             <div className="flex items-center justify-between px-[10px]">
-                <div className="group cursor-pointer">
+                <div
+                    className="group cursor-pointer"
+                    onClick={() => {
+                        const id = crypto.randomUUID()
+                        const shorthand_id = id.split('-')[0]
+
+                        const obj = {
+                            id: id as never,
+                            shorthand_id: shorthand_id,
+                            meta: { album: '', artist: '' },
+                            title: 'Unnamed',
+                            fileblob: undefined as never,
+                        }
+
+                        newWorkspace(obj)
+                        addWorkspace(obj)
+                    }}
+                >
                     <PlusCircleIcon
                         className="stroke-txt-1 group-hover:stroke-txt-2"
                         widths={20}
