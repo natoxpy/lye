@@ -11,6 +11,7 @@ export default function Dropdown({
     tab: [number, (tab: number) => void]
     active: [boolean, (active: boolean) => void]
 }) {
+    const [activeWorkspace, setActiveWorkspace] = useState<string | null>(null)
     const workspaces = useWorkspaces((state) => state.workspaces)
     const transitionSpeed = '250ms'
 
@@ -68,11 +69,13 @@ export default function Dropdown({
                 >
                     <WorkspacesTab
                         selectItem={() => setTabIndex(tabIndex + 1)}
+                        setWorkspace={setActiveWorkspace}
                         ref={tab1}
                     />
                     <WorkspaceItemTab
                         prevPage={() => setTabIndex(tabIndex - 1)}
                         nextPage={() => setTabIndex(tabIndex + 1)}
+                        workspace={activeWorkspace ?? ''}
                         ref={tab2}
                     />
                     <LrclibUploadTab

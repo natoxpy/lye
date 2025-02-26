@@ -3,19 +3,21 @@ import PlusCircleIcon from '@/app/components/icons/plusCircle'
 import OpenExternalLink from '@/app/components/icons/openExternalLink'
 import { useHeader, useWorkspaces } from '@/states/hooks'
 import { forwardRef } from 'react'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 
 function WorkspaceItem({
     id,
     name,
     image,
     active,
+    subpage,
     onClick,
 }: {
     id: string
     name: string
     image: string
     active?: boolean
+    subpage: string
     onClick: () => void
 }) {
     const router = useRouter()
@@ -54,7 +56,7 @@ function WorkspaceItem({
                 className="flex justify-center rounded items-center group/open hover:bg-bg-5 w-[40px] h-[30px]"
                 onClick={(e) => {
                     e.stopPropagation()
-                    router.push('/workspaces/' + id + '/edit')
+                    router.push('/workspaces/' + id + '/' + subpage)
                     headerSetActive(false)
                 }}
             >
@@ -68,41 +70,49 @@ function WorkspaceItem({
     )
 }
 
-const WorkspacesTab = forwardRef<HTMLDivElement, { selectItem: () => void }>(
-    (props, ref) => {
-        const workspaces = useWorkspaces((state) => state.workspaces)
+const WorkspacesTab = forwardRef<
+    HTMLDivElement,
+    { selectItem: () => void; setWorkspace: (workspace: string) => void }
+>((props, ref) => {
+    const workspaces = useWorkspaces((state) => state.workspaces)
+    const pathname = usePathname()
+    let subpage = 'edit'
+    if (pathname.endsWith('sync')) subpage = 'sync'
 
-        return (
-            <div
-                ref={ref}
-                className="flex flex-col w-[350px] h-fit p-[15px] rounded-lg gap-[10px]"
-            >
-                <div className="flex items-center justify-between px-[10px]">
-                    <div className="group cursor-pointer">
-                        <PlusCircleIcon
-                            className="stroke-txt-1 group-hover:stroke-txt-2"
-                            widths={20}
-                            height={20}
-                        />
-                    </div>
+    return (
+        <div
+            ref={ref}
+            className="flex flex-col w-[350px] h-fit p-[15px] rounded-lg gap-[10px]"
+        >
+            <div className="flex items-center justify-between px-[10px]">
+                <div className="group cursor-pointer">
+                    <PlusCircleIcon
+                        className="stroke-txt-1 group-hover:stroke-txt-2"
+                        widths={20}
+                        height={20}
+                    />
+                </div>
 
-                    <span className="text-[18px] text-txt-2">Workspaces</span>
-                </div>
-                <div className="flex flex-col">
-                    {workspaces.map((workspace) => (
-                        <WorkspaceItem
-                            key={workspace.id}
-                            id={workspace.shorthand_id}
-                            name={workspace.title}
-                            image="https://t2.genius.com/unsafe/474x474/https%3A%2F%2Fimages.genius.com%2F66179b862f9f1521b10319874d2bb522.1000x1000x1.jpg"
-                            onClick={props.selectItem}
-                        />
-                    ))}
-                </div>
+                <span className="text-[18px] text-txt-2">Workspaces</span>
             </div>
-        )
-    }
-)
+            <div className="flex flex-col">
+                {workspaces.map((workspace) => (
+                    <WorkspaceItem
+                        key={workspace.id}
+                        id={workspace.shorthand_id}
+                        name={workspace.title}
+                        subpage={subpage}
+                        image="https://t2.genius.com/unsafe/474x474/https%3A%2F%2Fimages.genius.com%2F66179b862f9f1521b10319874d2bb522.1000x1000x1.jpg"
+                        onClick={() => {
+                            props.selectItem()
+                            props.setWorkspace(workspace.shorthand_id)
+                        }}
+                    />
+                ))}
+            </div>
+        </div>
+    )
+})
 
 WorkspacesTab.displayName = 'WorkspacesTab'
 export default WorkspacesTab

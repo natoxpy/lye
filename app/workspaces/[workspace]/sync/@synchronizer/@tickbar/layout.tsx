@@ -1,5 +1,3 @@
-import Tickbar from '@/app/components/tickbar'
-
-export default function Layout() {
-    return <Tickbar maxWidth={4000} />
+export default function Layout({ children }: { children: React.ReactNode }) {
+    return <>{children}</>
 }

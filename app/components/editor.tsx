@@ -140,7 +140,7 @@ export default function Editor({
     setLines,
 }: {
     lines: string[]
-    setLines: React.Dispatch<React.SetStateAction<string[]>>
+    setLines: React.Dispatch<React.SetStateAction<string[] | null>>
 }) {
     function getLineNumbers() {
         const numbers = []

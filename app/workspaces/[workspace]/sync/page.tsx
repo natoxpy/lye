@@ -1,5 +1,5 @@
 'use client'
-import { usePlainLyricsLinesWorkspace } from '@/states/plain-lyrics'
+import { usePlainLyricsLinesWorkspace } from '@/states/store-plain-lyrics'
 import SyncLine from '@/app/components/sync-line'
 import { useParams } from 'next/navigation'
 import { UNAME } from '@/utils/units'
@@ -16,7 +16,7 @@ function Lines() {
                     content={content}
                     inTimeLine={true}
                     left={-100}
-                    line={1}
+                    line={key + 1}
                     onClick={() => {}}
                 />
             ))}

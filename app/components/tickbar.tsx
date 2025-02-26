@@ -96,22 +96,39 @@ export function fitCanvasOnParent(
     ctx?.scale(dpr, dpr)
 }
 
-export default function Component({ maxWidth }: { maxWidth: number }) {
+export function getTickbarWidth() {
+    return 0
+}
+
+export default function Component({
+    maxWidth,
+    duration,
+    offset,
+    onFrameWidth,
+}: {
+    offset: Milliseconds
+    maxWidth: number
+    duration: Milliseconds
+    onFrameWidth?: (widthMs: Milliseconds, widthPx: number) => void
+    onFullWidth?: (widthMs: Milliseconds, widthPx: number) => void
+}) {
     const refparent = useRef<HTMLDivElement>(null)
     const refcanvas = useRef<HTMLCanvasElement>(null)
     const draw = useDraw(refcanvas)
-    const duration = 1000 * 60 * 3
 
     const getWidth = useCallback(() => {
         const wp = refparent.current?.getBoundingClientRect().width as 0
-        return (duration * (wp / maxWidth)) as Milliseconds
-    }, [duration, maxWidth])
+        const wd = (duration * (wp / maxWidth)) as Milliseconds
+        if (onFrameWidth)
+            onFrameWidth(Math.floor(wd) as Milliseconds, Math.floor(wp))
+        return wd
+    }, [duration, maxWidth, onFrameWidth])
 
     const resize = useCallback(() => {
         const parent = refparent.current!
         fitCanvasOnParent(parent, refcanvas.current!)
-        draw(getWidth(), 0 as Milliseconds, duration as Milliseconds)
-    }, [draw, duration, getWidth])
+        draw(getWidth(), offset, duration as Milliseconds)
+    }, [draw, duration, offset, getWidth])
 
     useEffect(() => {
         resize()
