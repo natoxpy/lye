@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import Logo from '../components/icons/logo'
 
 function Option({
@@ -8,16 +9,20 @@ function Option({
     primary?: boolean
 }) {
     return (
-        <div
-            style={{
-                background: primary ? 'var(--color-accent-blue)' : '',
-                width: primary ? '138px' : '100px',
-                color: primary ? 'var(--color-txt-2)' : 'var(--color-txt-1)',
-            }}
-            className="cursor-pointer font-semibold flex items-center rounded-[6px] justify-center h-[49px]"
-        >
-            <span className="text-[16px]">{children}</span>
-        </div>
+        <Link href="/workspaces">
+            <div
+                style={{
+                    background: primary ? 'var(--color-accent-blue)' : '',
+                    width: primary ? '138px' : '100px',
+                    color: primary
+                        ? 'var(--color-txt-2)'
+                        : 'var(--color-txt-1)',
+                }}
+                className="cursor-pointer font-semibold flex items-center rounded-[6px] justify-center h-[49px]"
+            >
+                <span className="text-[16px]">{children}</span>
+            </div>
+        </Link>
     )
 }
 

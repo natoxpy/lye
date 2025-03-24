@@ -15,7 +15,7 @@ function EditorLoader() {
         <>
             <div className="bg-bg-4 h-full pt-3">
                 <div className="flex flex-col animate-pulse">
-                    {Array.from({ length: 12 }).map((_, i) => (
+                    {Array.from({ length: 30 }).map((_, i) => (
                         <div
                             key={i}
                             className="flex items-center w-full min-h-[60px] pr-[25px]"
