@@ -21,6 +21,7 @@ import RightArrowSquare from './rightArrowSquare'
 import SyncLines from './syncLines'
 import SyncLyrics from './syncLyrics'
 import Unlocked from './unlocked'
+import UploadMusic from './uploadMusic'
 import VolumeMax from './volumeMax'
 import X from './x'
 import OpenExternalLink from './openExternalLink'
@@ -122,6 +123,10 @@ export default function Page() {
                 <span className="flex flex-col items-center">
                     Unlocked
                     <Unlocked className="w-10 h-10 stroke-red-700" />
+                </span>
+                <span className="flex flex-col items-center">
+                    UploadMusic
+                    <UploadMusic className="w-10 h-10 stroke-red-700" />
                 </span>
                 <span className="flex flex-col items-center">
                     VolumeMax

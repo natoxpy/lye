@@ -1,11 +1,10 @@
-export default function Icon() {
+export default function Icon(props: React.ComponentProps<'svg'>) {
     return (
         <svg
-            width="75"
-            height="76"
             viewBox="0 0 75 76"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
+            {...props}
         >
             <path
                 d="M18.5 27C18.5 23.2288 18.5 21.3431 19.6716 20.1716C20.8431 19 22.7288 19 26.5 19C30.2712 19 32.1569 19 33.3284 20.1716C34.5 21.3431 34.5 23.2288 34.5 27C34.5 30.7712 34.5 32.6569 33.3284 33.8284C32.1569 35 30.2712 35 26.5 35C22.7288 35 20.8431 35 19.6716 33.8284C18.5 32.6569 18.5 30.7712 18.5 27Z"
