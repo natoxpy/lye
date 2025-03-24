@@ -5,6 +5,10 @@
 
 @import './dark.scss';
 
+html {
+    overflow: hidden;
+}
+
 body,
 pre {
     font-family: 'Inter', serif;

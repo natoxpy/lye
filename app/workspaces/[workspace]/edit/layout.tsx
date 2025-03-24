@@ -6,7 +6,7 @@ export default async function layout({
     sidebar: React.ReactNode
 }) {
     return (
-        <div className="flex w-screen grow overflow-hidden">
+        <div className="flex min-w-screen overflow-hidden">
             {sidebar}
             {children}
         </div>

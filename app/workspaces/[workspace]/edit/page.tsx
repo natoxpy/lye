@@ -71,7 +71,7 @@ export default function Page() {
     }, [lines, setLines, workspace])
 
     return (
-        <div className="w-full h-full relative pb-[50px]">
+        <div className="w-screen relative pb-[50px]">
             {lines == null ? (
                 <EditorLoader />
             ) : (

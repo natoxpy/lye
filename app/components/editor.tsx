@@ -90,8 +90,7 @@ function Layout({
     return (
         <div
             className={
-                'flex h-full pt-3 overflow-y-auto overscroll-none ' +
-                'min-w-[calc(100%-60px)] w-[calc(100%)]'
+                'flex w-full h-full pt-3 overflow-y-auto overflow-x-hidden overscroll-none'
             }
             onClick={() => {
                 const element = textareaRef.current
@@ -99,39 +98,36 @@ function Layout({
                 if (!textareaFocus) element.focus()
             }}
         >
-            <div
-                ref={numbersRef}
-                className="min-w-[85px] overflow-hidden h-fit"
-            >
+            <div ref={numbersRef} className="min-w-[85px] h-fit">
                 {numbers}
             </div>
-            <div
-                ref={linesRef}
-                className="relative w-[calc(100%-(60px+85px))] flex overscroll-none no-scrollbar pr-10 flex-col overflow-x-auto"
-            >
+
+            <div className="flex grow h-fit overflow-x-auto overflow-y-hidden overscroll-x-none">
                 <div
-                    ref={linesFitRef}
-                    className="min-w-fit pointer-events-none z-10 w-full"
+                    ref={linesRef}
+                    className="min-w-fit grow relative flex  pr-10 flex-col"
                 >
-                    {lines}
+                    <div ref={linesFitRef} className="pointer-events-none z-10">
+                        {lines}
+                    </div>
+                    <textarea
+                        ref={textareaRef}
+                        value={content.join('\n')}
+                        onBlur={() => setTextareaFocus(false)}
+                        onFocus={() => setTextareaFocus(true)}
+                        onChange={(e) => {
+                            setContent(e.target.value.split('\n'))
+                            setPreviousCursor(e.target.selectionEnd)
+                        }}
+                        style={{
+                            lineHeight: LINE_HEIGHT + 'px',
+                        }}
+                        className={
+                            'absolute p-0 opacity-50 text-[24px] text-txt-2 overflow-hidden top-0 left-0 bg-transparent ' +
+                            'resize-none shadow-none outline-none main-code-editor'
+                        }
+                    />
                 </div>
-                <textarea
-                    ref={textareaRef}
-                    value={content.join('\n')}
-                    onBlur={() => setTextareaFocus(false)}
-                    onFocus={() => setTextareaFocus(true)}
-                    onChange={(e) => {
-                        setContent(e.target.value.split('\n'))
-                        setPreviousCursor(e.target.selectionEnd)
-                    }}
-                    style={{
-                        lineHeight: LINE_HEIGHT + 'px',
-                    }}
-                    className={
-                        'absolute p-0 opacity-50 text-[24px] text-txt-2 overflow-hidden top-0 left-0 bg-transparent ' +
-                        'resize-none shadow-none outline-none main-code-editor'
-                    }
-                />
             </div>
         </div>
     )
@@ -175,17 +171,25 @@ export default function Editor({
             }}
             numbers={<LineNumbers lines={getLineNumbers()} />}
             lines={lines.map((c, key) => (
-                <span
-                    key={key}
-                    style={{
-                        color: isHeaderLine(c)
-                            ? 'var(--color-txt-1)'
-                            : 'var(--color-txt-2)',
-                    }}
-                    className="w-fit min-w-full whitespace-nowrap flex items-center select-none text-[24px] min-h-[60px]"
-                >
-                    <pre>{c}</pre>
-                </span>
+                <div key={key} className="flex">
+                    <span
+                        style={{
+                            color: isHeaderLine(c)
+                                ? 'var(--color-txt-1)'
+                                : 'var(--color-txt-2)',
+                        }}
+                        className="grow-0 whitespace-nowrap flex items-center select-none text-[24px] min-h-[60px]"
+                    >
+                        <pre>{c}</pre>
+                    </span>
+                    {isHeaderLine(c) ? (
+                        <div className="flex pl-5 grow-[1] items-center min-h-[60px]">
+                            <div className="w-full h-[3px] bg-bg-6 opacity-35"></div>
+                        </div>
+                    ) : (
+                        <></>
+                    )}
+                </div>
             ))}
         />
     )
