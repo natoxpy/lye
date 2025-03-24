@@ -9,7 +9,7 @@ import { updateWorkspace } from '@/states/persistance'
 import { Workspace } from '@/states/store-workspaces'
 // import jsmediatags from 'jsmediatags'
 
-type Props = { onClick: () => void; dropdown: React.ReactNode }
+type Props = { onClick(): void; dropdown: React.ReactNode }
 
 export default function Header({ onClick, dropdown }: Props) {
     const { workspace: workspaceId } = useParams<{ workspace: string }>()
@@ -91,6 +91,7 @@ export default function Header({ onClick, dropdown }: Props) {
             <div className="group cursor-pointer">
                 <IconFile
                     onClick={() => inputFileRef.current?.click()}
+                    opacity={workspaceRef == null ? 0 : 1}
                     style={{
                         stroke: workspaceRef?.fileblob
                             ? 'var(--color-txt-2)'
@@ -104,7 +105,9 @@ export default function Header({ onClick, dropdown }: Props) {
                 onClick={onClick}
                 className="flex cursor-pointer gap-[10px] justify-center items-center"
             >
-                <span className="text-txt-2 text-[20px]">{title}</span>
+                <span className="text-txt-2 text-[20px]">
+                    {workspaceRef != null ? title : 'Select Workspace'}
+                </span>
                 <IconCarrot className="stroke-txt-2 w-[14px] h-[14px]" />
             </div>
             {dropdown}
