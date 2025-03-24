@@ -71,12 +71,14 @@ export default function Page() {
     }, [lines, setLines, workspace])
 
     return (
-        <div className="w-full h-full">
+        <div className="w-full h-full relative pb-[50px]">
             {lines == null ? (
                 <EditorLoader />
             ) : (
                 <Editor lines={lines} setLines={setLines} />
             )}
+
+            <div className="relative w-full h-[50px] bg-bg-3"></div>
         </div>
     )
 }

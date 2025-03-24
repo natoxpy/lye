@@ -14,6 +14,10 @@ pre {
     background: var(--color-bg-6);
 }
 
+.main-code-editor::selection {
+    // background: transparent;
+}
+
 /* add the code bellow */
 @layer utilities {
     .rendering-pixelated {

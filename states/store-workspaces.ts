@@ -11,6 +11,7 @@ export type Workspace = {
         album: string
     }
     fileblob: Blob
+    coverblob: Blob
 }
 
 type WorkspacesState = {

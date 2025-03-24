@@ -18,6 +18,8 @@ function LineNumbers({ lines }: { lines: string[] }) {
             {lines.map((line, key) => (
                 <div
                     style={{
+                        backgroundColor:
+                            key == -1 ? 'rgba(255,255,255,0.5)' : '',
                         height: LINE_HEIGHT + 'px',
                     }}
                     className="flex pointer-events-none items-center justify-end pr-[25px]"
@@ -126,8 +128,8 @@ function Layout({
                         lineHeight: LINE_HEIGHT + 'px',
                     }}
                     className={
-                        'absolute p-0  text-[24px] text-txt-2 overflow-hidden top-0 left-0 bg-transparent ' +
-                        'resize-none shadow-none outline-none'
+                        'absolute p-0 opacity-50 text-[24px] text-txt-2 overflow-hidden top-0 left-0 bg-transparent ' +
+                        'resize-none shadow-none outline-none main-code-editor'
                     }
                 />
             </div>
@@ -180,7 +182,7 @@ export default function Editor({
                             ? 'var(--color-txt-1)'
                             : 'var(--color-txt-2)',
                     }}
-                    className="w-fit min-w-full whitespace-nowrap flex items-center select-none text-red-400 text-[24px] min-h-[60px]"
+                    className="w-fit min-w-full whitespace-nowrap flex items-center select-none text-[24px] min-h-[60px]"
                 >
                     <pre>{c}</pre>
                 </span>

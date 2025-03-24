@@ -1,3 +1,4 @@
+import Script from 'next/script'
 import '../themes/globals.scss'
 import type { Metadata } from 'next'
 export const metadata: Metadata = {
@@ -12,6 +13,9 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en" data-theme="dark">
+            <head>
+                <Script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js" />
+            </head>
             <body className={`antialiased`}>{children}</body>
         </html>
     )
