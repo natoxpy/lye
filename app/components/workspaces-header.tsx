@@ -8,9 +8,17 @@ import { updateWorkspace } from '@/states/persistance'
 import { Workspace } from '@/states/store-workspaces'
 import Link from 'next/link'
 
-type Props = { onClick(): void; dropdown: React.ReactNode }
+type Props = {
+    onClick(): void
+    dropdown: React.ReactNode
+    active: [boolean, (active: boolean) => void]
+}
 
-export default function Header({ onClick, dropdown }: Props) {
+export default function Header({
+    onClick,
+    dropdown,
+    active: [opened, setOpened],
+}: Props) {
     const { workspace: workspaceId } = useParams<{ workspace: string }>()
     const [title, setTitle] = useState('Loading...')
     const [workspaceRef, setWorkspaceRef] = useState<Workspace | null>(null)
@@ -24,7 +32,27 @@ export default function Header({ onClick, dropdown }: Props) {
         if (!workspace) return setWorkspaceRef(null)
         setTitle(workspace.title)
         setWorkspaceRef(workspace)
-    }, [workspaces, workspaceId])
+
+        const onMousedown = (e: MouseEvent) => {
+            const rolldown = (ht: HTMLElement | null) => {
+                if (!ht) return false
+                if (
+                    ht.id == 'headerDropdownWrapper' ||
+                    ht.id == 'headerDropdownParent'
+                )
+                    return true
+                return rolldown(ht.parentElement)
+            }
+
+            if (!rolldown(e.target as HTMLElement) && opened) setOpened(false)
+        }
+
+        document.addEventListener('mousedown', onMousedown)
+
+        return () => {
+            document.removeEventListener('mousedown', onMousedown)
+        }
+    }, [workspaces, workspaceId, opened, setOpened])
 
     return (
         <div className="flex bg-bg-1">
@@ -114,6 +142,7 @@ export default function Header({ onClick, dropdown }: Props) {
                 <div
                     onClick={onClick}
                     className="flex cursor-pointer gap-[10px] justify-center items-center"
+                    id="headerDropdownParent"
                 >
                     <span className="text-txt-2 text-[20px]">
                         {workspaceRef != null ? title : 'Select Workspace'}

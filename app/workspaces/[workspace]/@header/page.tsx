@@ -16,6 +16,7 @@ export default function Page() {
                 <Dropdown tab={[tab, setTab]} active={[active, setActive]} />
             }
             onClick={() => setActive(!active)}
+            active={[active, setActive]}
         />
     )
 }

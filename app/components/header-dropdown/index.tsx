@@ -94,6 +94,7 @@ export default function Dropdown({
                     maxHeight: !active ? '0px' : tabsize[tabIndex]?.h,
                 }}
                 className="z-30 absolute left-1/2 overflow-hidden -translate-x-1/2 text-white top-12 transition-all ease-in-out shadow-xl"
+                id="headerDropdownWrapper"
             >
                 <div>{childNodes}</div>
             </div>
