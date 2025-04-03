@@ -1,14 +1,13 @@
 'use client'
 import AppProvider from '@/store/provider'
 import PlayerAudioProvider from '@/app/components/player/component'
-// import { useEffect } from 'react'
-// import { usePlainLyrics } from '@/states/plain-lyrics'
-// import { UNAME } from '@/utils/units'
 
 export default function Layout({
+    header,
     children,
     navigation,
 }: {
+    header: React.ReactNode
     children: React.ReactNode
     navigation: React.ReactNode
 }) {
@@ -16,6 +15,7 @@ export default function Layout({
         <AppProvider>
             <PlayerAudioProvider>
                 <div className="flex-col w-screen max-h-screen h-screen bg-bg-4 flex overflow-hidden">
+                    {header}
                     {children}
                     {navigation}
                 </div>

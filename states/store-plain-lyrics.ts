@@ -1,6 +1,7 @@
 import { HEADER_PREFIX } from '@/app/components/editor'
 import { UNAME } from '@/utils/units'
 import { createStore } from 'zustand'
+import { addPlainlines } from './persistance'
 
 export type PlainLyrics = {
     id: UNAME
@@ -14,6 +15,8 @@ type PlainLyricsState = {
 
 type PlainLyricsActions = {
     actions: {
+        add: (workspace: UNAME) => void
+        setPlainLyrics: (plainLyrics: PlainLyrics[]) => void
         updateLyrics: (workspace: UNAME, content: string) => void
         createLyrics: (id: UNAME, workspace: UNAME, content: string) => void
     }
@@ -40,6 +43,26 @@ export const plainLyricsStore = createStore<PlainLyricsStore>()((set) => ({
         // },
     ],
     actions: {
+        add(workspace) {
+            set((state) => {
+                const obj = {
+                    'workspace': workspace,
+                    'content': '',
+                    'id': workspace
+                };
+
+                addPlainlines(obj);
+                state.lyrics.push(obj);
+                return state;
+            })
+
+        },
+        setPlainLyrics(plainLyrics) {
+            set((state) => {
+                state.lyrics = plainLyrics;
+                return state;
+            }, true)
+        },
         createLyrics(id, workspace, content) {
             set((state) => {
                 if (state.lyrics.find((i) => i.id === id)) return state
@@ -123,8 +146,11 @@ export function usePlainLyricsWorkspace(workspace: UNAME) {
 
     if (!lyrics) return null
 
-
     return lyrics.content.split('\n')
+}
+
+export function getPlainLyricsCount(lyrics: string): number {
+    return lyrics.split('\n').filter((a) => !a.startsWith(HEADER_PREFIX)).length
 }
 
 ///
@@ -135,7 +161,7 @@ export function usePlainLyricsLinesWorkspace(workspace: UNAME) {
         .getState()
         .lyrics.find((lyrics) => lyrics.workspace === workspace)
 
-    if (!lyrics) return [''] // error handle this later
+    if (!lyrics) return undefined // error handle this later
 
     return lyrics.content
         .split('\n')

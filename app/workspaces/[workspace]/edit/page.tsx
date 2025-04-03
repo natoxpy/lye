@@ -37,12 +37,24 @@ export default function Page() {
     const [lines, setLines] = useState<string[] | null>(
         usePlainLyricsWorkspace(workspace)
     )
+    const plainLyrics = usePlainLyrics((state) => state.lyrics)
     const workspacesLyricsList = usePlainLyrics((state) => state.lyrics)
 
     const updateLyrics = usePlainLyrics((state) => state.actions.updateLyrics)
+    const addLines = usePlainLyrics((state) => state.actions.add)
 
     useEffect(() => {
-        if (!lines) return
+        if (lines != null) return;
+        setLines(plainLyrics.find(pl => pl.workspace == workspace)?.content.split("\n") ?? null);
+    }, [lines, plainLyrics, workspace])
+
+    useEffect(() => {
+        if (!lines) {
+            addLines(workspace)
+
+            return
+        }
+
         updateLyrics(workspace, lines.join('\n'))
 
         const workspaceData = workspacesLyricsList.find(
@@ -52,7 +64,7 @@ export default function Page() {
         if (!workspaceData) return
 
         updatePlainlyrics(workspaceData)
-    }, [lines, updateLyrics, workspace, workspacesLyricsList])
+    }, [lines, updateLyrics, addLines, workspace, workspacesLyricsList])
 
     useEffect(() => {
         const handler = () => {

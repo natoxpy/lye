@@ -109,7 +109,7 @@ export async function getAllPlainlines(): Promise<PlainLyrics[]> {
 
 export async function deleteWorkspace(id: string) {
     const database = await Database()
-    const transaction = database.transaction('workspaces', 'readonly')
+    const transaction = database.transaction('workspaces', 'readwrite')
     const store = transaction.objectStore('workspaces')
     store.delete(id)
 }

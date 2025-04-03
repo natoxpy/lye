@@ -1,6 +1,7 @@
 import { UNAME } from '@/utils/units'
 import { createStore } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
+import { addWorkspace, deleteWorkspace } from './persistance'
 
 export type Workspace = {
     shorthand_id: string
@@ -23,6 +24,7 @@ type WorkspaceActions = {
         setWorkspaces: (workspaces: Workspace[]) => void
         update: (workspace: Workspace) => void
         add: (workspace: Workspace) => void
+        delete: (Workspace: Workspace) => void
     }
 }
 
@@ -49,9 +51,16 @@ export const workspacesStore = createStore<WorkspaceStore>()(
                 },
                 add(workspace) {
                     set((state) => {
+                        addWorkspace(workspace)
                         state.workspaces.push(workspace)
                     })
                 },
+                delete(workspace) {
+                    set((state) => {
+                        deleteWorkspace(workspace.id)
+                        state.workspaces = state.workspaces.filter((w) => w.id != workspace.id);
+                    })
+                }
             },
         }
     })
