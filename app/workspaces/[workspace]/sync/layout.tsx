@@ -38,7 +38,7 @@ export default function Layout({
 }) {
     const { workspace } = useParams<{ workspace: UNAME }>()
     const lines = usePlainLyricsLinesWorkspace(workspace)
-    const hasNoLines = lines.filter((a) => a.trim() !== '').length == 0
+    const hasNoLines = lines?.filter((a) => a.trim() !== '').length == 0
 
     return (
         <div

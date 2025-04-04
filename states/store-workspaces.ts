@@ -23,8 +23,8 @@ type WorkspaceActions = {
     actions: {
         setWorkspaces: (workspaces: Workspace[]) => void
         update: (workspace: Workspace) => void
-        add: (workspace: Workspace) => void
-        delete: (Workspace: Workspace) => void
+        add: (id: string, shorthand_id: string) => void
+        delete: (id: string) => void
     }
 }
 
@@ -49,18 +49,29 @@ export const workspacesStore = createStore<WorkspaceStore>()(
                         if (index !== -1) state.workspaces[index] = workspace
                     })
                 },
-                add(workspace) {
+                add(id, shorthand_id) {
                     set((state) => {
-                        addWorkspace(workspace)
-                        state.workspaces.push(workspace)
+                        const workspaceObj = {
+                            id: id as never,
+                            shorthand_id: shorthand_id,
+                            meta: { album: '', artist: '' },
+                            title: 'Unnamed',
+                            fileblob: undefined as never,
+                            coverblob: undefined as never,
+                        }
+
+                        addWorkspace(workspaceObj)
+                        state.workspaces.push(workspaceObj)
                     })
                 },
-                delete(workspace) {
+                delete(id: string) {
                     set((state) => {
-                        deleteWorkspace(workspace.id)
-                        state.workspaces = state.workspaces.filter((w) => w.id != workspace.id);
+                        deleteWorkspace(id)
+                        state.workspaces = state.workspaces.filter(
+                            (w) => w.id != id
+                        )
                     })
-                }
+                },
             },
         }
     })

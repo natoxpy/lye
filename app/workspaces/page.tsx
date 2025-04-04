@@ -1,16 +1,22 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import DownArrow from '../components/icons/downArrow'
-import { usePlainLyrics, useWorkspaces } from '@/states/hooks'
+import {
+    usePlainLyrics,
+    useWorkspaces,
+    useWorkspaceUtils,
+} from '@/states/hooks'
 import { getPlainLyricsCount } from '@/states/store-plain-lyrics'
 import { useRouter } from 'next/navigation'
 import Header from './@header/page'
 
 function ActiveList() {
-    const deleteWorkspace = useWorkspaces((state) => state.actions.delete)
+    // const deleteWorkspace = useWorkspaces((state) => state.actions.delete)
+    const { deleteWorkspace } = useWorkspaceUtils()
     const workspaces = useWorkspaces((state) => state.workspaces)
     const plainLyrics = usePlainLyrics((state) => state.lyrics)
     const router = useRouter()
+    const inputFileRef = useRef<HTMLInputElement>(null)
 
     return (
         <>
@@ -78,15 +84,129 @@ function ActiveList() {
 
                             <td className="pr-4">
                                 <div className="flex items-center gap-4 w-full h-full">
-                                    <button onClick={() => console.log(1)}>
-                                        <span className="text-txt-3">
+                                    <input
+                                        ref={inputFileRef}
+                                        type="file"
+                                        className="hidden"
+                                        onChange={async (e) => {
+                                            const getAudioArrayBuffer =
+                                                async (): Promise<ArrayBuffer> => {
+                                                    return new Promise(
+                                                        (res, rej) => {
+                                                            const file =
+                                                                Array.from(
+                                                                    e.target
+                                                                        .files ??
+                                                                        []
+                                                                )[0]
+                                                            if (
+                                                                !file ||
+                                                                (file &&
+                                                                    !file.type.startsWith(
+                                                                        'audio/'
+                                                                    ))
+                                                            )
+                                                                return
+                                                            const n =
+                                                                new FileReader()
+                                                            n.readAsArrayBuffer(
+                                                                file
+                                                            )
+
+                                                            n.onload = () =>
+                                                                res(
+                                                                    n.result as ArrayBuffer
+                                                                )
+                                                            n.onerror = () =>
+                                                                rej(n.error)
+                                                        }
+                                                    )
+                                                }
+
+                                            const getAudioPicture = async (
+                                                arrayBuffer: ArrayBuffer
+                                            ): Promise<ArrayBuffer> => {
+                                                const blob = new Blob([
+                                                    arrayBuffer,
+                                                ])
+
+                                                return new Promise(
+                                                    (res, rej) => {
+                                                        new (
+                                                            window as any
+                                                        ).jsmediatags.read(
+                                                            blob,
+                                                            {
+                                                                onSuccess: (
+                                                                    tag: any
+                                                                ) => {
+                                                                    const picture =
+                                                                        tag
+                                                                            .tags[
+                                                                            'picture'
+                                                                        ]
+                                                                    if (
+                                                                        !picture
+                                                                    )
+                                                                        return
+                                                                    res(
+                                                                        new Uint8Array(
+                                                                            picture.data
+                                                                        ).buffer
+                                                                    )
+                                                                },
+                                                                onError: (
+                                                                    error: never
+                                                                ) => rej(error),
+                                                            }
+                                                        )
+                                                    }
+                                                )
+                                            }
+
+                                            const audiobuffer =
+                                                await getAudioArrayBuffer()
+                                            const picturebuffer =
+                                                await getAudioPicture(
+                                                    audiobuffer
+                                                )
+
+                                            const audioBlob = new Blob([
+                                                audiobuffer,
+                                            ])
+                                            const audioCoverBlob = new Blob([
+                                                picturebuffer,
+                                            ])
+
+                                            console.log(audioBlob)
+                                            console.log(audioCoverBlob)
+                                            console.log(workspace)
+
+                                            // updateWorkspace({
+                                            //     ...workspace,
+                                            //     fileblob: audioBlob,
+                                            //     coverblob: audioCoverBlob,
+                                            // })
+                                        }}
+                                    />
+
+                                    <button
+                                        onClick={() =>
+                                            inputFileRef?.current?.click()
+                                        }
+                                        className="group/assign-audio"
+                                    >
+                                        <span className="text-txt-3 group-hover/assign-audio:text-txt-2">
                                             AssignAudio
                                         </span>
                                     </button>
 
                                     <button
                                         onClick={() => {
-                                            deleteWorkspace(workspace)
+                                            deleteWorkspace(
+                                                workspace.id,
+                                                workspace.shorthand_id
+                                            )
                                         }}
                                         className="group/delete-btn"
                                     >
@@ -189,7 +309,7 @@ function ProcessingList({
 
 function CreateNewButton() {
     const [opened, setOpened] = useState(false)
-    const addWorkspace = useWorkspaces((state) => state.actions.add)
+    const { createEmptyWorkspace } = useWorkspaceUtils()
 
     useEffect(() => {
         const onMousedown = (e: MouseEvent) => {
@@ -238,21 +358,8 @@ function CreateNewButton() {
             >
                 <button
                     onClick={() => {
-                        const id = crypto.randomUUID()
-                        const shorthand_id = id.split('-')[0]
-
-                        const obj = {
-                            id: id as never,
-                            shorthand_id: shorthand_id,
-                            meta: { album: '', artist: '' },
-                            title: 'Unnamed',
-                            fileblob: undefined as never,
-                            coverblob: undefined as never,
-                        }
-
                         setOpened(false)
-
-                        addWorkspace(obj)
+                        createEmptyWorkspace()
                     }}
                     className="relative text-left cursor-pointer hover:bg-bg-4 transition-all px-4 py-2"
                 >

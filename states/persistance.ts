@@ -116,7 +116,7 @@ export async function deleteWorkspace(id: string) {
 
 export async function deletePlainlines(id: string) {
     const database = await Database()
-    const transaction = database.transaction('plainlines', 'readonly')
+    const transaction = database.transaction('plainlines', 'readwrite')
     const store = transaction.objectStore('plainlines')
     store.delete(id)
 }

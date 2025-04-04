@@ -5,6 +5,7 @@ import { plainLyricsStore, PlainLyricsStore } from './store-plain-lyrics'
 import { headerStore, HeaderStore } from './store-header'
 import { synchronizerStore, SynchronizerStore } from './store-synchronizer'
 import { workspacesStore, WorkspaceStore } from './store-workspaces'
+import { UNAME } from '@/utils/units'
 
 export const useTimedLinesStore = create(() => timedLinesStore)
 
@@ -29,4 +30,26 @@ export const useSynchronizer = <T,>(
     selector: (state: SynchronizerStore) => T
 ): T => {
     return useStore(synchronizerStore, selector)
+}
+
+export const useWorkspaceUtils = () => {
+    const workspace = useWorkspaces((state) => state.actions)
+    const plainLyrics = usePlainLyrics((state) => state.actions)
+
+    const createEmptyWorkspace = () => {
+        const workspace_id = crypto.randomUUID() as UNAME
+        const shorthand_id = workspace_id.split('-')[0] as UNAME
+        workspace.add(workspace_id, shorthand_id)
+        plainLyrics.add(shorthand_id)
+    }
+
+    const deleteWorkspace = (id: string, shorthand_id: string) => {
+        workspace.delete(id)
+        plainLyrics.delete(shorthand_id as UNAME)
+    }
+
+    return {
+        createEmptyWorkspace,
+        deleteWorkspace,
+    }
 }

@@ -7,8 +7,8 @@ export function useLocalState() {
 
     return {
         newWorkspace: function NewLocalWorkspace(workspace: Workspace) {
-            addPlainlyrics(workspace.id, workspace.shorthand_id as never, '')
-            addWorkspace(workspace)
+            // addPlainlyrics(workspace.id, workspace.shorthand_id as never, '')
+            // addWorkspace(workspace)
         },
     }
 }

@@ -26,7 +26,7 @@ function Lines() {
 
 export default function Page() {
     return (
-        <div className="h-fit flex flex-col gap-4">
+        <div className="h-fit flex flex-col gap-2">
             <Lines />
         </div>
     )

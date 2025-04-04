@@ -26,6 +26,9 @@ const config: Config = {
                 'unaccent-accent-1': 'var(--color-unaccent-accent-1)',
                 'unaccent-accent-2': 'var(--color-unaccent-accent-2)',
             },
+            boxShadow: {
+                'top-shadow': '0 -10px 15px -3px,  0 -4px 6px -4px'
+            },
         },
     },
     plugins: [],

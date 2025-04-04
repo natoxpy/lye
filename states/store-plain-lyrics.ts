@@ -1,7 +1,7 @@
 import { HEADER_PREFIX } from '@/app/components/editor'
 import { UNAME } from '@/utils/units'
 import { createStore } from 'zustand'
-import { addPlainlines } from './persistance'
+import { addPlainlines, deletePlainlines } from './persistance'
 
 export type PlainLyrics = {
     id: UNAME
@@ -16,6 +16,7 @@ type PlainLyricsState = {
 type PlainLyricsActions = {
     actions: {
         add: (workspace: UNAME) => void
+        delete: (workspace: UNAME) => void
         setPlainLyrics: (plainLyrics: PlainLyrics[]) => void
         updateLyrics: (workspace: UNAME, content: string) => void
         createLyrics: (id: UNAME, workspace: UNAME, content: string) => void
@@ -25,42 +26,41 @@ type PlainLyricsActions = {
 export type PlainLyricsStore = PlainLyricsState & PlainLyricsActions
 
 export const plainLyricsStore = createStore<PlainLyricsStore>()((set) => ({
-    lyrics: [
-        // {
-        //     id: 'e5d1d5b9-4141-4797-a34e-0f53a914c4b9' as UNAME,
-        //     content: 'Iron Lotus Lyrics',
-        //     workspace: '50685e09' as UNAME,
-        // },
-        // {
-        //     id: '3bd43f69-d9d0-4715-bdaf-df6a45bbb183' as UNAME,
-        //     content: 'In Hell We Live, Lament Lyrics',
-        //     workspace: 'f122e5d2' as UNAME,
-        // },
-        // {
-        //     id: 'b5cc0d74-9d4f-4c21-b3ce-4407e2816985' as UNAME,
-        //     content: "Grown-up's paradise Lyrics",
-        //     workspace: '098cf7e1' as UNAME,
-        // },
-    ],
+    lyrics: [],
     actions: {
         add(workspace) {
             set((state) => {
+                const id = crypto.randomUUID()
+
                 const obj = {
-                    'workspace': workspace,
-                    'content': '',
-                    'id': workspace
-                };
+                    workspace: workspace,
+                    content: '',
+                    id: id as UNAME,
+                }
 
-                addPlainlines(obj);
-                state.lyrics.push(obj);
-                return state;
+                addPlainlines(obj)
+                state.lyrics.push(obj)
+                return state
             })
+        },
+        delete(workspace) {
+            set((state) => {
+                const lyric = state.lyrics.find((l) => l.workspace == workspace)
+                if (!lyric) return state
 
+                deletePlainlines(lyric.id)
+
+                state.lyrics = state.lyrics.filter(
+                    (l) => l.workspace != workspace
+                )
+
+                return state
+            }, true)
         },
         setPlainLyrics(plainLyrics) {
             set((state) => {
-                state.lyrics = plainLyrics;
-                return state;
+                state.lyrics = plainLyrics
+                return state
             }, true)
         },
         createLyrics(id, workspace, content) {
@@ -91,52 +91,6 @@ export const plainLyricsStore = createStore<PlainLyricsStore>()((set) => ({
     },
 }))
 
-/*
-export const usePlainLyrics = create<PlainLyricsStore>()(
-    immer((set) => ({
-        lyrics: [
-            {
-                id: 'e5d1d5b9-4141-4797-a34e-0f53a914c4b9' as UNAME,
-                content: 'Iron Lotus Lyrics',
-                workspace: '50685e09' as UNAME,
-            },
-            // {
-            //     id: '3bd43f69-d9d0-4715-bdaf-df6a45bbb183' as UNAME,
-            //     content: 'In Hell We Live, Lament Lyrics',
-            //     workspace: 'f122e5d2' as UNAME,
-            // },
-            // {
-            //     id: 'b5cc0d74-9d4f-4c21-b3ce-4407e2816985' as UNAME,
-            //     content: "Grown-up's paradise Lyrics",
-            //     workspace: '098cf7e1' as UNAME,
-            // },
-        ],
-        actions: {
-            createLyrics(id, workspace, content) {
-                set((state) => {
-                    if (state.lyrics.find((i) => i.id === id)) return
-
-                    state.lyrics.push({
-                        id,
-                        workspace,
-                        content,
-                    })
-                })
-            },
-            updateLyrics(workspace, content) {
-                set((state) => {
-                    const idx = state.lyrics.findIndex(
-                        (i) => i.workspace === workspace
-                    )
-                    if (idx == -1) return
-                    state.lyrics[idx].content = content
-                })
-            },
-        },
-    }))
-)
-    */
-
 export function usePlainLyricsWorkspace(workspace: UNAME) {
     const lyrics = plainLyricsStore
         .getState()
@@ -161,7 +115,7 @@ export function usePlainLyricsLinesWorkspace(workspace: UNAME) {
         .getState()
         .lyrics.find((lyrics) => lyrics.workspace === workspace)
 
-    if (!lyrics) return undefined // error handle this later
+    if (!lyrics) return [] // error handle this later
 
     return lyrics.content
         .split('\n')
