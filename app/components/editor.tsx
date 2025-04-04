@@ -7,9 +7,10 @@ export const HEADER_PREFIX = '\u200B'
 const LINE_HEIGHT = 60
 
 const HeaderLineNumberPlaceholder = '#'
+const HeaderLineNumberReplacement = '#'
 
 function isHeaderLine(v: string) {
-    return v.trim().startsWith('#') || v.trim().startsWith(HEADER_PREFIX)
+    return v.trim().startsWith(HeaderLineNumberReplacement) || v.trim().startsWith(HEADER_PREFIX)
 }
 
 function LineNumbers({ lines }: { lines: string[] }) {
@@ -163,8 +164,8 @@ export default function Editor({
             setContent={(v) => {
                 setLines(
                     v.map((c) => {
-                        if (c.startsWith('#'))
-                            return c.replace('#', HEADER_PREFIX)
+                        if (c.startsWith(HeaderLineNumberReplacement))
+                            return c.replace(HeaderLineNumberReplacement, HEADER_PREFIX)
                         return c
                     })
                 )
