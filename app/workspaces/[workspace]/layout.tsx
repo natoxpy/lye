@@ -14,7 +14,7 @@ export default function Layout({
     return (
         <AppProvider>
             <PlayerAudioProvider>
-                <div className="flex-col w-screen max-h-screen h-screen bg-bg-4 flex overflow-hidden">
+                <div className="flex-col w-screen max-h-screen h-screen bg-bg-3 flex overflow-hidden">
                     {header}
                     {children}
                     {navigation}
