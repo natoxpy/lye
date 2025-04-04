@@ -42,18 +42,20 @@ function ActiveList() {
                     {workspaces.map((workspace, index) => (
                         <tr
                             key={index}
-                            className="border-t-2 group transition-all w-12 border-bg-5 h-14 relative items-center hover:bg-bg-4"
-                            onDoubleClick={() => {
-                                router.push(
-                                    `/workspaces/${workspace.shorthand_id}/edit`
-                                )
-                            }}
+                            className="border-t-2 group transition-all w-12 border-bg-5 h-14 relative items-center"
                         >
                             <td className="flex justify-center items-center w-12 h-14">
                                 <div className="w-5 h-5 border-2 group-hover:border-txt-3 border-transparent cursor-pointer hover:opacity-100 opacity-50 transition-all rounded-full"></div>
                             </td>
                             <td>
-                                <span className="text-txt-3">
+                                <span
+                                    onClick={() => {
+                                        router.push(
+                                            `/workspaces/${workspace.shorthand_id}/edit`
+                                        )
+                                    }}
+                                    className="text-txt-3 hover:text-txt-2 cursor-pointer transition-all"
+                                >
                                     {workspace.title}
                                 </span>
                             </td>
@@ -264,6 +266,10 @@ function CreateNewButton() {
                 <button className="relative text-left transition-all px-4 py-2 opacity-50">
                     <span className="text-txt-2">From LRCLIB</span>
                 </button>
+
+                <button className="relative text-left transition-all px-4 py-2 opacity-50">
+                    <span className="text-txt-2">From Genius</span>
+                </button>
             </div>
         </div>
     )
@@ -283,13 +289,13 @@ export default function Page() {
                             />
 
                             <div className="flex rounded-md overflow-hidden">
-                                <div className="text-txt-2 bg-bg-4 hover:bg-bg-3 px-4 py-2 ">
+                                <div className="text-txt-2 bg-bg-3 hover:bg-bg-4 px-4 py-2 cursor-pointer select-none">
                                     Active
                                 </div>
-                                <div className="text-txt-3 bg-bg-2 hover:bg-bg-3 cursor-pointer px-4 py-2">
+                                <div className="text-txt-3 bg-bg-2 hover:bg-bg-4 cursor-pointer px-4 py-2 select-none">
                                     Processing
                                 </div>
-                                <div className="bg-bg-2 hover:bg-bg-4 cursor-pointer px-4 py-2 text-txt-3">
+                                <div className="bg-bg-2 hover:bg-bg-4 cursor-pointer px-4 py-2 text-txt-3 select-none">
                                     Finished
                                 </div>
                             </div>
