@@ -309,7 +309,7 @@ function ProcessingList({
 
 function CreateNewButton() {
     const [opened, setOpened] = useState(false)
-    const { createEmptyWorkspace } = useWorkspaceUtils()
+    const { createEmptyWorkspace, createWorkspace } = useWorkspaceUtils()
 
     useEffect(() => {
         const onMousedown = (e: MouseEvent) => {
@@ -366,16 +366,54 @@ function CreateNewButton() {
                     <span className="text-txt-2">Empty</span>
                 </button>
 
-                <button className="relative text-left transition-all px-4 py-2 opacity-50">
+                <button
+                    onClick={async () => {
+                        const url = prompt('Genius link')
+
+                        setOpened(false)
+
+                        if (
+                            url == null ||
+                            url.startsWith('https://genius.com') == false
+                        )
+                            return
+
+                        const response = await fetch(
+                            `/api/genius?url=${decodeURI(url)}`
+                        )
+
+                        if (response.status == 400) {
+                            alert(`${url} was not found`)
+                            return
+                        }
+
+                        const song = (await response.json()) as {
+                            title: string
+                            album: string
+                            artist: string
+                            lyrics: string
+                        }
+
+                        createWorkspace({
+                            workspace: {
+                                title: song.title,
+                                album: song.album,
+                                artist: song.artist,
+                            },
+                            plainLyrics: song.lyrics,
+                        })
+                    }}
+                    className="relative text-left cursor-pointer hover:bg-bg-4 transition-all px-4 py-2"
+                >
+                    <span className="text-txt-2">From Genius</span>
+                </button>
+
+                <button className="relative text-left transition-all cursor-default px-4 py-2 opacity-50">
                     <span className="text-txt-2">From LUR</span>
                 </button>
 
-                <button className="relative text-left transition-all px-4 py-2 opacity-50">
+                <button className="relative text-left transition-all cursor-default px-4 py-2 opacity-50">
                     <span className="text-txt-2">From LRCLIB</span>
-                </button>
-
-                <button className="relative text-left transition-all px-4 py-2 opacity-50">
-                    <span className="text-txt-2">From Genius</span>
                 </button>
             </div>
         </div>

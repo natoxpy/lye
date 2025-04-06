@@ -33,23 +33,47 @@ export const useSynchronizer = <T,>(
 }
 
 export const useWorkspaceUtils = () => {
-    const workspace = useWorkspaces((state) => state.actions)
-    const plainLyrics = usePlainLyrics((state) => state.actions)
+    const workspaceStore = useWorkspaces((state) => state.actions)
+    const plainLyricsStore = usePlainLyrics((state) => state.actions)
 
     const createEmptyWorkspace = () => {
         const workspace_id = crypto.randomUUID() as UNAME
         const shorthand_id = workspace_id.split('-')[0] as UNAME
-        workspace.add(workspace_id, shorthand_id)
-        plainLyrics.add(shorthand_id)
+        workspaceStore.add(workspace_id, shorthand_id)
+        plainLyricsStore.add(shorthand_id)
+
+        return [workspace_id, shorthand_id]
     }
 
     const deleteWorkspace = (id: string, shorthand_id: string) => {
-        workspace.delete(id)
-        plainLyrics.delete(shorthand_id as UNAME)
+        workspaceStore.delete(id)
+        plainLyricsStore.delete(shorthand_id as UNAME)
+    }
+
+    const createWorkspace = ({
+        workspace,
+        plainLyrics,
+    }: {
+        workspace: { title: string; artist: string; album: string }
+        plainLyrics: string
+        synced?: []
+    }) => {
+        const workspace_id = crypto.randomUUID() as UNAME
+        const shorthand_id = workspace_id.split('-')[0] as UNAME
+
+        workspaceStore.add(workspace_id, shorthand_id, {
+            title: workspace.title,
+            meta: { artist: workspace.artist, album: workspace.album },
+            fileblob: undefined as never,
+            coverblob: undefined as never,
+        })
+
+        plainLyricsStore.add(shorthand_id, plainLyrics)
     }
 
     return {
         createEmptyWorkspace,
+        createWorkspace,
         deleteWorkspace,
     }
 }

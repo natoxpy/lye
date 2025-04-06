@@ -8,7 +8,7 @@ import {
 } from '@/states/store-plain-lyrics'
 import { UNAME } from '@/utils/units'
 import { useParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import PlayIcon from '@/app/components/icons/play'
 import PauseIcon from '@/app/components/icons/pause'
 import useAudio from '@/app/components/audio'
@@ -41,6 +41,7 @@ export default function Page() {
     const [lines, setLines] = useState<string[] | null>(
         usePlainLyricsWorkspace(workspace)
     )
+    const seekbarRef = useRef<HTMLDivElement>(null)
     const plainLyrics = usePlainLyrics((state) => state.lyrics)
     const workspacesLyricsList = usePlainLyrics((state) => state.lyrics)
 
@@ -121,7 +122,17 @@ export default function Page() {
                             {formatS(audio.currentTime * 1000)}
                         </span>
                     </div>
-                    <div className="flex items-center w-full h-[25px] cursor-pointer group/seekbar">
+                    <div
+                        onClick={() => {
+                            const element = seekbarRef.current
+                            if (!element) return
+                            const box = element.getBoundingClientRect()
+                            console.log(box)
+                        }}
+                        className="flex items-center w-full h-[25px] cursor-pointer group/seekbar"
+                        id="seekbar-interactive"
+                        ref={seekbarRef}
+                    >
                         <div className="flex items-center rounded w-full h-[5px] bg-bg-5">
                             <div
                                 style={{

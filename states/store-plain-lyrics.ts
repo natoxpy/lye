@@ -15,7 +15,7 @@ type PlainLyricsState = {
 
 type PlainLyricsActions = {
     actions: {
-        add: (workspace: UNAME) => void
+        add: (workspace: UNAME, content?: string) => void
         delete: (workspace: UNAME) => void
         setPlainLyrics: (plainLyrics: PlainLyrics[]) => void
         updateLyrics: (workspace: UNAME, content: string) => void
@@ -28,13 +28,13 @@ export type PlainLyricsStore = PlainLyricsState & PlainLyricsActions
 export const plainLyricsStore = createStore<PlainLyricsStore>()((set) => ({
     lyrics: [],
     actions: {
-        add(workspace) {
+        add(workspace, content) {
             set((state) => {
                 const id = crypto.randomUUID()
 
                 const obj = {
                     workspace: workspace,
-                    content: '',
+                    content: content ?? '',
                     id: id as UNAME,
                 }
 
