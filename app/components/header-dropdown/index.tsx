@@ -87,7 +87,7 @@ export default function Dropdown({
         </>
     )
 
-    const dropdownWrapper = (
+    return (
         <>
             <div
                 style={{
@@ -100,6 +100,4 @@ export default function Dropdown({
             </div>
         </>
     )
-
-    return dropdownWrapper
 }

@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import { useEffect, useRef, useState } from 'react'
 import DownArrow from '../components/icons/downArrow'
 import {
+    useHeader,
     usePlainLyrics,
     useWorkspaces,
     useWorkspaceUtils,
@@ -132,7 +134,8 @@ function ActiveList() {
 
                                                 return new Promise(
                                                     (res, rej) => {
-                                                        new (
+                                                        new 
+                                                        (
                                                             window as any
                                                         ).jsmediatags.read(
                                                             blob,
@@ -177,10 +180,6 @@ function ActiveList() {
                                             const audioCoverBlob = new Blob([
                                                 picturebuffer,
                                             ])
-
-                                            console.log(audioBlob)
-                                            console.log(audioCoverBlob)
-                                            console.log(workspace)
 
                                             // updateWorkspace({
                                             //     ...workspace,
@@ -421,6 +420,11 @@ function CreateNewButton() {
 }
 
 export default function Page() {
+    const header = useHeader((state) => state.actions)
+    useEffect(() => {
+        header.setTab(0)
+    })
+
     return (
         <div className="flex flex-col w-screen max-h-screen h-screen bg-bg-2">
             <Header />
