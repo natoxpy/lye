@@ -11,6 +11,7 @@ import {
 import { getPlainLyricsCount } from '@/states/store-plain-lyrics'
 import { useRouter } from 'next/navigation'
 import Header from './@header/page'
+import { updateWorkspace } from '@/states/persistance'
 
 function ActiveList() {
     // const deleteWorkspace = useWorkspaces((state) => state.actions.delete)
@@ -181,11 +182,11 @@ function ActiveList() {
                                                 picturebuffer,
                                             ])
 
-                                            // updateWorkspace({
-                                            //     ...workspace,
-                                            //     fileblob: audioBlob,
-                                            //     coverblob: audioCoverBlob,
-                                            // })
+                                            updateWorkspace({
+                                                ...workspace,
+                                                fileblob: audioBlob,
+                                                coverblob: audioCoverBlob,
+                                            })
                                         }}
                                     />
 
