@@ -423,6 +423,7 @@ function CreateNewButton() {
 export default function Page() {
     const header = useHeader((state) => state.actions)
     useEffect(() => {
+        header.setActive(false)
         header.setTab(0)
     })
 
