@@ -8,7 +8,6 @@ export default function Layout({
     children: React.ReactNode
 }) {
     useEffect(() => {
-        console.log('load');
         loadAll()
     }, [])
 

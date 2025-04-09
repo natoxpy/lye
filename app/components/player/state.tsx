@@ -10,6 +10,7 @@ export type State = {
     volume: number
     src: string | null
 }
+
 type Actions =
     | { type: 'set-currentTime'; payload: Milliseconds }
     | { type: 'set-duration'; payload: Milliseconds }
