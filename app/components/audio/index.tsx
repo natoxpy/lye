@@ -10,6 +10,7 @@ type Actions = { play: () => void; pause: () => void }
 type State = {
     paused: boolean
     currentTime: number
+    volume: number
     duration: number
     src: string
 }
@@ -18,6 +19,7 @@ const AudioContext = createContext<State & Actions>({
     paused: false,
     currentTime: 0,
     duration: 0,
+    volume: 0,
     src: '',
     pause() {},
     play() {},
@@ -76,14 +78,28 @@ export default function Provider({ children }: { children: React.ReactNode }) {
                 get paused() {
                     return audio?.paused ?? true
                 },
+
                 get currentTime() {
                     return audio?.currentTime || 0
                 },
+
                 set currentTime(time: number) {
                     if (!audio) return
                     audio.currentTime = time
                     updateTick()
                 },
+
+                get volume() {
+                    if (!audio) return 1
+                    return audio.volume
+                },
+
+                set volume(vol: number) {
+                    if (!audio) return
+                    audio.volume = vol
+                    updateTick()
+                },
+
                 get duration() {
                     return audio?.duration || 0
                 },
