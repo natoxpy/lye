@@ -10,10 +10,71 @@ const HeaderLineNumberPlaceholder = '#'
 const HeaderLineNumberReplacement = '#'
 
 function isHeaderLine(v: string) {
-    return v.trim().startsWith(HeaderLineNumberReplacement) || v.trim().startsWith(HEADER_PREFIX)
+    return (
+        v.trim().startsWith(HeaderLineNumberReplacement) ||
+        v.trim().startsWith(HEADER_PREFIX)
+    )
 }
 
-function LineNumbers({ lines }: { lines: string[] }) {
+const SidelineMarkers = {
+    Error: ({ lines, msg }: { lines: number; msg: string }) => (
+        <div
+            style={{
+                height: `calc(60px * ${lines})`,
+            }}
+            className="group/msg-box top-0 absolute min-w-4 max-w-4 z-40"
+        >
+            <div className="flex items-center h-full min-w-1 max-w-1 bg-red-500 rounded-r">
+                <div className="absolute group-hover/msg-box:opacity-100 group-hover/msg-box:scale-100 origin-left transition-all opacity-35 scale-0 w-fit h-fit bg-[hsla(var(--color-bg-5-hsl),0.75)] p-2 left-2 rounded z-50">
+                    <span className="text-txt-2 text-[14px]">{msg}</span>
+                </div>
+            </div>
+        </div>
+    ),
+    Warning: ({ lines, msg }: { lines: number; msg: string }) => (
+        <div
+            style={{
+                height: `calc(60px * ${lines})`,
+            }}
+            className="group/msg-box top-0 absolute min-w-4 max-w-4 z-20"
+        >
+            <div className="flex items-center h-full min-w-1 max-w-1 bg-yellow-400 rounded-r">
+                <div className="absolute group-hover/msg-box:opacity-100 group-hover/msg-box:scale-100 origin-left transition-all opacity-35 scale-0 w-fit h-fit bg-[hsla(var(--color-bg-5-hsl),0.75)] p-2 left-2 rounded z-50">
+                    <span className="text-txt-2 text-[14px]">{msg}</span>
+                </div>
+            </div>
+        </div>
+    ),
+    Message: ({ lines, msg }: { lines: number; msg: string }) => {
+        return (
+            <div
+                style={{
+                    height: `calc(60px * ${lines})`,
+                }}
+                className="group/msg-box top-0 absolute min-w-4 max-w-4 z-20"
+            >
+                <div className="flex items-center h-full min-w-1 max-w-1 bg-accent-blue rounded-r">
+                    <div className="absolute group-hover/msg-box:opacity-100 group-hover/msg-box:scale-100 origin-left transition-all opacity-35 scale-0 w-fit h-fit bg-[hsla(var(--color-bg-5-hsl),0.75)] p-2 left-2 rounded z-50">
+                        <span className="text-txt-2 text-[14px]">{msg}</span>
+                    </div>
+                </div>
+            </div>
+        )
+    },
+}
+
+function LineNumbers({
+    lines,
+    sidelogs,
+}: {
+    lines: string[]
+    sidelogs: {
+        type: 'error' | 'warning' | 'message'
+        start: number
+        lines: number
+        msg: string
+    }[]
+}) {
     return (
         <>
             {lines.map((line, key) => (
@@ -23,9 +84,35 @@ function LineNumbers({ lines }: { lines: string[] }) {
                             key == -1 ? 'rgba(255,255,255,0.5)' : '',
                         height: LINE_HEIGHT + 'px',
                     }}
-                    className="flex pointer-events-none items-center justify-end pr-[25px]"
+                    className="relative flex select-none items-center justify-between pr-[25px]"
                     key={key}
                 >
+                    {sidelogs.map(({ type, msg, start, lines }) => (
+                        <>
+                            {type == 'error' && key == start && (
+                                <SidelineMarkers.Error
+                                    lines={lines}
+                                    msg={msg}
+                                />
+                            )}
+
+                            {type == 'warning' && key == start && (
+                                <SidelineMarkers.Error
+                                    lines={lines}
+                                    msg={msg}
+                                />
+                            )}
+
+                            {type == 'message' && key == start && (
+                                <SidelineMarkers.Error
+                                    lines={lines}
+                                    msg={msg}
+                                />
+                            )}
+                        </>
+                    ))}
+
+                    <span />
                     <span className="text-[20px] pointer-events-none select-none text-txt-1">
                         {line}
                     </span>
@@ -165,28 +252,55 @@ export default function Editor({
                 setLines(
                     v.map((c) => {
                         if (c.startsWith(HeaderLineNumberReplacement))
-                            return c.replace(HeaderLineNumberReplacement, HEADER_PREFIX)
+                            return c.replace(
+                                HeaderLineNumberReplacement,
+                                HEADER_PREFIX
+                            )
                         return c
                     })
                 )
             }}
-            numbers={<LineNumbers lines={getLineNumbers()} />}
+            numbers={
+                <LineNumbers
+                    lines={getLineNumbers()}
+                    sidelogs={[
+                        {
+                            type: 'error',
+                            start: 0,
+                            lines: 3,
+                            msg: 'Section does not include header',
+                        },
+                    ]}
+                />
+            }
             lines={lines.map((c, key) => (
-                <div key={key} className="flex">
+                <div
+                    key={key}
+                    className="flex items-center gap-3 hover/headerline"
+                >
                     <span
                         style={{
                             color: isHeaderLine(c)
-                                ? 'var(--color-txt-1)'
+                                ? 'var(--color-txt-3)'
                                 : 'var(--color-txt-2)',
                         }}
                         className="grow-0 whitespace-nowrap flex items-center select-none text-[24px] min-h-[60px]"
                     >
                         <pre>{c}</pre>
                     </span>
+
                     {isHeaderLine(c) ? (
-                        <div className="flex pl-5 grow-[1] items-center min-h-[60px]">
-                            <div className="w-full h-[3px] bg-bg-6 opacity-35"></div>
-                        </div>
+                        <>
+                            <div className="w-6 h-[3px] bg-bg-5 opacity-35"></div>
+                            <span className="text-txt-3 opacity-50 select-none transition-all pointer-events-auto cursor-pointer hover:opacity-100">
+                                00:00
+                            </span>
+                            <div className="min-w-2 h-[3px] bg-bg-5 rounded-full"></div>
+                            <span className="text-txt-3 opacity-50 select-none transition-all pointer-events-auto cursor-pointer hover:opacity-100">
+                                00:00
+                            </span>
+                            <div className="w-full h-[3px] bg-bg-4 opacity-35"></div>
+                        </>
                     ) : (
                         <></>
                     )}
