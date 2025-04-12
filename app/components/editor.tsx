@@ -506,7 +506,7 @@ export default function Editor({
 
                     {isHeaderLine(c) ? (
                         <>
-                            <div className="w-6 h-[3px] bg-bg-5 opacity-35"></div>
+                            <div className="min-w-6 h-[3px] bg-bg-5 opacity-35"></div>
                             <span className="text-txt-3 opacity-50 select-none transition-all pointer-events-auto cursor-pointer hover:opacity-100">
                                 00:00
                             </span>
