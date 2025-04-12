@@ -54,7 +54,7 @@ const SidelineMarkers = {
                               ? 'flex-start'
                               : 'center',
                 }}
-                className="relative flex h-full w-1 bg-red-400 rounded-r group-hover/msg-box:bg-red-500 group-hover/msg-box:w-2 transition-all group-hover/msg-box:opacity-100 opacity-50"
+                className="relative flex h-full w-1 bg-red-400 rounded-r group-hover/msg-box:bg-red-500 group-hover/msg-box:w-2 transition-all group-hover/msg-box:opacity-100 opacity-75"
             >
                 <div className="absolute group-hover/msg-box:opacity-100 group-hover/msg-box:scale-100 origin-left transition-all opacity-35 scale-0 w-fit h-fit bg-[hsla(var(--color-bg-5-hsl),0.75)] px-3 py-2 left-4 rounded z-50">
                     <span className="text-txt-2 text-[14px]">{msg}</span>
@@ -240,6 +240,23 @@ function Layout({
         }
     }, [lines, previosCursor, setPreviousCursor])
 
+    const properPlaceCursor = () => {
+        const txtArea = textareaRef.current
+        if (!txtArea) return
+
+        setTimeout(() => {
+            if (txtArea.selectionStart != txtArea.selectionEnd) return
+            const selection = txtArea.selectionStart
+
+            const char = txtArea.value[selection - 1]
+
+            if (char == HEADER_PREFIX) {
+                txtArea.selectionStart = selection - 1
+                txtArea.selectionEnd = selection - 1
+            }
+        })
+    }
+
     return (
         <div
             className={
@@ -249,6 +266,7 @@ function Layout({
                 const element = textareaRef.current
                 if (!element) return
                 if (!textareaFocus) element.focus()
+                properPlaceCursor()
             }}
         >
             <div ref={numbersRef} className="min-w-[85px] h-fit">
@@ -266,6 +284,40 @@ function Layout({
                     <textarea
                         ref={textareaRef}
                         value={content.join('\n')}
+                        onKeyDown={(e) => {
+                            const txtArea = textareaRef.current
+                            if (!txtArea) return
+
+                            setTimeout(() => {
+                                if (
+                                    txtArea.selectionStart !=
+                                    txtArea.selectionEnd
+                                )
+                                    return
+                                const selection = txtArea.selectionStart
+
+                                const char = txtArea.value[selection - 1]
+
+                                if (char == HEADER_PREFIX) {
+                                    if (
+                                        e.key == 'ArrowLeft' &&
+                                        selection - 1 >= 0
+                                    ) {
+                                        txtArea.selectionStart = selection - 1
+                                        txtArea.selectionEnd = selection - 1
+                                    } else if (
+                                        e.key == 'ArrowRight' &&
+                                        selection + 1 < txtArea.value.length - 1
+                                    ) {
+                                        txtArea.selectionStart = selection + 1
+                                        txtArea.selectionEnd = selection + 1
+                                    } else {
+                                        txtArea.selectionStart = selection - 1
+                                        txtArea.selectionEnd = selection - 1
+                                    }
+                                }
+                            })
+                        }}
                         onBlur={() => setTextareaFocus(false)}
                         onFocus={() => setTextareaFocus(true)}
                         onChange={(e) => {
