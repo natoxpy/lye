@@ -376,8 +376,6 @@ function fmtLines(lines: string[]): [SectionType[], SidelogType[]] {
             )
     }
 
-    console.log(logs)
-
     return [sections, logs]
 }
 
