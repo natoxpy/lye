@@ -257,6 +257,34 @@ function Layout({
         })
     }
 
+    const properPlaceCursorByEvent = (e: KeyboardEvent) => {
+        const txtArea = textareaRef.current
+        if (!txtArea) return
+
+        setTimeout(() => {
+            if (txtArea.selectionStart != txtArea.selectionEnd) return
+            const selection = txtArea.selectionStart
+
+            const char = txtArea.value[selection - 1]
+
+            if (char == HEADER_PREFIX) {
+                if (e.key == 'ArrowLeft' && selection - 1 >= 0) {
+                    txtArea.selectionStart = selection - 1
+                    txtArea.selectionEnd = selection - 1
+                } else if (
+                    e.key == 'ArrowRight' &&
+                    selection + 1 < txtArea.value.length - 1
+                ) {
+                    txtArea.selectionStart = selection + 1
+                    txtArea.selectionEnd = selection + 1
+                } else {
+                    txtArea.selectionStart = selection - 1
+                    txtArea.selectionEnd = selection - 1
+                }
+            }
+        })
+    }
+
     return (
         <div
             className={
@@ -285,38 +313,9 @@ function Layout({
                         ref={textareaRef}
                         value={content.join('\n')}
                         onKeyDown={(e) => {
-                            const txtArea = textareaRef.current
-                            if (!txtArea) return
-
-                            setTimeout(() => {
-                                if (
-                                    txtArea.selectionStart !=
-                                    txtArea.selectionEnd
-                                )
-                                    return
-                                const selection = txtArea.selectionStart
-
-                                const char = txtArea.value[selection - 1]
-
-                                if (char == HEADER_PREFIX) {
-                                    if (
-                                        e.key == 'ArrowLeft' &&
-                                        selection - 1 >= 0
-                                    ) {
-                                        txtArea.selectionStart = selection - 1
-                                        txtArea.selectionEnd = selection - 1
-                                    } else if (
-                                        e.key == 'ArrowRight' &&
-                                        selection + 1 < txtArea.value.length - 1
-                                    ) {
-                                        txtArea.selectionStart = selection + 1
-                                        txtArea.selectionEnd = selection + 1
-                                    } else {
-                                        txtArea.selectionStart = selection - 1
-                                        txtArea.selectionEnd = selection - 1
-                                    }
-                                }
-                            })
+                            properPlaceCursorByEvent(
+                                e as never as KeyboardEvent
+                            )
                         }}
                         onBlur={() => setTextareaFocus(false)}
                         onFocus={() => setTextareaFocus(true)}
@@ -409,7 +408,7 @@ function fmtLines(lines: string[]): [SectionType[], SidelogType[]] {
 
             if (line.trim().length > 0 && emptyStart != -1) {
                 addLog(
-                    usection.start,
+                    emptyStart,
                     usection.start + i + 1 - emptyStart,
                     'warning',
                     'Lines Cannot Be Empty'
