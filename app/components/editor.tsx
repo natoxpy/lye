@@ -1,5 +1,3 @@
-'use client'
-
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 export const HEADER_PREFIX = '\u200B'
@@ -9,6 +7,21 @@ const LINE_HEIGHT = 60
 const HeaderLineNumberPlaceholder = '#'
 const HeaderLineNumberReplacement = '#'
 
+type SidelogType = {
+    type: 'error' | 'warning' | 'message'
+    start: number
+    lines: number
+    msg: string
+    // 'center' by default
+    aligned?: 'top' | 'bottom'
+}
+
+type SectionType = {
+    header: string
+    start: number
+    lines: string[]
+}
+
 function isHeaderLine(v: string) {
     return (
         v.trim().startsWith(HeaderLineNumberReplacement) ||
@@ -17,35 +30,79 @@ function isHeaderLine(v: string) {
 }
 
 const SidelineMarkers = {
-    Error: ({ lines, msg }: { lines: number; msg: string }) => (
+    Error: ({
+        lines,
+        msg,
+        alignment,
+    }: {
+        lines: number
+        msg: string
+        alignment?: 'top' | 'bottom'
+    }) => (
         <div
             style={{
                 height: `calc(60px * ${lines})`,
             }}
-            className="group/msg-box top-0 absolute min-w-4 max-w-4 z-40"
+            className="group/msg-box top-0 absolute min-w-4 max-w-4 z-[9999]"
         >
-            <div className="flex items-center h-full min-w-1 max-w-1 bg-red-500 rounded-r">
-                <div className="absolute group-hover/msg-box:opacity-100 group-hover/msg-box:scale-100 origin-left transition-all opacity-35 scale-0 w-fit h-fit bg-[hsla(var(--color-bg-5-hsl),0.75)] p-2 left-2 rounded z-50">
+            <div
+                style={{
+                    alignItems:
+                        alignment == 'top'
+                            ? 'flex-end'
+                            : alignment == 'bottom'
+                              ? 'flex-start'
+                              : 'center',
+                }}
+                className="relative flex h-full w-1 bg-red-400 rounded-r group-hover/msg-box:bg-red-500 group-hover/msg-box:w-2 transition-all group-hover/msg-box:opacity-100 opacity-50"
+            >
+                <div className="absolute group-hover/msg-box:opacity-100 group-hover/msg-box:scale-100 origin-left transition-all opacity-35 scale-0 w-fit h-fit bg-[hsla(var(--color-bg-5-hsl),0.75)] px-3 py-2 left-4 rounded z-50">
                     <span className="text-txt-2 text-[14px]">{msg}</span>
                 </div>
             </div>
         </div>
     ),
-    Warning: ({ lines, msg }: { lines: number; msg: string }) => (
+    Warning: ({
+        lines,
+        msg,
+        alignment,
+    }: {
+        lines: number
+        msg: string
+        alignment?: 'top' | 'bottom'
+    }) => (
         <div
             style={{
                 height: `calc(60px * ${lines})`,
             }}
             className="group/msg-box top-0 absolute min-w-4 max-w-4 z-20"
         >
-            <div className="flex items-center h-full min-w-1 max-w-1 bg-yellow-400 rounded-r">
-                <div className="absolute group-hover/msg-box:opacity-100 group-hover/msg-box:scale-100 origin-left transition-all opacity-35 scale-0 w-fit h-fit bg-[hsla(var(--color-bg-5-hsl),0.75)] p-2 left-2 rounded z-50">
+            <div
+                style={{
+                    alignItems:
+                        alignment == 'top'
+                            ? 'flex-end'
+                            : alignment == 'bottom'
+                              ? 'flex-start'
+                              : 'center',
+                }}
+                className="flex h-full w-1 bg-yellow-300 rounded-r group-hover/msg-box:bg-yellow-400 group-hover/msg-box:w-2 transition-all group-hover/msg-box:opacity-100 opacity-50"
+            >
+                <div className="absolute group-hover/msg-box:opacity-100 group-hover/msg-box:scale-100 origin-left transition-all opacity-35 scale-0 w-fit h-fit bg-[hsla(var(--color-bg-5-hsl),0.75)] px-3 py-2 left-4 rounded z-50">
                     <span className="text-txt-2 text-[14px]">{msg}</span>
                 </div>
             </div>
         </div>
     ),
-    Message: ({ lines, msg }: { lines: number; msg: string }) => {
+    Message: ({
+        lines,
+        msg,
+        alignment,
+    }: {
+        lines: number
+        msg: string
+        alignment?: 'top' | 'bottom'
+    }) => {
         return (
             <div
                 style={{
@@ -53,8 +110,18 @@ const SidelineMarkers = {
                 }}
                 className="group/msg-box top-0 absolute min-w-4 max-w-4 z-20"
             >
-                <div className="flex items-center h-full min-w-1 max-w-1 bg-accent-blue rounded-r">
-                    <div className="absolute group-hover/msg-box:opacity-100 group-hover/msg-box:scale-100 origin-left transition-all opacity-35 scale-0 w-fit h-fit bg-[hsla(var(--color-bg-5-hsl),0.75)] p-2 left-2 rounded z-50">
+                <div
+                    style={{
+                        alignItems:
+                            alignment == 'top'
+                                ? 'flex-end'
+                                : alignment == 'bottom'
+                                  ? 'flex-start'
+                                  : 'center',
+                    }}
+                    className="flex h-full w-1 bg-accent-blue rounded-r group-hover:/msg-box:w-2 transition-all group-hover/msg-box:opacity-100 opacity-50"
+                >
+                    <div className="absolute group-hover/msg-box:opacity-100 group-hover/msg-box:scale-100 origin-left transition-all opacity-35 scale-0 w-fit h-fit bg-[hsla(var(--color-bg-5-hsl),0.75)] px-3 py-2 left-4 rounded z-50">
                         <span className="text-txt-2 text-[14px]">{msg}</span>
                     </div>
                 </div>
@@ -68,12 +135,7 @@ function LineNumbers({
     sidelogs,
 }: {
     lines: string[]
-    sidelogs: {
-        type: 'error' | 'warning' | 'message'
-        start: number
-        lines: number
-        msg: string
-    }[]
+    sidelogs: SidelogType[]
 }) {
     return (
         <>
@@ -87,26 +149,29 @@ function LineNumbers({
                     className="relative flex select-none items-center justify-between pr-[25px]"
                     key={key}
                 >
-                    {sidelogs.map(({ type, msg, start, lines }) => (
+                    {sidelogs.map(({ type, msg, start, lines, aligned }) => (
                         <>
                             {type == 'error' && key == start && (
                                 <SidelineMarkers.Error
                                     lines={lines}
                                     msg={msg}
+                                    alignment={aligned}
                                 />
                             )}
 
                             {type == 'warning' && key == start && (
-                                <SidelineMarkers.Error
+                                <SidelineMarkers.Warning
                                     lines={lines}
                                     msg={msg}
+                                    alignment={aligned}
                                 />
                             )}
 
                             {type == 'message' && key == start && (
-                                <SidelineMarkers.Error
+                                <SidelineMarkers.Message
                                     lines={lines}
                                     msg={msg}
+                                    alignment={aligned}
                                 />
                             )}
                         </>
@@ -221,6 +286,114 @@ function Layout({
     )
 }
 
+/**
+ * @rule {Error} Lyrics cannot start with no section header
+ * @rule {Error} Sections cannot be empty
+ * @rule {Warning} Section header must have a name
+ * @rule {Warning} Sections must be given a timerange
+ */
+function fmtLines(lines: string[]): [SectionType[], SidelogType[]] {
+    const sections: SectionType[] = []
+    const logs: SidelogType[] = []
+    const unsanitizedSections: SectionType[] = []
+
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i]
+
+        if (isHeaderLine(line)) {
+            unsanitizedSections.push({ header: line, start: i, lines: [] })
+        } else {
+            if (unsanitizedSections.length - 1 < 0) continue
+            unsanitizedSections[unsanitizedSections.length - 1].lines.push(line)
+        }
+    }
+
+    const addLog = (
+        start: number,
+        linesn: number,
+        type: SidelogType['type'],
+        msg: string
+    ) => {
+        logs.push({
+            start,
+            lines: linesn,
+            type,
+            msg,
+            aligned:
+                start == 0
+                    ? 'bottom'
+                    : start == lines.length - 1
+                      ? 'top'
+                      : undefined,
+        })
+    }
+
+    if (unsanitizedSections.length > 0 && unsanitizedSections[0].start > 0) {
+        addLog(
+            0,
+            unsanitizedSections[0].start,
+            'error',
+            'Lines Do Not Have a Section Header'
+        )
+    }
+
+    for (const usection of unsanitizedSections) {
+        if (usection.header.trim().length == 1) {
+            addLog(usection.start, 1, 'warning', 'Header Must Have a Name')
+        }
+
+        if (usection.lines.length == 0) {
+            addLog(usection.start, 1, 'error', 'Section Cannot Be Empty')
+        }
+
+        let emptyStart = -1
+
+        for (let i = 0; i < usection.lines.length; i++) {
+            const line = usection.lines[i]
+
+            if (line.trim().length == 0 && emptyStart == -1) {
+                emptyStart = usection.start + i + 1
+            }
+
+            if (line.trim().length > 0 && emptyStart != -1) {
+                addLog(
+                    usection.start,
+                    usection.start + i + 1 - emptyStart,
+                    'warning',
+                    'Lines Cannot Be Empty'
+                )
+
+                emptyStart = -1
+            }
+        }
+
+        if (emptyStart != -1)
+            addLog(
+                emptyStart,
+                usection.start + usection.lines.length + 1 - emptyStart,
+                'warning',
+                'Lines Cannot Be Empty'
+            )
+    }
+
+    console.log(logs)
+
+    return [sections, logs]
+}
+
+function useSidelogs(lines: string[]): SidelogType[] {
+    const [sidelogs, setSidelogs] = useState<SidelogType[]>([])
+
+    useEffect(() => {
+        const [sections, sl] = fmtLines(lines)
+        setSidelogs(sl)
+
+        console.log(sections)
+    }, [lines])
+
+    return sidelogs
+}
+
 export default function Editor({
     lines,
     setLines,
@@ -245,6 +418,8 @@ export default function Editor({
         return numbers
     }
 
+    const sidelogs = useSidelogs(lines)
+
     return (
         <Layout
             content={lines}
@@ -261,17 +436,7 @@ export default function Editor({
                 )
             }}
             numbers={
-                <LineNumbers
-                    lines={getLineNumbers()}
-                    sidelogs={[
-                        {
-                            type: 'error',
-                            start: 0,
-                            lines: 3,
-                            msg: 'Section does not include header',
-                        },
-                    ]}
-                />
+                <LineNumbers lines={getLineNumbers()} sidelogs={sidelogs} />
             }
             lines={lines.map((c, key) => (
                 <div
