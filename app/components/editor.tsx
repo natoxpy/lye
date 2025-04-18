@@ -262,15 +262,15 @@ function Layout({
             const char = txtArea.value[selection - 1]
             const c = txtArea.value[selection]
 
-            // if (char == HEADER_PREFIX) {
-            //     txtArea.selectionStart = selection - 1
-            //     txtArea.selectionEnd = selection - 1
-            // }
+            if (char == HEADER_PREFIX) {
+                txtArea.selectionStart = selection - 1
+                txtArea.selectionEnd = selection - 1
+            }
 
-            // if ((char == '\n' || char == undefined) && c == HEADER_PREFIX) {
-            //     txtArea.selectionStart = selection + 1
-            //     txtArea.selectionEnd = selection + 1
-            // }
+            if ((char == '\n' || char == undefined) && c == HEADER_PREFIX) {
+                txtArea.selectionStart = selection + 1
+                txtArea.selectionEnd = selection + 1
+            }
         })
     }
 
@@ -291,28 +291,26 @@ function Layout({
                 txtArea.selectionEnd = selection + 1
             }
 
-            console.log("'", char, "': ", '|', "'", c, "': ", "'", postc, "'")
+            if (char == HEADER_PREFIX && c != '\n') {
+                if (e.key == 'ArrowLeft' && selection - 1 >= 0) {
+                    txtArea.selectionStart = selection - 1
+                    txtArea.selectionEnd = selection - 1
+                } else if (
+                    e.key == 'ArrowRight' &&
+                    selection + 1 < txtArea.value.length - 1
+                ) {
+                    txtArea.selectionStart = selection + 1
+                    txtArea.selectionEnd = selection + 1
+                } else {
+                    txtArea.selectionStart = selection - 1
+                    txtArea.selectionEnd = selection - 1
+                }
+            }
 
-            // if (char == HEADER_PREFIX && c != '\n') {
-            //     if (e.key == 'ArrowLeft' && selection - 1 >= 0) {
-            //         txtArea.selectionStart = selection - 1
-            //         txtArea.selectionEnd = selection - 1
-            //     } else if (
-            //         e.key == 'ArrowRight' &&
-            //         selection + 1 < txtArea.value.length - 1
-            //     ) {
-            //         txtArea.selectionStart = selection + 1
-            //         txtArea.selectionEnd = selection + 1
-            //     } else {
-            //         txtArea.selectionStart = selection - 1
-            //         txtArea.selectionEnd = selection - 1
-            //     }
-            // }
-
-            // if ((char == '\n' || char == undefined) && c == HEADER_PREFIX) {
-            //     txtArea.selectionStart = selection + 1
-            //     txtArea.selectionEnd = selection + 1
-            // }
+            if ((char == '\n' || char == undefined) && c == HEADER_PREFIX) {
+                txtArea.selectionStart = selection + 1
+                txtArea.selectionEnd = selection + 1
+            }
         })
     }
 
