@@ -177,9 +177,20 @@ function LineNumbers({
                         </>
                     ))}
 
+                    <div
+                        style={{
+                            display:
+                                line == HeaderLineNumberPlaceholder
+                                    ? 'none' // feature intentially disabled
+                                    : 'none',
+                        }}
+                        className="w-14 h-2/3 absolute right-0 border-y-2 border-l-2 border-txt-3 rounded-l-lg opacity-35"
+                    ></div>
+
                     <span />
                     <span className="text-[20px] pointer-events-none select-none text-txt-1">
-                        {line}
+                        {line == HeaderLineNumberPlaceholder && <>#</>}
+                        {line != HeaderLineNumberPlaceholder && String(line)}
                     </span>
                 </div>
             ))}
@@ -249,11 +260,17 @@ function Layout({
             const selection = txtArea.selectionStart
 
             const char = txtArea.value[selection - 1]
+            const c = txtArea.value[selection]
 
-            if (char == HEADER_PREFIX) {
-                txtArea.selectionStart = selection - 1
-                txtArea.selectionEnd = selection - 1
-            }
+            // if (char == HEADER_PREFIX) {
+            //     txtArea.selectionStart = selection - 1
+            //     txtArea.selectionEnd = selection - 1
+            // }
+
+            // if ((char == '\n' || char == undefined) && c == HEADER_PREFIX) {
+            //     txtArea.selectionStart = selection + 1
+            //     txtArea.selectionEnd = selection + 1
+            // }
         })
     }
 
@@ -266,22 +283,36 @@ function Layout({
             const selection = txtArea.selectionStart
 
             const char = txtArea.value[selection - 1]
+            const c = txtArea.value[selection]
+            const postc = txtArea.value[selection + 1]
 
-            if (char == HEADER_PREFIX) {
-                if (e.key == 'ArrowLeft' && selection - 1 >= 0) {
-                    txtArea.selectionStart = selection - 1
-                    txtArea.selectionEnd = selection - 1
-                } else if (
-                    e.key == 'ArrowRight' &&
-                    selection + 1 < txtArea.value.length - 1
-                ) {
-                    txtArea.selectionStart = selection + 1
-                    txtArea.selectionEnd = selection + 1
-                } else {
-                    txtArea.selectionStart = selection - 1
-                    txtArea.selectionEnd = selection - 1
-                }
+            if (char == '\n' && c == HEADER_PREFIX && postc == '\n') {
+                txtArea.selectionStart = selection + 1
+                txtArea.selectionEnd = selection + 1
             }
+
+            console.log("'", char, "': ", '|', "'", c, "': ", "'", postc, "'")
+
+            // if (char == HEADER_PREFIX && c != '\n') {
+            //     if (e.key == 'ArrowLeft' && selection - 1 >= 0) {
+            //         txtArea.selectionStart = selection - 1
+            //         txtArea.selectionEnd = selection - 1
+            //     } else if (
+            //         e.key == 'ArrowRight' &&
+            //         selection + 1 < txtArea.value.length - 1
+            //     ) {
+            //         txtArea.selectionStart = selection + 1
+            //         txtArea.selectionEnd = selection + 1
+            //     } else {
+            //         txtArea.selectionStart = selection - 1
+            //         txtArea.selectionEnd = selection - 1
+            //     }
+            // }
+
+            // if ((char == '\n' || char == undefined) && c == HEADER_PREFIX) {
+            //     txtArea.selectionStart = selection + 1
+            //     txtArea.selectionEnd = selection + 1
+            // }
         })
     }
 
@@ -498,20 +529,27 @@ export default function Editor({
                                 ? 'var(--color-txt-3)'
                                 : 'var(--color-txt-2)',
                         }}
-                        className="grow-0 whitespace-nowrap flex items-center select-none text-[24px] min-h-[60px]"
+                        className="grow-0 whitespace-nowrap flex items-center select-none text-[24px] min-h-[60px] relative"
                     >
                         <pre>{c}</pre>
+                        <div
+                            style={{
+                                // feature intentially disabled
+                                display: isHeaderLine(c) ? 'none' : 'none',
+                            }}
+                            className="w-[calc(100%+1rem)] h-2/3 absolute left-0 border-y-2 border-r-2 border-txt-3 rounded-r-lg opacity-35"
+                        ></div>
                     </span>
 
                     {isHeaderLine(c) ? (
                         <>
                             <div className="min-w-6 h-[3px] bg-bg-5 opacity-35"></div>
                             <span className="text-txt-3 opacity-50 select-none transition-all pointer-events-auto cursor-pointer hover:opacity-100">
-                                00:00
+                                --:--
                             </span>
                             <div className="min-w-2 h-[3px] bg-bg-5 rounded-full"></div>
                             <span className="text-txt-3 opacity-50 select-none transition-all pointer-events-auto cursor-pointer hover:opacity-100">
-                                00:00
+                                --:--
                             </span>
                             <div className="w-full h-[3px] bg-bg-4 opacity-35"></div>
                         </>
