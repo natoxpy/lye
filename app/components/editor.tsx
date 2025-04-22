@@ -420,10 +420,14 @@ function fmtLines(lines: string[]): [SectionType[], SidelogType[]] {
     for (const usection of unsanitizedSections) {
         if (usection.header.trim().length == 1) {
             addLog(usection.start, 1, 'warning', 'Header Must Have a Name')
+
+            continue
         }
 
         if (usection.lines.length == 0) {
             addLog(usection.start, 1, 'error', 'Section Cannot Be Empty')
+
+            continue
         }
 
         let emptyStart = -1
@@ -444,32 +448,187 @@ function fmtLines(lines: string[]): [SectionType[], SidelogType[]] {
                 )
 
                 emptyStart = -1
+
+                continue
             }
         }
 
-        if (emptyStart != -1)
+        if (emptyStart != -1) {
             addLog(
                 emptyStart,
                 usection.start + usection.lines.length + 1 - emptyStart,
                 'warning',
                 'Lines Cannot Be Empty'
             )
+            continue
+        }
+
+        sections.push(usection)
     }
 
     return [sections, logs]
 }
 
-function useSidelogs(lines: string[]): SidelogType[] {
+function useFmtLines(lines: string[]): [SectionType[], SidelogType[]] {
     const [sidelogs, setSidelogs] = useState<SidelogType[]>([])
+    const [sections, setSections] = useState<SectionType[]>([])
 
     useEffect(() => {
         const [sections, sl] = fmtLines(lines)
         setSidelogs(sl)
-
+        setSections(sections)
         console.log(sections)
     }, [lines])
 
-    return sidelogs
+    return [sections, sidelogs]
+}
+
+function SectionTimeInput({ setTime }: { setTime: (timeMs?: number) => void }) {
+    const [minutes, setMinutes] = useState<[string, number]>(['', 0])
+    const [seconds, setSeconds] = useState<[string, number]>(['', 0])
+    const [deciSeconds, setDeciSeconds] = useState<[string, number]>(['', 0])
+
+    const secondsRef = useRef<HTMLDivElement>(null)
+    const deciSecondsRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+        const m = Number(minutes)
+        const s = Number(seconds)
+        const dcs = Number(deciSeconds)
+
+        if (Number.isNaN(m) || Number.isNaN(s) || Number.isNaN(dcs))
+            return setTime(undefined)
+
+        const m_ms = m * 60 * 1000
+        const s_ms = s * 1000
+        const dcs_ms = dcs * 10
+
+        setTime(m_ms + s_ms + dcs_ms)
+    }, [minutes, seconds, deciSeconds, setTime])
+
+    return (
+        <div
+            onClick={(e) => e.stopPropagation()}
+            className="flex text-txt-3 opacity-50 select-none transition-all pointer-events-auto cursor-pointer hover:opacity-100"
+        >
+            <div
+                tabIndex={0}
+                className="outline-none flex justify-center w-[21px] focus:bg-bg-6"
+                onKeyDown={(e) => {
+                    if (e.key == 'Backspace')
+                        setMinutes((dcs) => {
+                            if (dcs[1] == 2) return [dcs[0][0], 1]
+                            return ['', 0]
+                        })
+                    if (e.key == 'Delete') setMinutes(['', 0])
+
+                    const deciSec = Number(e.key)
+                    if (Number.isNaN(deciSec)) return
+
+                    setMinutes((m) => {
+                        if (m[1] == 0 || m[1] == 2) {
+                            return [String(deciSec), 1]
+                        } else if (m[1] == 1) {
+                            secondsRef.current?.focus()
+                            return [m[0] + String(deciSec), 2]
+                        }
+
+                        return ['', 0]
+                    })
+                }}
+            >
+                <span>
+                    {minutes[1] == 1
+                        ? minutes[0].length == 2
+                            ? minutes[0]
+                            : minutes[0] + '-'
+                        : minutes[1] == 2
+                          ? minutes[0]
+                          : '--'}
+                </span>
+            </div>
+            :
+            <div
+                ref={secondsRef}
+                tabIndex={0}
+                className="outline-none flex justify-center w-[21px] focus:bg-bg-6"
+                onKeyDown={(e) => {
+                    if (e.key == 'Backspace')
+                        setSeconds((s) => {
+                            if (s[1] == 2) return [s[0][0], 1]
+                            return ['', 0]
+                        })
+                    if (e.key == 'Delete') setSeconds(['', 0])
+
+                    const sec = Number(e.key)
+                    if (Number.isNaN(sec)) return
+
+                    setSeconds((s) => {
+                        if (s[1] == 0 || s[1] == 2) {
+                            return [String(sec), 1]
+                        } else if (s[1] == 1) {
+                            let total = s[0] + String(sec)
+                            const numt = Number(total)
+                            if (numt >= 60) total = '59'
+
+                            deciSecondsRef.current?.focus()
+
+                            return [total, 2]
+                        }
+
+                        return ['', 0]
+                    })
+                }}
+            >
+                <span>
+                    {seconds[1] == 1
+                        ? seconds[0].length == 2
+                            ? seconds[0]
+                            : seconds[0] + '-'
+                        : seconds[1] == 2
+                          ? seconds[0]
+                          : '--'}
+                </span>
+            </div>
+            .
+            <div
+                ref={deciSecondsRef}
+                tabIndex={0}
+                className="outline-none flex justify-center w-[21px] focus:bg-bg-6"
+                onKeyDown={(e) => {
+                    if (e.key == 'Backspace')
+                        setDeciSeconds((dcs) => {
+                            if (dcs[1] == 2) return [dcs[0][0], 1]
+                            return ['', 0]
+                        })
+                    if (e.key == 'Delete') setDeciSeconds(['', 0])
+
+                    const deciSec = Number(e.key)
+                    if (Number.isNaN(deciSec)) return
+
+                    setDeciSeconds((dcs) => {
+                        if (dcs[1] == 0 || dcs[1] == 2) {
+                            return [String(deciSec), 1]
+                        } else if (dcs[1] == 1) {
+                            return [dcs[0] + String(deciSec), 2]
+                        }
+
+                        return ['', 0]
+                    })
+                }}
+            >
+                <span>
+                    {deciSeconds[1] == 1
+                        ? deciSeconds[0].length == 2
+                            ? deciSeconds[0]
+                            : deciSeconds[0] + '-'
+                        : deciSeconds[1] == 2
+                          ? deciSeconds[0]
+                          : '--'}
+                </span>
+            </div>
+        </div>
+    )
 }
 
 export default function Editor({
@@ -496,7 +655,7 @@ export default function Editor({
         return numbers
     }
 
-    const sidelogs = useSidelogs(lines)
+    const [sections, sidelogs] = useFmtLines(lines)
 
     return (
         <Layout
@@ -542,13 +701,9 @@ export default function Editor({
                     {isHeaderLine(c) ? (
                         <>
                             <div className="min-w-6 h-[3px] bg-bg-5 opacity-35"></div>
-                            <span className="text-txt-3 opacity-50 select-none transition-all pointer-events-auto cursor-pointer hover:opacity-100">
-                                --:--
-                            </span>
+                            <SectionTimeInput setTime={() => {}} />
                             <div className="min-w-2 h-[3px] bg-bg-5 rounded-full"></div>
-                            <span className="text-txt-3 opacity-50 select-none transition-all pointer-events-auto cursor-pointer hover:opacity-100">
-                                --:--
-                            </span>
+                            <SectionTimeInput setTime={() => {}} />
                             <div className="w-full h-[3px] bg-bg-4 opacity-35"></div>
                         </>
                     ) : (
