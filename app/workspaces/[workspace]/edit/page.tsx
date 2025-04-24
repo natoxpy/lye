@@ -11,7 +11,7 @@ import { useParams } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import PlayIcon from '@/app/components/icons/play'
 import PauseIcon from '@/app/components/icons/pause'
-import { formatS } from '@/utils/time'
+import { formatS, formatMS } from '@/utils/time'
 import { useAudio } from '@/app/components/audio/index'
 
 function EditorLoader() {
@@ -191,9 +191,9 @@ export function EditPlayer() {
                 }}
                 className="flex w-full items-center gap-4"
             >
-                <div className="flex items-center justify-center h-[50px] min-w-[60px]">
+                <div className="flex items-center h-[50px] min-w-[75px]">
                     <span className="text-txt-3 select-none">
-                        {formatS(audio.currentTime * 1000)}
+                        {formatMS(audio.currentTime * 1000)}
                     </span>
                 </div>
                 <div
