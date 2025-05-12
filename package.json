@@ -24,6 +24,7 @@
         "react-redux": "^9.1.2",
         "use-immer": "^0.10.0",
         "uuid": "^10.0.0",
+        "xxhashjs": "^0.2.2",
         "zustand": "^5.0.1"
     },
     "devDependencies": {
@@ -32,6 +33,7 @@
         "@types/react": "^18",
         "@types/react-dom": "^18",
         "@types/uuid": "^10.0.0",
+        "@types/xxhashjs": "^0.2.4",
         "eslint": "^8",
         "eslint-config-next": "14.2.15",
         "postcss": "^8",

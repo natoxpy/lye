@@ -1,7 +1,12 @@
 'use client'
 import Editor from '@/app/components/editor'
-import { usePlainLyrics } from '@/states/hooks'
-import { PersistanceEmitter, updatePlainlyrics } from '@/states/persistance'
+import NewEditor from '@/app/components/newEditor'
+import { usePlainLyrics, useSectionedLyricsSections } from '@/states/hooks'
+import {
+    PersistanceEmitter,
+    updatePlainlyrics,
+    updateSectionedLyrics,
+} from '@/states/persistance'
 import {
     plainLyricsStore,
     usePlainLyricsWorkspace,
@@ -13,6 +18,8 @@ import PlayIcon from '@/app/components/icons/play'
 import PauseIcon from '@/app/components/icons/pause'
 import { formatS, formatMS } from '@/utils/time'
 import { useAudio } from '@/app/components/audio/index'
+import { SectionedParse, Section } from '@/states/store-sectioned-lyrics'
+import { useSectionedLyrics } from '@/states/hooks'
 
 function EditorLoader() {
     return (
@@ -43,9 +50,18 @@ export default function Page() {
     )
     const plainLyrics = usePlainLyrics((state) => state.lyrics)
     const workspacesLyricsList = usePlainLyrics((state) => state.lyrics)
+    const sectionedLyricsSections = useSectionedLyricsSections(workspace)
 
     const updateLyrics = usePlainLyrics((state) => state.actions.updateLyrics)
-    const addLines = usePlainLyrics((state) => state.actions.add)
+
+    const updateSectionedLyricsRange = useSectionedLyrics(
+        (state) => state.actions.updateRange
+    )
+
+    useEffect(() => {
+        if (lines == null) return
+        SectionedParse(lines.join('\n'))
+    }, [lines])
 
     useEffect(() => {
         if (lines != null) return
@@ -68,7 +84,7 @@ export default function Page() {
         if (!workspaceData) return
 
         updatePlainlyrics(workspaceData)
-    }, [lines, updateLyrics, addLines, workspace, workspacesLyricsList])
+    }, [lines, updateLyrics, workspace, workspacesLyricsList])
 
     useEffect(() => {
         const handler = () => {
@@ -89,7 +105,23 @@ export default function Page() {
             {lines == null ? (
                 <EditorLoader />
             ) : (
-                <Editor lines={lines} setLines={setLines} />
+                <NewEditor />
+                // <Editor
+                //     lines={lines}
+                //     sections={sectionedLyricsSections}
+                //     setLines={setLines}
+                //     setTimeRangeStart={(time, start) =>
+                //         updateSectionedLyricsRange(workspace, start, time)
+                //     }
+                //     setTimeRangeEnd={(time, start) =>
+                //         updateSectionedLyricsRange(
+                //             workspace,
+                //             start,
+                //             undefined,
+                //             time
+                //         )
+                //     }
+                // />
             )}
 
             <div className="flex">

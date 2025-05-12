@@ -2,6 +2,10 @@ import { create, useStore } from 'zustand'
 
 import { timedLinesStore } from './store-timed-lines'
 import { plainLyricsStore, PlainLyricsStore } from './store-plain-lyrics'
+import {
+    sectionedLyricsStore,
+    SectionedLyricsStore,
+} from './store-sectioned-lyrics'
 import { headerStore, HeaderStore } from './store-header'
 import { synchronizerStore, SynchronizerStore } from './store-synchronizer'
 import { workspacesStore, WorkspaceStore } from './store-workspaces'
@@ -15,6 +19,12 @@ export const usePlainLyrics = <T,>(
     return useStore(plainLyricsStore, selector)
 }
 
+export const useSectionedLyrics = <T,>(
+    selector: (state: SectionedLyricsStore) => T
+): T => {
+    return useStore(sectionedLyricsStore, selector)
+}
+
 // Create a custom hook with support for selectors
 export const useWorkspaces = <T,>(
     selector: (state: WorkspaceStore) => T
@@ -26,6 +36,14 @@ export const useHeader = <T,>(selector: (state: HeaderStore) => T): T => {
     return useStore(headerStore, selector)
 }
 
+export function useSectionedLyricsSections(workspace: string) {
+    const wsp = useSectionedLyrics((state) =>
+        state.workspaces.find((w) => w.workspace == workspace)
+    )
+    if (!wsp) return []
+    return wsp.sections
+}
+
 export const useSynchronizer = <T,>(
     selector: (state: SynchronizerStore) => T
 ): T => {
@@ -35,19 +53,21 @@ export const useSynchronizer = <T,>(
 export const useWorkspaceUtils = () => {
     const workspaceStore = useWorkspaces((state) => state.actions)
     const plainLyricsStore = usePlainLyrics((state) => state.actions)
+    const sectionedLyricsStore = useSectionedLyrics((state) => state.actions)
 
     const createEmptyWorkspace = () => {
-        const workspace_id = crypto.randomUUID() as UNAME
-        const shorthand_id = workspace_id.split('-')[0] as UNAME
-        workspaceStore.add(workspace_id, shorthand_id)
-        plainLyricsStore.add(shorthand_id)
+        const workspaceId = crypto.randomUUID() as UNAME
+        const shorthandId = workspaceId.split('-')[0] as UNAME
+        workspaceStore.add(workspaceId, shorthandId)
+        plainLyricsStore.add(shorthandId)
+        sectionedLyricsStore.add(shorthandId, [])
 
-        return [workspace_id, shorthand_id]
+        return [workspaceId, shorthandId]
     }
 
-    const deleteWorkspace = (id: string, shorthand_id: string) => {
+    const deleteWorkspace = (id: string, shorthandId: string) => {
         workspaceStore.delete(id)
-        plainLyricsStore.delete(shorthand_id as UNAME)
+        plainLyricsStore.delete(shorthandId as UNAME)
     }
 
     const createWorkspace = ({
@@ -58,17 +78,18 @@ export const useWorkspaceUtils = () => {
         plainLyrics: string
         synced?: []
     }) => {
-        const workspace_id = crypto.randomUUID() as UNAME
-        const shorthand_id = workspace_id.split('-')[0] as UNAME
+        const workspaceId = crypto.randomUUID() as UNAME
+        const shorthandId = workspaceId.split('-')[0] as UNAME
 
-        workspaceStore.add(workspace_id, shorthand_id, {
+        workspaceStore.add(workspaceId, shorthandId, {
             title: workspace.title,
             meta: { artist: workspace.artist, album: workspace.album },
             fileblob: undefined as never,
             coverblob: undefined as never,
         })
 
-        plainLyricsStore.add(shorthand_id, plainLyrics)
+        plainLyricsStore.add(shorthandId, plainLyrics)
+        sectionedLyricsStore.add(shorthandId, [])
     }
 
     return {

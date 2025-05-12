@@ -1,4 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { Section } from '../../states/store-sectioned-lyrics'
+import { hash } from '@/utils/hash'
+import * as binary from '@/utils/binary'
 
 export const HEADER_PREFIX = '\u200B'
 
@@ -14,12 +17,6 @@ type SidelogType = {
     msg: string
     // 'center' by default
     aligned?: 'top' | 'bottom'
-}
-
-type SectionType = {
-    header: string
-    start: number
-    lines: string[]
 }
 
 function isHeaderLine(v: string) {
@@ -274,45 +271,45 @@ function Layout({
         })
     }
 
-    const properPlaceCursorByEvent = (e: KeyboardEvent) => {
-        const txtArea = textareaRef.current
-        if (!txtArea) return
+    // const properPlaceCursorByEvent = (e: KeyboardEvent) => {
+    //     const txtArea = textareaRef.current
+    //     if (!txtArea) return
 
-        setTimeout(() => {
-            if (txtArea.selectionStart != txtArea.selectionEnd) return
-            const selection = txtArea.selectionStart
+    //     setTimeout(() => {
+    //         if (txtArea.selectionStart != txtArea.selectionEnd) return
+    //         const selection = txtArea.selectionStart
 
-            const char = txtArea.value[selection - 1]
-            const c = txtArea.value[selection]
-            const postc = txtArea.value[selection + 1]
+    //         const char = txtArea.value[selection - 1]
+    //         const c = txtArea.value[selection]
+    //         const postc = txtArea.value[selection + 1]
 
-            if (char == '\n' && c == HEADER_PREFIX && postc == '\n') {
-                txtArea.selectionStart = selection + 1
-                txtArea.selectionEnd = selection + 1
-            }
+    //         if (char == '\n' && c == HEADER_PREFIX && postc == '\n') {
+    //             txtArea.selectionStart = selection + 1
+    //             txtArea.selectionEnd = selection + 1
+    //         }
 
-            if (char == HEADER_PREFIX && c != '\n') {
-                if (e.key == 'ArrowLeft' && selection - 1 >= 0) {
-                    txtArea.selectionStart = selection - 1
-                    txtArea.selectionEnd = selection - 1
-                } else if (
-                    e.key == 'ArrowRight' &&
-                    selection + 1 < txtArea.value.length - 1
-                ) {
-                    txtArea.selectionStart = selection + 1
-                    txtArea.selectionEnd = selection + 1
-                } else {
-                    txtArea.selectionStart = selection - 1
-                    txtArea.selectionEnd = selection - 1
-                }
-            }
+    //         if (char == HEADER_PREFIX && c != '\n') {
+    //             if (e.key == 'ArrowLeft' && selection - 1 >= 0) {
+    //                 txtArea.selectionStart = selection - 1
+    //                 txtArea.selectionEnd = selection - 1
+    //             } else if (
+    //                 e.key == 'ArrowRight' &&
+    //                 selection + 1 < txtArea.value.length - 1
+    //             ) {
+    //                 txtArea.selectionStart = selection + 1
+    //                 txtArea.selectionEnd = selection + 1
+    //             } else {
+    //                 txtArea.selectionStart = selection - 1
+    //                 txtArea.selectionEnd = selection - 1
+    //             }
+    //         }
 
-            if ((char == '\n' || char == undefined) && c == HEADER_PREFIX) {
-                txtArea.selectionStart = selection + 1
-                txtArea.selectionEnd = selection + 1
-            }
-        })
-    }
+    //         if ((char == '\n' || char == undefined) && c == HEADER_PREFIX) {
+    //             txtArea.selectionStart = selection + 1
+    //             txtArea.selectionEnd = selection + 1
+    //         }
+    //     })
+    // }
 
     return (
         <div
@@ -342,14 +339,124 @@ function Layout({
                         ref={textareaRef}
                         value={content.join('\n')}
                         onKeyDown={(e) => {
-                            properPlaceCursorByEvent(
-                                e as never as KeyboardEvent
-                            )
+                            const txtarea = e.target as HTMLTextAreaElement
+                            const s = txtarea.value.split('\n')[0]
+
+                            const currentCursor = {
+                                start: txtarea.selectionStart,
+                                end: txtarea.selectionEnd,
+                            }
+
+                            setTimeout(() => {
+                                const toCursor = {
+                                    start: txtarea.selectionStart,
+                                    end: txtarea.selectionEnd,
+                                }
+
+                                const res = binary.testProcess(
+                                    txtarea.value,
+                                    currentCursor,
+                                    toCursor,
+                                    txtarea.selectionDirection
+                                )
+
+                                if (res != undefined) {
+                                    txtarea.selectionStart = res
+                                    txtarea.selectionEnd = res
+                                }
+                            }, 1)
                         }}
                         onBlur={() => setTextareaFocus(false)}
                         onFocus={() => setTextareaFocus(true)}
                         onChange={(e) => {
-                            setContent(e.target.value.split('\n'))
+                            const contentArray = e.target.value
+                                .split('\n')
+                                .map((l) => l.replace(/HEADER_PREFIX/g, ''))
+
+                            const readMetadata = (line: string) => {
+                                const results = binary.extractFromString(line)
+
+                                let headbin = null
+                                let tailbin = null
+
+                                for (const result of results) {
+                                    if (headbin != null && tailbin != null)
+                                        break
+
+                                    if (result.startsWith('h')) {
+                                        const data = result
+                                            .replace('h:', '')
+                                            .split(':')
+                                        headbin = {
+                                            id: data[0],
+                                            line: Number(data[1]),
+                                        }
+                                    }
+                                    if (result.startsWith('t')) {
+                                        const data = result
+                                            .replace('t:', '')
+                                            .split(':')
+                                        tailbin = {
+                                            contentHash: data[0],
+                                            id: data[1],
+                                            line: Number(data[2]),
+                                        }
+                                    }
+                                }
+
+                                return {
+                                    head: headbin,
+                                    tail: tailbin,
+                                }
+                            }
+
+                            const writeMetadata = (
+                                id: string,
+                                contentHash: string,
+                                line: number
+                            ) => {
+                                const headbin = binary.encode(`h:${id}:${line}`)
+                                const tailbin = binary.encode(
+                                    `t:${contentHash}:${id}:${line}`
+                                )
+
+                                return [headbin, tailbin]
+                            }
+
+                            const encodedContentArray = []
+
+                            for (let i = 0; i < contentArray.length; i++) {
+                                const line = contentArray[i]
+
+                                const isLineHeaderLine = isHeaderLine(line)
+                                const existingData = readMetadata(line)
+
+                                const decodedLine = binary
+                                    .removeEncodings(line)
+                                    .replace(HEADER_PREFIX, '')
+
+                                const [head, tail] = writeMetadata(
+                                    existingData.head == null
+                                        ? hash(String(Math.random()))
+                                        : existingData.head.id,
+                                    hash(decodedLine),
+                                    i
+                                )
+
+                                if (isLineHeaderLine) {
+                                    encodedContentArray.push(decodedLine + tail)
+                                } else {
+                                    encodedContentArray.push(decodedLine + tail)
+                                }
+                            }
+
+                            for (const line of encodedContentArray) {
+                                console.log(
+                                    JSON.stringify(readMetadata(line), null, 2)
+                                )
+                            }
+
+                            setContent(encodedContentArray)
                             setPreviousCursor(e.target.selectionEnd)
                         }}
                         style={{
@@ -372,16 +479,20 @@ function Layout({
  * @rule {Warning} Section header must have a name
  * @rule {Warning} Sections must be given a timerange
  */
-function fmtLines(lines: string[]): [SectionType[], SidelogType[]] {
-    const sections: SectionType[] = []
+function lineLogger(lines: string[]): SidelogType[] {
     const logs: SidelogType[] = []
-    const unsanitizedSections: SectionType[] = []
+    const unsanitizedSections: Section[] = []
 
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i]
 
         if (isHeaderLine(line)) {
-            unsanitizedSections.push({ header: line, start: i, lines: [] })
+            unsanitizedSections.push({
+                header: line,
+                start: i,
+                lines: [],
+                timeframe: { start: null, end: null },
+            })
         } else {
             if (unsanitizedSections.length - 1 < 0) continue
             unsanitizedSections[unsanitizedSections.length - 1].lines.push(line)
@@ -462,41 +573,70 @@ function fmtLines(lines: string[]): [SectionType[], SidelogType[]] {
             )
             continue
         }
-
-        sections.push(usection)
     }
 
-    return [sections, logs]
+    return logs
 }
 
-function useFmtLines(lines: string[]): [SectionType[], SidelogType[]] {
+function useLineLogger(lines: string[]): [SidelogType[]] {
     const [sidelogs, setSidelogs] = useState<SidelogType[]>([])
-    const [sections, setSections] = useState<SectionType[]>([])
 
     useEffect(() => {
-        const [sections, sl] = fmtLines(lines)
+        const sl = lineLogger(lines)
         setSidelogs(sl)
-        setSections(sections)
-        console.log(sections)
     }, [lines])
 
-    return [sections, sidelogs]
+    return [sidelogs]
 }
 
-function SectionTimeInput({ setTime }: { setTime: (timeMs?: number) => void }) {
-    const [minutes, setMinutes] = useState<[string, number]>(['', 0])
-    const [seconds, setSeconds] = useState<[string, number]>(['', 0])
-    const [deciSeconds, setDeciSeconds] = useState<[string, number]>(['', 0])
+function SectionTimeInput({
+    loadtime,
+    setTime,
+}: {
+    loadtime?: number
+    setTime: (timeMs?: number) => void
+}) {
+    const extractMinutes = (time?: number): [string, number] => {
+        if (time == undefined) return ['', 0]
+        const t = Math.floor(time / (1000 * 60)) % 99
+        return [t < 10 ? '0' + t : String(t), 2]
+    }
+
+    const extractSeconds = (time?: number): [string, number] => {
+        if (time == undefined) return ['', 0]
+        const t = Math.floor(time / 1000) % 60
+        return [t < 10 ? '0' + t : String(t), 2]
+    }
+
+    const extractDeciSeconds = (time?: number): [string, number] => {
+        if (time == undefined) return ['', 0]
+        const t = Math.floor((time % 1000) / 100) % 99
+        return [t < 10 ? '0' + t : String(t), 2]
+    }
+
+    const [minutes, setMinutes] = useState<[string, number]>(
+        extractMinutes(loadtime)
+    )
+    const [seconds, setSeconds] = useState<[string, number]>(
+        extractSeconds(loadtime)
+    )
+    const [deciSeconds, setDeciSeconds] = useState<[string, number]>(
+        extractDeciSeconds(loadtime)
+    )
 
     const secondsRef = useRef<HTMLDivElement>(null)
     const deciSecondsRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
-        const m = Number(minutes)
-        const s = Number(seconds)
-        const dcs = Number(deciSeconds)
+        // console.log(loadtime)
+    })
 
-        if (Number.isNaN(m) || Number.isNaN(s) || Number.isNaN(dcs))
+    useEffect(() => {
+        const m = Number(minutes[0])
+        const s = Number(seconds[0])
+        const dcs = Number(deciSeconds[0])
+
+        if (minutes[1] != 2 || seconds[1] != 2 || deciSeconds[1] != 2)
             return setTime(undefined)
 
         const m_ms = m * 60 * 1000
@@ -633,10 +773,16 @@ function SectionTimeInput({ setTime }: { setTime: (timeMs?: number) => void }) {
 
 export default function Editor({
     lines,
+    sections,
     setLines,
+    setTimeRangeStart,
+    setTimeRangeEnd,
 }: {
     lines: string[]
+    sections: Section[]
     setLines: React.Dispatch<React.SetStateAction<string[] | null>>
+    setTimeRangeStart: (time: number, start: number) => void
+    setTimeRangeEnd: (time: number, start: number) => void
 }) {
     function getLineNumbers() {
         const numbers = []
@@ -655,7 +801,7 @@ export default function Editor({
         return numbers
     }
 
-    const [sections, sidelogs] = useFmtLines(lines)
+    const [sidelogs] = useLineLogger(lines)
 
     return (
         <Layout
@@ -701,9 +847,29 @@ export default function Editor({
                     {isHeaderLine(c) ? (
                         <>
                             <div className="min-w-6 h-[3px] bg-bg-5 opacity-35"></div>
-                            <SectionTimeInput setTime={() => {}} />
+                            <SectionTimeInput
+                                loadtime={
+                                    sections.find((sec) => sec.start == key)
+                                        ?.timeframe?.start ?? undefined
+                                }
+                                setTime={(time) => {
+                                    if (time == undefined) return
+
+                                    setTimeRangeStart(time, key)
+                                }}
+                            />
                             <div className="min-w-2 h-[3px] bg-bg-5 rounded-full"></div>
-                            <SectionTimeInput setTime={() => {}} />
+                            <SectionTimeInput
+                                loadtime={
+                                    sections.find((sec) => sec.start == key)
+                                        ?.timeframe?.end ?? undefined
+                                }
+                                setTime={(time) => {
+                                    if (time == undefined) return
+
+                                    setTimeRangeEnd(time, key)
+                                }}
+                            />
                             <div className="w-full h-[3px] bg-bg-4 opacity-35"></div>
                         </>
                     ) : (
