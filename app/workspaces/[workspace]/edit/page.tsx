@@ -1,16 +1,12 @@
 'use client'
-import Editor from '@/app/components/editor'
+// import Editor from '@/app/components/editor'
 import NewEditor from '@/app/components/newEditor'
-import { usePlainLyrics, useSectionedLyricsSections } from '@/states/hooks'
-import {
-    PersistanceEmitter,
-    updatePlainlyrics,
-    updateSectionedLyrics,
-} from '@/states/persistance'
-import {
-    plainLyricsStore,
-    usePlainLyricsWorkspace,
-} from '@/states/store-plain-lyrics'
+// import { usePlainLyrics, useSectionedLyricsSections } from '@/states/hooks'
+// import { PersistanceEmitter, updatePlainlyrics } from '@/states/persistance'
+// import {
+//     plainLyricsStore,
+//     usePlainLyricsWorkspace,
+// } from '@/states/store-plain-lyrics'
 import { UNAME } from '@/utils/units'
 import { useParams } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -18,45 +14,115 @@ import PlayIcon from '@/app/components/icons/play'
 import PauseIcon from '@/app/components/icons/pause'
 import { formatS, formatMS } from '@/utils/time'
 import { useAudio } from '@/app/components/audio/index'
-import { SectionedParse, Section } from '@/states/store-sectioned-lyrics'
-import { useSectionedLyrics } from '@/states/hooks'
+import { useLyrics } from '@/states/hooks'
+import { LyricsDatabase } from '@/states/persistance'
 
-function EditorLoader() {
-    return (
-        <>
-            <div className="bg-bg-3 h-full pt-3">
-                <div className="flex flex-col animate-pulse">
-                    {Array.from({ length: 30 }).map((_, i) => (
-                        <div
-                            key={i}
-                            className="flex items-center w-full min-h-[60px] pr-[25px]"
-                        >
-                            <div className="flex min-w-[85px] h-30px justify-end text-[20px] pr-[25px]">
-                                <span className="text-txt-1"></span>
-                            </div>
-                            <div className="w-full h-[30px]  bg-bg-4 opacity-35 rounded-xl"></div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </>
-    )
-}
+// import { SectionedParse } from '@/states/store-sectioned-lyrics'
+// import { useSectionedLyrics } from '@/states/hooks'
+
+// function EditorLoader() {
+//     return (
+//         <>
+//             <div className="bg-bg-3 h-full pt-3">
+//                 <div className="flex flex-col animate-pulse">
+//                     {Array.from({ length: 30 }).map((_, i) => (
+//                         <div
+//                             key={i}
+//                             className="flex items-center w-full min-h-[60px] pr-[25px]"
+//                         >
+//                             <div className="flex min-w-[85px] h-30px justify-end text-[20px] pr-[25px]">
+//                                 <span className="text-txt-1"></span>
+//                             </div>
+//                             <div className="w-full h-[30px]  bg-bg-4 opacity-35 rounded-xl"></div>
+//                         </div>
+//                     ))}
+//                 </div>
+//             </div>
+//         </>
+//     )
+// }
 
 export default function Page() {
+    const [, setTick] = useState(0)
+
     const { workspace } = useParams<{ workspace: UNAME }>()
+    const lyricsWorkspaces = useLyrics((state) =>
+        state.workspaces.find((v) => v.workspace == workspace)
+    )
+
+    const lyricsUpdate = useLyrics((state) => state.actions.update)
+
+    useEffect(() => {
+        const rerender = () => {
+            setTick((t) => t + 1)
+        }
+
+        LyricsDatabase.onReRender(rerender)
+        return () => LyricsDatabase.removeReRender(rerender)
+    }, [])
+
+    useEffect(() => {
+        // console.log(lyricsWorkspaces?.lyrics)
+    }, [lyricsWorkspaces])
+
+    return (
+        <div className="w-screen relative pb-[50px]">
+            <NewEditor
+                lyricsSections={lyricsWorkspaces?.lyrics ?? []}
+                onChange={(lyrics) => lyricsUpdate(workspace, lyrics)}
+            />
+
+            <div className="flex">
+                <EditPlayer />
+                <PlayerVolume />
+            </div>
+        </div>
+    )
+
+    // const lyrics = useLyrics((state) => state)
+
+    // useEffect(() => {
+    //     if (lyrics.workspaces.length != 0) return
+
+    //     lyrics.actions.add({
+    //         workspace: '123',
+    //         id: '321',
+    //         lyrics: [
+    //             {
+    //                 header: {
+    //                     id: 'awa',
+    //                     timerange: {},
+    //                     content: 'verse',
+    //                 },
+    //                 content: [
+    //                     {
+    //                         timerange: {},
+    //                         content: 'iron lotus',
+    //                         id: 'uwu',
+    //                     },
+    //                 ],
+    //             },
+    //         ],
+    //     })
+    // }, [lyrics])
+
+    // useEffect(() => {
+    //     console.log(lyrics)
+    // }, [lyrics])
+
+    /*
     const [lines, setLines] = useState<string[] | null>(
         usePlainLyricsWorkspace(workspace)
     )
     const plainLyrics = usePlainLyrics((state) => state.lyrics)
     const workspacesLyricsList = usePlainLyrics((state) => state.lyrics)
-    const sectionedLyricsSections = useSectionedLyricsSections(workspace)
+    // const sectionedLyricsSections = useSectionedLyricsSections(workspace)
 
     const updateLyrics = usePlainLyrics((state) => state.actions.updateLyrics)
 
-    const updateSectionedLyricsRange = useSectionedLyrics(
-        (state) => state.actions.updateRange
-    )
+    // const updateSectionedLyricsRange = useSectionedLyrics(
+    //     (state) => state.actions.updateRange
+    // )
 
     useEffect(() => {
         if (lines == null) return
@@ -99,37 +165,7 @@ export default function Page() {
         PersistanceEmitter.addEventListener('rerender', handler)
         return () => PersistanceEmitter.removeEventListener('rerender', handler)
     }, [lines, setLines, workspace])
-
-    return (
-        <div className="w-screen relative pb-[50px]">
-            {lines == null ? (
-                <EditorLoader />
-            ) : (
-                <NewEditor />
-                // <Editor
-                //     lines={lines}
-                //     sections={sectionedLyricsSections}
-                //     setLines={setLines}
-                //     setTimeRangeStart={(time, start) =>
-                //         updateSectionedLyricsRange(workspace, start, time)
-                //     }
-                //     setTimeRangeEnd={(time, start) =>
-                //         updateSectionedLyricsRange(
-                //             workspace,
-                //             start,
-                //             undefined,
-                //             time
-                //         )
-                //     }
-                // />
-            )}
-
-            <div className="flex">
-                <EditPlayer />
-                <PlayerVolume />
-            </div>
-        </div>
-    )
+    */
 }
 
 export function EditPlayer() {

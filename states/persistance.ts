@@ -1,29 +1,137 @@
 import { Workspace, workspacesStore } from './store-workspaces'
-import { PlainLyrics, plainLyricsStore } from './store-plain-lyrics'
-import { SectionedLyrics, sectionedLyricsStore } from './store-sectioned-lyrics'
+import { Lyrics, lyricsStore } from './store-lyrics'
+import { LineSync } from './store-line-sync'
+
+import { PlainLyrics } from './store-plain-lyrics'
+import { SectionedLyrics } from './store-sectioned-lyrics'
 
 export const PersistanceEmitter = new EventTarget()
 
 export function triggerPersistanceEvent() {
     PersistanceEmitter.dispatchEvent(new Event('rerender'))
+    LyricsDatabase.emitReRender()
 }
 
 export async function loadAll() {
     const workspaces = await getAllWorkspace()
-    const plainlines = await getAllPlainlines()
-    const sectionedLyrics = await getAllSectionedLyrics()
-
     workspacesStore.getState().actions.setWorkspaces(workspaces)
-    plainLyricsStore.setState({
-        lyrics: plainlines,
+    lyricsStore.setState({
+        workspaces: await LyricsDatabase.getAll(),
     })
 
-    sectionedLyricsStore.setState({
-        workspaces: sectionedLyrics,
-    })
+    // const plainlines = await getAllPlainlines()
+    // const sectionedLyrics = await getAllSectionedLyrics()
+
+    // plainLyricsStore.setState({
+    //     lyrics: plainlines,
+    // })
+
+    // sectionedLyricsStore.setState({
+    //     workspaces: sectionedLyrics,
+    // })
 
     triggerPersistanceEvent()
 }
+
+//
+// OOP persistance system
+//
+
+export class DatabaseStore<T> {
+    public event: EventTarget = new EventTarget()
+
+    constructor(private storeName: string) {}
+
+    public emit(type: string) {
+        PersistanceEmitter.dispatchEvent(new Event(type))
+    }
+
+    public emitReRender() {
+        this.emit('rerender')
+    }
+
+    public onReRender(cb: EventListenerOrEventListenerObject) {
+        this.event.addEventListener('rerender', cb)
+    }
+
+    public removeReRender(cb: EventListenerOrEventListenerObject) {
+        this.event.removeEventListener('rerender', cb)
+    }
+
+    public async add(value: T): Promise<IDBValidKey> {
+        const database = await Database()
+        const transaction = database.transaction(this.storeName, 'readwrite')
+        const store = transaction.objectStore(this.storeName)
+        const request = store.add(value)
+
+        return new Promise((res, rej) => {
+            request.onerror = () => rej(request.error)
+            request.onsuccess = () => res(request.result)
+        })
+    }
+
+    public async update(value: T): Promise<IDBValidKey> {
+        const database = await Database()
+        const transaction = database.transaction(this.storeName, 'readwrite')
+        const store = transaction.objectStore(this.storeName)
+        const request = store.put(value)
+
+        return new Promise((res, rej) => {
+            request.onerror = () => rej(request.error)
+            request.onsuccess = () => res(request.result)
+        })
+    }
+
+    public async get(query: IDBValidKey | IDBKeyRange): Promise<T> {
+        const database = await Database()
+        const transaction = database.transaction(this.storeName, 'readonly')
+        const store = transaction.objectStore(this.storeName)
+        const request = store.get(query)
+
+        return new Promise((res, rej) => {
+            request.onerror = () => rej(request.error)
+            request.onsuccess = () => {
+                if (request.result !== undefined) res(request.result)
+                else rej(request.error)
+            }
+        })
+    }
+
+    public async getAll(): Promise<T[]> {
+        const database = await Database()
+        const transaction = database.transaction(this.storeName, 'readonly')
+        const store = transaction.objectStore(this.storeName)
+        const request = store.getAll()
+
+        return new Promise((res, rej) => {
+            request.onerror = () => rej(request.error)
+            request.onsuccess = () => {
+                if (request.result !== undefined) res(request.result)
+                else rej(request.error)
+            }
+        })
+    }
+
+    public async delete(query: IDBValidKey | IDBKeyRange) {
+        const database = await Database()
+        const transaction = database.transaction(this.storeName, 'readwrite')
+        const store = transaction.objectStore(this.storeName)
+        const request = store.delete(query)
+
+        return new Promise((res, rej) => {
+            request.onsuccess = () => res(undefined)
+            request.onerror = () => rej()
+        })
+    }
+}
+
+export const WorkspacesDatabase = new DatabaseStore<Workspace>('workspaces')
+export const LyricsDatabase = new DatabaseStore<Lyrics>('lyrics')
+export const LineSyncDatabase = new DatabaseStore<LineSync>('linesync')
+
+//
+// Old persistance system
+//
 
 export async function addWorkspace(workspace: Workspace) {
     const database = await Database()
@@ -185,6 +293,10 @@ export function Database(): Promise<IDBDatabase> {
             switch (event.oldVersion) {
                 case 0:
                     db.createObjectStore('workspaces', { keyPath: 'id' })
+
+                    db.createObjectStore('lyrics', { keyPath: 'id' })
+                    db.createObjectStore('linesync', { keyPath: 'id' })
+
                     db.createObjectStore('plainlines', { keyPath: 'id' })
                     db.createObjectStore('sectionedLyrics', { keyPath: 'id' })
                     db.createObjectStore('synclines', { keyPath: 'id' })

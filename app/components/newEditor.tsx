@@ -7,7 +7,8 @@ import {
     useState,
     useCallback,
 } from 'react'
-import { hash } from '@/utils/hash'
+import { hash, hashRandom } from '@/utils/hash'
+import { LyricsSection, Line as StoreLine } from '@/states/store-lyrics'
 
 function TimeInput({
     time,
@@ -16,7 +17,7 @@ function TimeInput({
 }: {
     time?: number
     onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void
-    onChange: (t: number) => void
+    onChange: (t: number | undefined) => void
 }) {
     const leadingZero = (t: number) => {
         if (Number.isNaN(t)) return ''
@@ -29,7 +30,7 @@ function TimeInput({
         leadingZero(Math.floor((time ?? NaN) / 1000) % 60)
     )
     const [decis, setDecis] = useState(
-        leadingZero(Math.floor((time ?? NaN) / 10) % 99)
+        leadingZero(Math.floor(((time ?? NaN) % 1000) / 10) % 99)
     )
 
     const minuteRef = useRef<HTMLInputElement>(null)
@@ -38,7 +39,7 @@ function TimeInput({
 
     useEffect(() => {
         if (!(minutes.length >= 2 && seconds.length >= 2 && decis.length >= 2))
-            return
+            return onChange(undefined)
 
         const m = Number(minutes)
         const s = Number(seconds)
@@ -214,9 +215,9 @@ function Line({
     header: boolean
     lineNumber: number
     content: string
-    timerange?: { start: number; end: number }
+    timerange?: { start?: number; end?: number }
     onChange: (e: ChangeEvent<HTMLInputElement>) => void
-    onChangeTime: (range: { start: number } | { end: number }) => void
+    onChangeTime: (range: { start?: number } | { end?: number }) => void
     onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void
     onRef: (ref: HTMLInputElement) => void
 }) {
@@ -251,7 +252,10 @@ function Line({
                             <TimeInput
                                 time={timerange?.start}
                                 onKeyDown={onKeyDown}
-                                onChange={(t) => onChangeTime({ start: t })}
+                                onChange={(t) => {
+                                    if (t !== timerange?.start)
+                                        onChangeTime({ start: t })
+                                }}
                             />
 
                             <div className="min-w-4 h-1 bg-bg-4 rounded"></div>
@@ -259,7 +263,10 @@ function Line({
                             <TimeInput
                                 time={timerange?.end}
                                 onKeyDown={onKeyDown}
-                                onChange={(t) => onChangeTime({ end: t })}
+                                onChange={(t) => {
+                                    if (t !== timerange?.end)
+                                        onChangeTime({ end: t })
+                                }}
                             />
 
                             <div className="w-full h-1 bg-bg-4 rounded"></div>
@@ -272,7 +279,9 @@ function Line({
                         onChange={(e) => onChange(e)}
                         onKeyDown={(e) => onkeydown(e)}
                         style={{
-                            color: header ? 'var(--color-txt-3)' : 'var(--color-txt-2)',
+                            color: header
+                                ? 'var(--color-txt-3)'
+                                : 'var(--color-txt-2)',
                         }}
                         className="flex w-full items-center h-full bg-transparent border-none outline-none"
                     />
@@ -280,13 +289,6 @@ function Line({
             </div>
         </div>
     )
-}
-
-type Line = {
-    id: string
-    content: string
-    header: boolean
-    timerange?: { start: number; end: number }
 }
 
 function LinesSet({
@@ -304,24 +306,20 @@ function LinesSet({
 
     const add = useCallback(
         (value: string, location: number) => {
-            setLines((ln) => {
-                const s = ln.slice(0, location)
-                const e = ln.slice(location)
+            const startSlice = lines.slice(0, location)
+            const item = {
+                id: hash(String(Math.random())),
+                content: value,
+                header: false,
+            }
 
-                setFocused(location)
+            const endSlice = lines.slice(location)
 
-                return [
-                    ...s,
-                    {
-                        id: hash(String(Math.random())),
-                        content: value,
-                        header: false,
-                    },
-                    ...e,
-                ]
-            })
+            setFocused(location)
+
+            setLines([...startSlice, item, ...endSlice])
         },
-        [setLines]
+        [setLines, lines]
     )
 
     const setHeader = useCallback(
@@ -346,25 +344,19 @@ function LinesSet({
 
     const remove = useCallback(
         (index: number) => {
-            setLines((ln) => {
-                if (index == 0) return [...ln]
+            if (index == 0) return
+            const startSlice = lines.slice(0, index)
+            const endSlice = lines.slice(index + 1)
 
-                setFocused(index - 1)
+            setFocused(index - 1)
 
-                return [...ln.slice(0, index), ...ln.slice(index + 1)]
-            })
+            setLines([...startSlice, ...endSlice])
         },
-        [setLines]
+        [setLines, lines]
     )
 
     const updateTimeRange = useCallback(
-        (
-            timerange:
-                | { start: number }
-                | { end: number }
-                | { start: number; end: number },
-            index: number
-        ) => {
+        (timerange: { start?: number } | { end?: number }, index: number) => {
             setLines((ln) => {
                 const nln = structuredClone(ln)
 
@@ -500,14 +492,95 @@ function LinesSet({
     return <>{renderLines}</>
 }
 
-export default function Editor() {
-    const [lines, setLines] = useState<Array<Line>>([
-        { id: hash(String(Math.random())), content: '', header: false },
-    ])
+type Line = {
+    id: string
+    content: string
+    header: boolean
+    timerange?: { start?: number; end?: number }
+}
+
+function linetoStoreLine(line: Line): StoreLine {
+    return { content: line.content, timerange: line.timerange, id: line.id }
+}
+
+function storeLineToLine(line: StoreLine, header: boolean): Line {
+    return {
+        content: line.content,
+        timerange: line.timerange,
+        id: line.id,
+        header,
+    }
+}
+
+export default function Editor({
+    lyricsSections,
+    onChange,
+}: {
+    lyricsSections: LyricsSection[]
+    onChange: (lyrics: LyricsSection[]) => void
+}) {
+    const [lines, setLines] = useState<Array<Line>>([])
+
+    useEffect(() => {
+        const lns: Line[] = []
+
+        for (const section of lyricsSections) {
+            lns.push(storeLineToLine(section.header, true))
+            lns.push(...section.content.map((l) => storeLineToLine(l, false)))
+        }
+
+        setLines(lns)
+    }, [lyricsSections])
+
+    useEffect(() => {
+        const lyrics: LyricsSection[] = []
+        let header: StoreLine | null = null
+        let collect: Array<StoreLine> = []
+
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i]
+
+            if (line.header && header != null) {
+                lyrics.push({
+                    header,
+                    content: collect,
+                })
+            }
+
+            if (line.header) {
+                header = linetoStoreLine(line)
+                collect = []
+                continue
+            }
+
+            collect.push(linetoStoreLine(line))
+        }
+
+        if (header != null)
+            lyrics.push({
+                header,
+                content: collect,
+            })
+
+        if (lyrics.length == 0) return
+        if (lyrics.length == lyricsSections.length) {
+            let isSame = true
+            for (let i = 0; i < lyrics.length; i++) {
+                const l = lyrics[i]
+                const ls = lyricsSections[i]
+                if (JSON.stringify(l, null) != JSON.stringify(ls, null))
+                    isSame = false
+            }
+
+            if (isSame) return
+        }
+
+        onChange(lyrics)
+    }, [lines, onChange, lyricsSections])
 
     return (
         <div className="flex flex-col w-full h-full pt-3 overflow-y-auto overflow-x-hidden overscroll-none">
-            <LinesSet lines={lines} setLines={setLines} />
+            <LinesSet lines={lines} setLines={(v) => setLines(v)} />
         </div>
     )
 }

@@ -15,7 +15,7 @@ import { updateWorkspace } from '@/states/persistance'
 
 function ActiveList() {
     // const deleteWorkspace = useWorkspaces((state) => state.actions.delete)
-    const { deleteWorkspace } = useWorkspaceUtils()
+    // const { deleteWorkspace } = useWorkspaceUtils()
     const workspaces = useWorkspaces((state) => state.workspaces)
     const plainLyrics = usePlainLyrics((state) => state.lyrics)
     const router = useRouter()
@@ -135,8 +135,7 @@ function ActiveList() {
 
                                                 return new Promise(
                                                     (res, rej) => {
-                                                        new 
-                                                        (
+                                                        new (
                                                             window as any
                                                         ).jsmediatags.read(
                                                             blob,
@@ -203,10 +202,10 @@ function ActiveList() {
 
                                     <button
                                         onClick={() => {
-                                            deleteWorkspace(
-                                                workspace.id,
-                                                workspace.shorthand_id
-                                            )
+                                            // deleteWorkspace(
+                                            //     workspace.id,
+                                            //     workspace.shorthand_id
+                                            // )
                                         }}
                                         className="group/delete-btn"
                                     >
@@ -309,7 +308,7 @@ function ProcessingList({
 
 function CreateNewButton() {
     const [opened, setOpened] = useState(false)
-    const { createEmptyWorkspace, createWorkspace } = useWorkspaceUtils()
+    const { createEmptyWorkspace } = useWorkspaceUtils()
 
     useEffect(() => {
         const onMousedown = (e: MouseEvent) => {
@@ -387,21 +386,18 @@ function CreateNewButton() {
                             return
                         }
 
-                        const song = (await response.json()) as {
-                            title: string
-                            album: string
-                            artist: string
-                            lyrics: string
-                        }
+                        // const song = (await response.json()) as {
+                        //     title: string
+                        //     album: string
+                        //     artist: string
+                        //     lyrics: string
+                        // }
 
-                        createWorkspace({
-                            workspace: {
-                                title: song.title,
-                                album: song.album,
-                                artist: song.artist,
-                            },
-                            plainLyrics: song.lyrics,
-                        })
+                        // createWorkspace({
+                        //     title: song.title,
+                        //     album: song.album,
+                        //     artist: song.artist,
+                        // })
                     }}
                     className="relative text-left cursor-pointer hover:bg-bg-4 transition-all px-4 py-2"
                 >
