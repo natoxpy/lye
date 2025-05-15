@@ -11,7 +11,7 @@ function Component({ offsetPixel }: { offsetPixel: number }) {
                 width: `${((10 * 1000) / duration) * maxwidth}px`,
                 left: `${offsetPixel * -1}px`,
             }}
-            className="flex text-sm items-center justify-center absolute rounded h-16 bg-unaccent-accent-1 hover:border-2 border-accent-1 cursor-pointer text-txt-2"
+            className="flex text-sm items-center justify-center absolute rounded h-16 bg-unaccent-accent-1 hover:border-accent-1 border-2 border-unaccent-accent-1 cursor-pointer text-txt-2"
         >
             Frozen stairs, carpet in blood
         </div>
@@ -23,7 +23,6 @@ export default function Page() {
 
     return (
         <>
-            <Component offsetPixel={offsetPx} />
         </>
     )
 }

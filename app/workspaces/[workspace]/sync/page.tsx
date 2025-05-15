@@ -1,14 +1,10 @@
 'use client'
-// import { usePlainLyricsLinesWorkspace } from '@/states/store-plain-lyrics'
 import SyncLine from '@/app/components/sync-line'
 import { useParams } from 'next/navigation'
-import { UNAME } from '@/utils/units'
-// import { useEffect } from 'react'
 import { useLyrics, useSynchronizer } from '@/states/hooks'
-import { useEffect } from 'react'
 
 function Lines() {
-    const { workspace } = useParams<{ workspace: UNAME }>()
+    const { workspace } = useParams<{ workspace: string }>()
     const lyricsWorkspaces = useLyrics((state) =>
         state.workspaces.find((v) => v.workspace == workspace)
     )
@@ -45,12 +41,14 @@ function Lines() {
 }
 
 function SideHeaderNavigation() {
-    const { workspace } = useParams<{ workspace: UNAME }>()
+    const { workspace } = useParams<{ workspace: string }>()
     const lyricsWorkspaces = useLyrics((state) =>
         state.workspaces.find((v) => v.workspace == workspace)
     )
 
-    const { setMaxwidthFromDuration } = useSynchronizer((state) => state)
+    const { setMaxwidthFromDuration, setOffset } = useSynchronizer(
+        (state) => state
+    )
 
     return (
         <div className="flex flex-col pt-[20px]">
@@ -60,7 +58,13 @@ function SideHeaderNavigation() {
                     className="flex justify-end px-3 py-2 rounded group cursor-pointer"
                     key={i}
                     onClick={() => {
-                        setMaxwidthFromDuration(1000 * 30)
+                        const start = section.header.timerange?.start
+                        const end = section.header.timerange?.end
+
+                        if (start == undefined || end == undefined) return
+
+                        setMaxwidthFromDuration(end - start)
+                        setOffset(start)
                     }}
                 >
                     <span className="text-[16px] text-txt-3 group-hover:text-txt-2">

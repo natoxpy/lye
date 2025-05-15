@@ -3,6 +3,7 @@ import { RefObject, useCallback, useEffect, useRef } from 'react'
 import generateTicks, { BigTick, SmallTick } from '@/utils/generate_ticks'
 import { Milliseconds } from '@/utils/units'
 import { formatMS } from '@/utils/time'
+import { useSynchronizer } from '@/states/hooks'
 
 const colors = {
     tick: 'hsl(211, 22%, 21%)',
@@ -21,21 +22,21 @@ export function draw(
     timeWidth: Milliseconds,
     timeOffset: Milliseconds,
     duration: Milliseconds,
-    options: { tickLength: Milliseconds; inbetweenTicks: number } = {
-        tickLength: 10_000 as Milliseconds,
+    options: { tickLength: Milliseconds | number; inbetweenTicks: number } = {
+        tickLength: 10_000,
         inbetweenTicks: 10,
     }
 ) {
     const dpr = window.devicePixelRatio
     const { tickLength, inbetweenTicks } = options
-    clear(canvas)
 
+    clear(canvas)
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
     const ticks = generateTicks({
         config: {
-            tickLength,
+            tickLength: tickLength as Milliseconds,
             inbetweenTicks,
         },
         player: {
@@ -69,13 +70,35 @@ export function draw(
 }
 
 export function useDraw(canvas: RefObject<HTMLCanvasElement>) {
+    const { frame, duration, maxwidth } = useSynchronizer((state) => state)
+
     return (
         width: Milliseconds,
         offset: Milliseconds,
         playerDuration: Milliseconds
     ) => {
         if (!canvas.current) return
-        draw(canvas.current, width, offset, playerDuration)
+        const vstep = 0.1
+        const targetL = 200
+
+        let v = 0
+        let l = Infinity
+
+        while (l > targetL) {
+            v += 0.1
+            l = frame.width / v
+        }
+        l = frame.width / (v - vstep)
+
+        const t = (l / maxwidth) * duration
+        const final = Math.round(t / 1000) * 1000
+
+        console.log(t)
+
+        draw(canvas.current, width, offset, playerDuration, {
+            tickLength: final,
+            inbetweenTicks: 5,
+        })
     }
 }
 
