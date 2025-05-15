@@ -14,6 +14,8 @@ type State = {
 type Actions = {
     setOffset: (scroll: number | Milliseconds) => void
     setDuration: (duration: number | Milliseconds) => void
+    setMaxwidth: (maxwidth: number) => void
+    setMaxwidthFromDuration: (duration: number | Milliseconds) => void
     setFrame: (frame: { width: number; duration: Milliseconds }) => void
     changeOffset: (scrollDelta: number | Milliseconds) => void
 }
@@ -32,9 +34,14 @@ export const synchronizerStore = createStore<SynchronizerStore>()((set) => ({
     setOffset: (offset: number | Milliseconds) =>
         set((state) => ({
             offset: offset as Milliseconds,
-            offsetPx: state.maxwidth * ((offset - 1000 * 10) / state.duration),
+            offsetPx: state.maxwidth * (offset / state.duration),
         })),
     setDuration: (duration) => set({ duration: duration as Milliseconds }),
+    setMaxwidth: (maxwidth) => set({ maxwidth }),
+    setMaxwidthFromDuration: (duration) =>
+        set((store) => ({
+            maxwidth: (store.frame.width * store.duration) / duration,
+        })),
     setFrame: (frame) => set({ frame }),
     changeOffset: (scrollDelta: number | Milliseconds) => {
         set((state) => {

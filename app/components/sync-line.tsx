@@ -27,26 +27,26 @@ export default function Component({
     left,
     start,
     end,
-    inTimeLine,
+    synced,
     onClick,
 }: {
     content: string
     line: number
     left: number
-    inTimeLine: boolean
+    synced: boolean
     start?: Milliseconds
     end?: Milliseconds
     onClick: () => void
 }) {
-    const bg = inTimeLine ? 'var(--color-bg-4)' : 'var(--color-bg-2)'
+    const bg = synced ? 'var(--color-bg-4)' : 'var(--color-bg-2)'
 
     return (
         <div
             style={{
-                color: inTimeLine ? 'var(--color-txt-2)' : 'var(--color-txt-3)',
-                cursor: !inTimeLine ? 'pointer' : '',
+                color: synced ? 'var(--color-txt-2)' : '',
+                cursor: !synced ? 'pointer' : '',
             }}
-            className="flex bg-bg-3 text-[1rem] select-none gap-[3px] hover:border-unaccent-1 transition-all cursor border-2 border-transparent min-w-[1000px] h-[46px] rounded-[4px] overflow-hidden"
+            className="flex text-txt-3 hover:text-txt-2 bg-bg-3 text-[1rem] select-none gap-[3px] hover:border-accent-blue border-bg-3 cursor-pointer transition-all cursor border-x-2 min-w-[1000px] h-[46px] overflow-hidden"
             onClick={onClick}
         >
             <div

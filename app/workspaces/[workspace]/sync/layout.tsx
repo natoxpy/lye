@@ -1,6 +1,6 @@
 'use client'
 import React from 'react'
-import { usePlainLyricsLinesWorkspace } from '@/states/store-plain-lyrics'
+// import { usePlainLyricsLinesWorkspace } from '@/states/store-plain-lyrics'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { UNAME } from '@/utils/units'
@@ -37,20 +37,26 @@ export default function Layout({
     synchronizer: React.ReactNode
 }) {
     const { workspace } = useParams<{ workspace: UNAME }>()
-    const lines = usePlainLyricsLinesWorkspace(workspace)
-    const hasNoLines = lines?.filter((a) => a.trim() !== '').length == 0
+    // const lines = usePlainLyricsLinesWorkspace(workspace)
+    // const hasNoLines = lines?.filter((a) => a.trim() !== '').length == 0
+    const hasNoLines = false
+
+    // {hasNoLines ? <></> : <div className="h-fit p-12 rounded-md">{synchronizer}</div>}
 
     return (
         <div
             style={{
                 height: 'calc(100% - (40px + 48px))',
             }}
-            className="grow flex flex-col bg-bg-3"
+            className="grow flex flex-col relative"
         >
-            <div className="grow flex flex-col items-center overflow-y-auto py-4 gap-4">
+            <div className="grow flex flex-col items-center overflow-y-auto gap-4">
                 {hasNoLines ? <NoLines workspaceId={workspace} /> : children}
             </div>
-            {hasNoLines ? <></> : <div className="h-fit">{synchronizer}</div>}
+
+            <div className="absolute p-1 w-[calc(100%-200px)] left-[100px] bottom-[35px] rounded-md overflow-hidden">
+                <div className='rounded overflow-hidden'>{synchronizer}</div>
+            </div>
         </div>
     )
 }

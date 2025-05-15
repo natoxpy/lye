@@ -35,10 +35,10 @@ export default function Layout({
     }, [container, changeOffset])
 
     return (
-        <div className="h-full bg-bg-4">
-            {options}
+        <div className="flex flex-col h-full gap-2">
+            <div className="bg-bg-3 border-2 border-unaccent-accent-1 rounded-md overflow-hidden">{options}</div>
 
-            <div ref={container}>
+            <div className="bg-bg-3 px-1 border-2 border-unaccent-accent-1 rounded-md overflow-hidden h-fit" ref={container}>
                 {tickbar}
                 {body}
             </div>

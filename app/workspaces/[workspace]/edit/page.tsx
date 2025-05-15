@@ -44,7 +44,6 @@ import { LyricsDatabase } from '@/states/persistance'
 
 export default function Page() {
     const [, setTick] = useState(0)
-
     const { workspace } = useParams<{ workspace: UNAME }>()
     const lyricsWorkspaces = useLyrics((state) =>
         state.workspaces.find((v) => v.workspace == workspace)

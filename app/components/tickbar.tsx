@@ -5,7 +5,7 @@ import { Milliseconds } from '@/utils/units'
 import { formatMS } from '@/utils/time'
 
 const colors = {
-    unaccented_1: 'rgb(45,51,57)',
+    tick: 'hsl(211, 22%, 21%)',
     text_3: 'rgb(101,115,125)',
 }
 
@@ -49,6 +49,7 @@ export function draw(
 
     const timeToPx = (t: number) => (t / timeWidth) * (canvas.width / dpr)
 
+    ctx.fillStyle = colors.tick
     ctx.font = '12px Inter, serif'
 
     for (const tick of ticks) {
@@ -62,7 +63,7 @@ export function draw(
                 timeToPx(tick.value) + 5,
                 23
             )
-            ctx.fillStyle = colors.unaccented_1
+            ctx.fillStyle = colors.tick
         }
     }
 }
@@ -137,7 +138,7 @@ export default function Component({
     })
 
     return (
-        <div ref={refparent} className="w-screen bg-bg-4">
+        <div ref={refparent} className="w-full bg-bg-3">
             <canvas
                 ref={refcanvas}
                 style={{
