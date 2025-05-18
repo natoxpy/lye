@@ -16,6 +16,7 @@ import { updateWorkspace } from '@/states/persistance'
 function ActiveList() {
     // const deleteWorkspace = useWorkspaces((state) => state.actions.delete)
     // const { deleteWorkspace } = useWorkspaceUtils()
+    const { deleteWorkspace } = useWorkspaceUtils()
     const workspaces = useWorkspaces((state) => state.workspaces)
     const plainLyrics = usePlainLyrics((state) => state.lyrics)
     const router = useRouter()
@@ -202,10 +203,10 @@ function ActiveList() {
 
                                     <button
                                         onClick={() => {
-                                            // deleteWorkspace(
-                                            //     workspace.id,
-                                            //     workspace.shorthand_id
-                                            // )
+                                            deleteWorkspace(
+                                                workspace.id,
+                                                workspace.shorthand_id
+                                            )
                                         }}
                                         className="group/delete-btn"
                                     >

@@ -1,13 +1,18 @@
 'use client'
 import SyncLine from '@/app/components/sync-line'
 import { useParams } from 'next/navigation'
-import { useLyrics, useSynchronizer } from '@/states/hooks'
+import { useLineSync, useLyrics, useSynchronizer } from '@/states/hooks'
 
 function Lines() {
     const { workspace } = useParams<{ workspace: string }>()
     const lyricsWorkspaces = useLyrics((state) =>
         state.workspaces.find((v) => v.workspace == workspace)
     )
+
+    const lineSyncWp = useLineSync((store) =>
+        store.workspaces.find((w) => w.workspace == workspace)
+    )
+    const { lineSyncItems } = useLineSync((store) => store.actions)
 
     return (
         <>
@@ -27,10 +32,33 @@ function Lines() {
                             <SyncLine
                                 key={i}
                                 content={line.content}
-                                synced={Boolean(Math.floor(0))}
-                                left={-100}
+                                synced={
+                                    lineSyncWp?.content.findIndex(
+                                        (ls) => ls.targetId == line.id
+                                    ) != -1
+                                }
                                 line={i + 1}
-                                onClick={() => {}}
+                                onClick={() => {
+                                    let duration =
+                                        (sections.header.timerange?.end ?? 0) -
+                                        (sections.header.timerange?.start ?? 0)
+
+                                    if (duration <= 0) duration = 1000
+                                    else
+                                        duration /=
+                                            sections.content.length
+
+                                    lineSyncItems.add(workspace, {
+                                        targetId: line.id,
+                                        timerange: {
+                                            start:
+                                                (sections.header.timerange
+                                                    ?.start ?? 0) +
+                                                duration * i,
+                                            duration: duration,
+                                        },
+                                    })
+                                }}
                             />
                         ))}
                     </div>
@@ -85,7 +113,6 @@ export default function Page() {
             <div className="h-full scroll-smooth overflow-auto pt-4 pb-[230px] no-scrollbar flex flex-col gap-4">
                 <Lines />
             </div>
-
             <div className="w-64"></div>
         </div>
     )

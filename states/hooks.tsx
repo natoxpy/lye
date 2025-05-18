@@ -14,6 +14,7 @@ import {
 import { headerStore, HeaderStore } from './store-header'
 import { synchronizerStore, SynchronizerStore } from './store-synchronizer'
 import { UNAME } from '@/utils/units'
+import { lineSyncStore, LineSyncStore } from './store-line-sync'
 
 // Create a custom hook with support for selectors
 export const useWorkspaces = <T,>(
@@ -24,6 +25,10 @@ export const useWorkspaces = <T,>(
 
 export const useLyrics = <T,>(selector: (state: LyricsStore) => T) => {
     return useStore(lyricsStore, selector)
+}
+
+export const useLineSync = <T,>(selector: (state: LineSyncStore) => T) => {
+    return useStore(lineSyncStore, selector)
 }
 
 export const useTimedLinesStore = create(() => timedLinesStore)
@@ -61,8 +66,7 @@ export const useSynchronizer = <T,>(
 export const useWorkspaceUtils = () => {
     const workspaceStore = useWorkspaces((state) => state.actions)
     const lyricsStore = useLyrics((state) => state.actions)
-    // const plainLyricsStore = usePlainLyrics((state) => state.actions)
-    // const sectionedLyricsStore = useSectionedLyrics((state) => state.actions)
+    const lineSyncStore = useLineSync((state) => state.actions)
 
     const createWorkspace = (
         workspace: { title: string; artist: string; album: string },
@@ -81,6 +85,11 @@ export const useWorkspaceUtils = () => {
             fileblob: undefined as never,
         })
         lyricsStore.add(lyrics)
+        lineSyncStore.add({
+            content: [],
+            workspace: shorthandId,
+            id: crypto.randomUUID(),
+        })
     }
 
     const createEmptyWorkspace = () => {
@@ -94,60 +103,27 @@ export const useWorkspaceUtils = () => {
             lyrics: [
                 {
                     header: {
-                        content: 'Verse 1',
+                        content: '',
                         id: hashRandom(),
                     },
-                    content: [
-                        {
-                            content: 'hello world',
-                            id: hashRandom(),
-                        },
-                    ],
+                    content: [],
                 },
             ],
+        })
+        lineSyncStore.add({
+            content: [],
+            workspace: shorthandId,
+            id: crypto.randomUUID(),
         })
     }
 
     return {
         createWorkspace,
         createEmptyWorkspace,
-        deleteWorkspace: () => {},
+        deleteWorkspace: (workspaceId: string, shorthandId: string) => {
+            workspaceStore.delete(workspaceId)
+            lyricsStore.delete(shorthandId)
+            lineSyncStore.delete(shorthandId)
+        },
     }
-
-    // const createEmptyWorkspace = () => {
-    //     const workspaceId = crypto.randomUUID() as UNAME
-    //     const shorthandId = workspaceId.split('-')[0] as UNAME
-    //     workspaceStore.add(workspaceId, shorthandId)
-    //     plainLyricsStore.add(shorthandId)
-    //     sectionedLyricsStore.add(shorthandId, [])
-
-    //     return [workspaceId, shorthandId]
-    // }
-
-    // const deleteWorkspace = (id: string, shorthandId: string) => {
-    //     workspaceStore.delete(id)
-    //     // plainLyricsStore.delete(shorthandId as UNAME)
-    // }
-
-    // const createWorkspace = ({
-    //     workspace,
-    //     plainLyrics,
-    // }: {
-    //     workspace: { title: string; artist: string; album: string }
-    //     plainLyrics: string
-    //     synced?: []
-    // }) => {
-    //     const workspaceId = crypto.randomUUID() as UNAME
-    //     const shorthandId = workspaceId.split('-')[0] as UNAME
-
-    //     workspaceStore.add(workspaceId, shorthandId, {
-    //         title: workspace.title,
-    //         meta: { artist: workspace.artist, album: workspace.album },
-    //         fileblob: undefined as never,
-    //         coverblob: undefined as never,
-    //     })
-
-    //     plainLyricsStore.add(shorthandId, plainLyrics)
-    //     sectionedLyricsStore.add(shorthandId, [])
-    // }
 }

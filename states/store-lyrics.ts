@@ -48,8 +48,18 @@ export const lyricsStore = createStore<LyricsStore>()(
                     LyricsDatabase.update({ ...store.workspaces[index] })
                 })
             },
-            delete() {
-                set(() => {})
+            delete(workspace: string) {
+                set((store) => {
+                    const lyrics = store.workspaces.find(
+                        (l) => l.workspace == workspace
+                    )
+                    if (lyrics == undefined) return
+
+                    LyricsDatabase.delete(lyrics.id)
+                    store.workspaces = store.workspaces.filter(
+                        (w) => w.id != lyrics.id
+                    )
+                })
             },
         },
     }))

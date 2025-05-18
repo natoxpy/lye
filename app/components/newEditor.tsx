@@ -7,12 +7,11 @@ import {
     useState,
     useCallback,
 } from 'react'
-import { hash, hashRandom } from '@/utils/hash'
+import { hash } from '@/utils/hash'
 import { LyricsSection, Line as StoreLine } from '@/states/store-lyrics'
 
 function TimeInput({
     time,
-    onKeyDown,
     onChange,
 }: {
     time?: number
@@ -29,32 +28,43 @@ function TimeInput({
     const [seconds, setSeconds] = useState(
         leadingZero(Math.floor((time ?? NaN) / 1000) % 60)
     )
-    const [decis, setDecis] = useState(
-        leadingZero(Math.floor(((time ?? NaN) % 1000) / 10) % 99)
-    )
+    // const [decis, setDecis] = useState(
+    //     leadingZero(Math.floor(((time ?? NaN) % 1000) / 10) % 99)
+    // )
 
     const minuteRef = useRef<HTMLInputElement>(null)
     const secondRef = useRef<HTMLInputElement>(null)
-    const deciRef = useRef<HTMLInputElement>(null)
+    // const deciRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
-        if (!(minutes.length >= 2 && seconds.length >= 2 && decis.length >= 2))
+        if (
+            !(
+                (minutes.length >= 2 && seconds.length >= 2)
+                //&& decis.length >= 2
+            )
+        )
             return onChange(undefined)
 
         const m = Number(minutes)
         const s = Number(seconds)
-        const d = Number(decis)
+        // const d = Number(decis)
 
         const mMs = m * 60 * 1000
         const sMs = s * 1000
-        const dMs = d * 10
+        // const dMs = d * 10
 
-        onChange(mMs + sMs + dMs)
-    }, [minutes, seconds, decis, onChange])
+        onChange(
+            mMs + sMs
+            // + dMs
+        )
+    }, [
+        minutes,
+        seconds,
+        // decis,
+        onChange,
+    ])
 
     const onkeydown = (e: KeyboardEvent<HTMLInputElement>) => {
-        onKeyDown(e)
-
         if (/[0-9]/.test(e.key) && e.currentTarget.value.length >= 2) {
             e.currentTarget.value = ''
         }
@@ -105,7 +115,7 @@ function TimeInput({
                     onInput(e)
 
                     if (e.currentTarget.value.length >= 2) {
-                        deciRef.current?.focus()
+                        // deciRef.current?.focus()
 
                         if (Number(e.currentTarget.value) > 60) {
                             e.currentTarget.value = '59'
@@ -113,6 +123,7 @@ function TimeInput({
                     }
                 }}
             />
+            {/*}
             <span className="text-txt-3 opacity-35">.</span>
             <input
                 ref={deciRef}
@@ -132,6 +143,7 @@ function TimeInput({
                 }}
                 onInput={onInput}
             />
+            {*/}
         </div>
     )
 }
@@ -207,6 +219,7 @@ function Line({
     lineNumber,
     content,
     timerange,
+    isPlayingRange,
     onChangeTime,
     onChange,
     onKeyDown,
@@ -216,6 +229,7 @@ function Line({
     lineNumber: number
     content: string
     timerange?: { start?: number; end?: number }
+    isPlayingRange: boolean
     onChange: (e: ChangeEvent<HTMLInputElement>) => void
     onChangeTime: (range: { start?: number } | { end?: number }) => void
     onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void
@@ -248,7 +262,14 @@ function Line({
                         />
 
                         <div className="w-full flex items-center gap-3">
-                            <div className="min-w-8 h-1 bg-bg-4 rounded"></div>
+                            <div
+                                style={{
+                                    backgroundColor: isPlayingRange
+                                        ? 'var(--color-accent-blue)'
+                                        : '',
+                                }}
+                                className="min-w-8 h-1 bg-bg-4 rounded transition-colors"
+                            ></div>
                             <TimeInput
                                 time={timerange?.start}
                                 onKeyDown={onKeyDown}
@@ -258,7 +279,14 @@ function Line({
                                 }}
                             />
 
-                            <div className="min-w-4 h-1 bg-bg-4 rounded"></div>
+                            <div
+                                style={{
+                                    backgroundColor: isPlayingRange
+                                        ? 'var(--color-accent-blue)'
+                                        : '',
+                                }}
+                                className="min-w-4 h-1 bg-bg-4 rounded transition-colors"
+                            ></div>
 
                             <TimeInput
                                 time={timerange?.end}
@@ -269,7 +297,14 @@ function Line({
                                 }}
                             />
 
-                            <div className="w-full h-1 bg-bg-4 rounded"></div>
+                            <div
+                                style={{
+                                    backgroundColor: isPlayingRange
+                                        ? 'var(--color-accent-blue)'
+                                        : '',
+                                }}
+                                className="w-full h-1 bg-bg-4 rounded transition-colors"
+                            ></div>
                         </div>
                     </>
                 ) : (
@@ -294,9 +329,11 @@ function Line({
 function LinesSet({
     lines,
     setLines,
+    playerCurrentTime,
 }: {
     lines: Line[]
     setLines: React.Dispatch<React.SetStateAction<Line[]>>
+    playerCurrentTime: number
 }) {
     const [renderLines, setRenderLines] = useState<Array<JSX.Element>>([])
     const [focused, setFocused] = useState<number | null>(null)
@@ -411,6 +448,7 @@ function LinesSet({
                     add('', i + 1)
                     break
                 case '#':
+                    if (i == 0) return
                     e.preventDefault()
                     e.stopPropagation()
                     setHeader(!line.header, i)
@@ -446,8 +484,15 @@ function LinesSet({
 
             if (line.header) offset += 1
 
+            const isPlayingRange =
+                line.timerange?.start != undefined &&
+                line.timerange?.end != undefined &&
+                line.timerange.start <= playerCurrentTime * 1000 &&
+                line.timerange.end >= playerCurrentTime * 1000
+
             const lineElement = (
                 <Line
+                    isPlayingRange={isPlayingRange}
                     onChangeTime={(v) => {
                         updateTimeRange(v, i)
                     }}
@@ -487,6 +532,7 @@ function LinesSet({
         onKeyDown,
         update,
         updateTimeRange,
+        playerCurrentTime,
     ])
 
     return <>{renderLines}</>
@@ -514,9 +560,11 @@ function storeLineToLine(line: StoreLine, header: boolean): Line {
 
 export default function Editor({
     lyricsSections,
+    playerCurrentTime,
     onChange,
 }: {
     lyricsSections: LyricsSection[]
+    playerCurrentTime: number
     onChange: (lyrics: LyricsSection[]) => void
 }) {
     const [lines, setLines] = useState<Array<Line>>([])
@@ -580,7 +628,11 @@ export default function Editor({
 
     return (
         <div className="flex flex-col w-full h-full pt-3 overflow-y-auto overflow-x-hidden overscroll-none">
-            <LinesSet lines={lines} setLines={(v) => setLines(v)} />
+            <LinesSet
+                playerCurrentTime={playerCurrentTime}
+                lines={lines}
+                setLines={(v) => setLines(v)}
+            />
         </div>
     )
 }

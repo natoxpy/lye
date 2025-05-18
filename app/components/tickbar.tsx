@@ -93,8 +93,6 @@ export function useDraw(canvas: RefObject<HTMLCanvasElement>) {
         const t = (l / maxwidth) * duration
         const final = Math.round(t / 1000) * 1000
 
-        console.log(t)
-
         draw(canvas.current, width, offset, playerDuration, {
             tickLength: final,
             inbetweenTicks: 5,

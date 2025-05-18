@@ -12,7 +12,7 @@ import { useParams } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import PlayIcon from '@/app/components/icons/play'
 import PauseIcon from '@/app/components/icons/pause'
-import { formatS, formatMS } from '@/utils/time'
+import { formatS } from '@/utils/time'
 import { useAudio } from '@/app/components/audio/index'
 import { useLyrics } from '@/states/hooks'
 import { LyricsDatabase } from '@/states/persistance'
@@ -51,6 +51,8 @@ export default function Page() {
 
     const lyricsUpdate = useLyrics((state) => state.actions.update)
 
+    const audio = useAudio()
+
     useEffect(() => {
         const rerender = () => {
             setTick((t) => t + 1)
@@ -67,6 +69,7 @@ export default function Page() {
     return (
         <div className="w-screen relative pb-[50px]">
             <NewEditor
+                playerCurrentTime={audio.currentTime}
                 lyricsSections={lyricsWorkspaces?.lyrics ?? []}
                 onChange={(lyrics) => lyricsUpdate(workspace, lyrics)}
             />
@@ -258,9 +261,9 @@ export function EditPlayer() {
                 }}
                 className="flex w-full items-center gap-4"
             >
-                <div className="flex items-center h-[50px] min-w-[75px]">
+                <div className="flex items-center h-[50px] min-w-[60px]">
                     <span className="text-txt-3 select-none">
-                        {formatMS(audio.currentTime * 1000)}
+                        {formatS(audio.currentTime * 1000)}
                     </span>
                 </div>
                 <div

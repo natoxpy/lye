@@ -1,6 +1,6 @@
 import { Workspace, workspacesStore } from './store-workspaces'
 import { Lyrics, lyricsStore } from './store-lyrics'
-import { LineSync } from './store-line-sync'
+import { LineSync, lineSyncStore } from './store-line-sync'
 
 import { PlainLyrics } from './store-plain-lyrics'
 import { SectionedLyrics } from './store-sectioned-lyrics'
@@ -17,6 +17,9 @@ export async function loadAll() {
     workspacesStore.getState().actions.setWorkspaces(workspaces)
     lyricsStore.setState({
         workspaces: await LyricsDatabase.getAll(),
+    })
+    lineSyncStore.setState({
+        workspaces: await LineSyncDatabase.getAll(),
     })
 
     // const plainlines = await getAllPlainlines()
@@ -293,13 +296,12 @@ export function Database(): Promise<IDBDatabase> {
             switch (event.oldVersion) {
                 case 0:
                     db.createObjectStore('workspaces', { keyPath: 'id' })
-
                     db.createObjectStore('lyrics', { keyPath: 'id' })
                     db.createObjectStore('linesync', { keyPath: 'id' })
 
-                    db.createObjectStore('plainlines', { keyPath: 'id' })
-                    db.createObjectStore('sectionedLyrics', { keyPath: 'id' })
-                    db.createObjectStore('synclines', { keyPath: 'id' })
+                    // db.createObjectStore('plainlines', { keyPath: 'id' })
+                    // db.createObjectStore('sectionedLyrics', { keyPath: 'id' })
+                    // db.createObjectStore('synclines', { keyPath: 'id' })
                     break
             }
         }

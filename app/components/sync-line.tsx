@@ -1,30 +1,29 @@
 import { formatMS } from '@/utils/time'
 import { Milliseconds } from '@/utils/units'
 
-function DoubleSidedIcon(props: React.ComponentProps<'svg'>) {
-    return (
-        <svg
-            width="10"
-            height="46"
-            viewBox="0 0 10 46"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            {...props}
-        >
-            <path d="M2 1H5H8V3.2L5 5.4V40.6L8 42.8V45H5H2V42.8L5 40.6V5.4L2 3.2V1Z" />
-            <path
-                d="M5 5.4L2 3.2V1H5H8V3.2L5 5.4ZM5 5.4V40.6M5 40.6L2 42.8V45H5H8V42.8L5 40.6Z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-            />
-        </svg>
-    )
-}
+// function DoubleSidedIcon(props: React.ComponentProps<'svg'>) {
+//     return (
+//         <svg
+//             width="10"
+//             height="46"
+//             viewBox="0 0 10 46"
+//             fill="none"
+//             xmlns="http://www.w3.org/2000/svg"
+//             {...props}
+//         >
+//             <path d="M2 1H5H8V3.2L5 5.4V40.6L8 42.8V45H5H2V42.8L5 40.6V5.4L2 3.2V1Z" />
+//             <path
+//                 d="M5 5.4L2 3.2V1H5H8V3.2L5 5.4ZM5 5.4V40.6M5 40.6L2 42.8V45H5H8V42.8L5 40.6Z"
+//                 strokeLinecap="round"
+//                 strokeLinejoin="round"
+//             />
+//         </svg>
+//     )
+// }
 
 export default function Component({
     content,
     line,
-    left,
     start,
     end,
     synced,
@@ -32,7 +31,6 @@ export default function Component({
 }: {
     content: string
     line: number
-    left: number
     synced: boolean
     start?: Milliseconds
     end?: Milliseconds
@@ -71,13 +69,6 @@ export default function Component({
                 }}
                 className="relative overflow-hidden px-[24px] flex w-full h-full items-center"
             >
-                <DoubleSidedIcon
-                    style={{
-                        left: left + 'px',
-                    }}
-                    className="absolute fill-accent-1 stroke-accent-1"
-                />
-
                 <span>{content}</span>
             </div>
             <div
