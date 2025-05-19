@@ -7,7 +7,6 @@ type State = {
         duration: Milliseconds
     }
     offset: Milliseconds
-    offsetPx: number
     duration: Milliseconds
     maxwidth: number
     // tickLength: Milliseconds | number
@@ -20,6 +19,7 @@ type Actions = {
     setMaxwidth: (maxwidth: number) => void
     setMaxwidthFromDuration: (duration: number | Milliseconds) => void
     setFrame: (frame: { width: number; duration: Milliseconds }) => void
+    setFrameFromDuration: (duration: number) => void
 }
 
 export type SynchronizerStore = State & Actions
@@ -29,17 +29,13 @@ export const synchronizerStore = createStore<SynchronizerStore>()((set) => ({
         width: 0,
         duration: 0 as Milliseconds,
     },
-    offset: 0 as Milliseconds,
-    offsetPx: 0,
+    offset: 10_000 as Milliseconds,
     duration: (1000 * 60 * 4) as Milliseconds,
     maxwidth: 4000,
-    // tickLength: 10_000,
-    // inbetweenTicks: 5,
     setOffset: (offset: number | Milliseconds) =>
-        set((state) => {
+        set(() => {
             return {
                 offset: offset as Milliseconds,
-                offsetPx: state.maxwidth * (offset / state.duration),
             }
         }),
     setDuration: (duration) => set({ duration: duration as Milliseconds }),
@@ -78,6 +74,20 @@ export const synchronizerStore = createStore<SynchronizerStore>()((set) => ({
         //     return { frame }
         // })
     },
+
+    setFrameFromDuration(duration) {
+        set((store) => {
+            const width = (duration / store.duration) * store.maxwidth
+
+            return {
+                frame: {
+                    duration: duration as Milliseconds,
+                    width,
+                },
+            }
+        })
+    },
+
     changeOffset: (scrollDelta: number | Milliseconds) => {
         set((state) => {
             let offset = (state.offset + scrollDelta) as Milliseconds
@@ -87,7 +97,6 @@ export const synchronizerStore = createStore<SynchronizerStore>()((set) => ({
 
             return {
                 offset,
-                offsetPx: state.maxwidth * (offset / state.duration),
             }
         })
     },

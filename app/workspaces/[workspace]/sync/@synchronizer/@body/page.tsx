@@ -26,7 +26,7 @@ function Component({
                 width: `${(duration / TotalDuration) * maxwidth}px`,
                 left: `${startOffset - offsetPx}px`,
             }}
-            className="flex text-sm items-center justify-center absolute rounded h-16 bg-unaccent-accent-1 hover:border-accent-1 border-2 border-unaccent-accent-1 cursor-pointer text-txt-2"
+            className="flex text-sm items-center justify-center absolute rounded-sm h-16 bg-unaccent-accent-1 hover:border-accent-1 border-bg-2 border-[1px] cursor-pointer text-txt-2"
         >
             {content}
         </div>

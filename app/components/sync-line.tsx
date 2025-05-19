@@ -1,5 +1,4 @@
 import { formatMS } from '@/utils/time'
-import { Milliseconds } from '@/utils/units'
 
 // function DoubleSidedIcon(props: React.ComponentProps<'svg'>) {
 //     return (
@@ -25,15 +24,15 @@ export default function Component({
     content,
     line,
     start,
-    end,
+    duration,
     synced,
     onClick,
 }: {
     content: string
     line: number
     synced: boolean
-    start?: Milliseconds
-    end?: Milliseconds
+    start?: number
+    duration?: number
     onClick: () => void
 }) {
     const bg = synced ? 'var(--color-bg-4)' : 'var(--color-bg-2)'
@@ -77,7 +76,7 @@ export default function Component({
                 }}
                 className="flex items-center justify-center  min-w-[112px] h-full"
             >
-                <span>{formatMS(end)}</span>
+                <span>{formatMS(start && duration ? start + duration : undefined)}</span>
             </div>
         </div>
     )

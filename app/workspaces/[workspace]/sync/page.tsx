@@ -32,6 +32,16 @@ function Lines() {
                             <SyncLine
                                 key={i}
                                 content={line.content}
+                                start={
+                                    lineSyncWp?.content.find(
+                                        (ls) => ls.targetId == line.id
+                                    )?.timerange.start
+                                }
+                                duration={
+                                    lineSyncWp?.content.find(
+                                        (ls) => ls.targetId == line.id
+                                    )?.timerange.duration
+                                }
                                 synced={
                                     lineSyncWp?.content.findIndex(
                                         (ls) => ls.targetId == line.id
@@ -44,9 +54,7 @@ function Lines() {
                                         (sections.header.timerange?.start ?? 0)
 
                                     if (duration <= 0) duration = 1000
-                                    else
-                                        duration /=
-                                            sections.content.length
+                                    else duration /= sections.content.length
 
                                     lineSyncItems.add(workspace, {
                                         targetId: line.id,
