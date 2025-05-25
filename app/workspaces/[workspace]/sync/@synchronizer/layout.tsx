@@ -12,7 +12,9 @@ export default function Layout({
     tickbar: React.ReactNode
     body: React.ReactNode
 }) {
-    const {changeOffset, frame, duration} = useSynchronizer((state) => state)
+    const { changeOffset, frame, maxwidth, duration } = useSynchronizer(
+        (state) => state
+    )
     const container = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
@@ -24,7 +26,8 @@ export default function Layout({
             e.stopPropagation()
 
             const delta = e.deltaX == 0 ? e.deltaY : e.deltaX
-            changeOffset(delta * (frame.duration/duration) * 50 * -1)
+            const frameDuration = (frame / maxwidth) * duration
+            changeOffset(delta * (frameDuration / duration) * 50 * -1)
         }
 
         el.addEventListener('wheel', onWheel, { passive: false })
@@ -32,13 +35,18 @@ export default function Layout({
         return () => {
             el.removeEventListener('wheel', onWheel)
         }
-    }, [container, changeOffset, frame, duration])
+    }, [container, changeOffset, frame, duration, maxwidth])
 
     return (
         <div className="flex flex-col h-full gap-2">
-            <div className="bg-bg-3 border-2 border-unaccent-accent-1 rounded-md overflow-hidden">{options}</div>
+            <div className="bg-bg-3 border-2 border-unaccent-accent-1 rounded-md overflow-hidden">
+                {options}
+            </div>
 
-            <div className="bg-bg-3 px-1 border-2 border-unaccent-accent-1 rounded-md overflow-hidden h-fit" ref={container}>
+            <div
+                className="bg-bg-3 px-1 border-2 border-unaccent-accent-1 rounded-md overflow-hidden h-fit"
+                ref={container}
+            >
                 {tickbar}
                 {body}
             </div>

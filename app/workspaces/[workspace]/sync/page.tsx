@@ -82,7 +82,7 @@ function SideHeaderNavigation() {
         state.workspaces.find((v) => v.workspace == workspace)
     )
 
-    const { setMaxwidthFromDuration, setOffset } = useSynchronizer(
+    const { setMaxwidth, setOffset, frame, duration } = useSynchronizer(
         (state) => state
     )
 
@@ -99,7 +99,10 @@ function SideHeaderNavigation() {
 
                         if (start == undefined || end == undefined) return
 
-                        setMaxwidthFromDuration(end - start)
+                        const timerange = end - start
+
+                        const mw = (frame * duration) / timerange
+                        setMaxwidth(mw)
                         setOffset(start)
                     }}
                 >

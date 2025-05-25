@@ -13,9 +13,9 @@ export default function Page() {
                 offset={offset}
                 duration={duration}
                 maxWidth={maxwidth}
-                onFrameWidth={(ws, wp) => {
-                    if (frame.duration == ws && frame.width == wp) return
-                    setFrame({ width: wp, duration: ws })
+                onFrameWidth={(wp) => {
+                    if (frame == wp) return
+                    setFrame(wp)
                 }}
             />
         </>

@@ -13,12 +13,13 @@ function Component({
     content: string
 }) {
     const {
-        offsetPx,
+        offset,
         duration: TotalDuration,
         maxwidth,
     } = useSynchronizer((state) => state)
 
     const startOffset = (start / TotalDuration) * maxwidth
+    const offsetPx = (offset / TotalDuration) * maxwidth
 
     return (
         <div

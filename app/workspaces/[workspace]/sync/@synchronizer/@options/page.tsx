@@ -2,28 +2,34 @@
 import { useSynchronizer } from '@/states/hooks'
 
 export default function Page() {
-    const { frame, duration, setMaxwidth, offset, setOffset, maxwidth } =
+    const { setMaxwidth, setOffset, offset, duration, maxwidth, frame } =
         useSynchronizer((state) => state)
 
     return (
         <div className="flex grow items-center justify-center">
             <input
+                value={maxwidth}
                 onInput={(e) => {
-                    const offsetPx = (offset / duration) * maxwidth
-                    console.log(offsetPx / maxwidth)
+                    const nmw = Number(e.currentTarget.value)
+                    const opx = (offset / duration) * maxwidth
+                    const u1 = (opx + frame / 2) / maxwidth
+                    const opx1 = u1 * nmw - frame / 2
+                    const o = (opx1 / nmw) * duration
 
-                    // const value = Number(e.currentTarget.value)
-
-                    // setMaxwidth(maxwidth - 10)
-                    // setOffset(((offsetPx - 5) / maxwidth) * duration)
-
-                    // setMaxwidthFromDuration(nmw)
+                    setOffset(o)
+                    setMaxwidth(nmw)
                 }}
-                value={frame.duration / duration}
+                onMouseUp={() => {
+                    if (offset < 0) setOffset(0)
+                }}
                 type="range"
-                min="0.01"
-                step="0.00001"
-                max="1"
+                min={frame}
+                step={1}
+                /*
+                 Equation comes from `time/duration = frame/maxwidth` solving for `maxwidth`
+                 you get `maxwidth = (frame * duration / time)` 
+                 */
+                max={((frame / 4) * duration) / 1000}
             />
         </div>
     )

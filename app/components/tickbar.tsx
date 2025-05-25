@@ -86,12 +86,13 @@ export function useDraw(canvas: RefObject<HTMLCanvasElement>) {
 
         while (l > targetL) {
             v += 0.1
-            l = frame.width / v
+            l = frame / v
         }
-        l = frame.width / (v - vstep)
+        l = frame / (v - vstep)
 
         const t = (l / maxwidth) * duration
-        const final = Math.round(t / 1000) * 1000
+        const final =
+            t > 800 ? Math.round(t / 1000) * 1000 : Math.ceil(t / 100) * 100
 
         draw(canvas.current, width, offset, playerDuration, {
             tickLength: final,
@@ -131,7 +132,7 @@ export default function Component({
     offset: Milliseconds
     maxWidth: number
     duration: Milliseconds
-    onFrameWidth?: (widthMs: Milliseconds, widthPx: number) => void
+    onFrameWidth?: (widthPx: number) => void
     onFullWidth?: (widthMs: Milliseconds, widthPx: number) => void
 }) {
     const refparent = useRef<HTMLDivElement>(null)
@@ -141,8 +142,7 @@ export default function Component({
     const getWidth = useCallback(() => {
         const wp = refparent.current?.getBoundingClientRect().width as 0
         const wd = (duration * (wp / maxWidth)) as Milliseconds
-        if (onFrameWidth)
-            onFrameWidth(Math.floor(wd) as Milliseconds, Math.floor(wp))
+        if (onFrameWidth) onFrameWidth(Math.floor(wp))
         return wd
     }, [duration, maxWidth, onFrameWidth])
 
