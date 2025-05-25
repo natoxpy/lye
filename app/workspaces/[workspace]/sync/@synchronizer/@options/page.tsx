@@ -23,13 +23,13 @@ export default function Page() {
                     if (offset < 0) setOffset(0)
                 }}
                 type="range"
-                min={frame}
+                min={frame * 2}
                 step={1}
                 /*
                  Equation comes from `time/duration = frame/maxwidth` solving for `maxwidth`
                  you get `maxwidth = (frame * duration / time)` 
                  */
-                max={((frame / 4) * duration) / 1000}
+                max={((frame / 3) * duration) / 1000}
             />
         </div>
     )
