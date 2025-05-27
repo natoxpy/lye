@@ -116,7 +116,7 @@ function AnkerBase({
             style={{
                 right: right ? '0px' : undefined,
             }}
-            className="absolute w-4 h-full"
+            className="absolute w-4 h-full hover:bg-accent-1"
         >
             {children}
         </div>
