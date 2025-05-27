@@ -32,9 +32,13 @@ function TimelineTimebar({
         const onMouseMove = (e: MouseEvent) => {
             if (!mouseDown) return
 
-            const x = e.clientX - parent.getBoundingClientRect().x
+            let x = e.clientX - parent.getBoundingClientRect().x
 
-            console.log('layout', x)
+            x += offsetPx
+
+            const xms = (x / maxwidth) * duration
+
+            audio.currentTime = xms / 1000
         }
 
         const onMouseDown = () => {
@@ -55,7 +59,7 @@ function TimelineTimebar({
             document.removeEventListener('mouseup', onMouseUp)
             element.removeEventListener('mousedown', onMouseDown)
         }
-    }, [parentRef, mouseDown])
+    }, [parentRef, mouseDown, audio, duration, maxwidth, offsetPx])
 
     return (
         <>
