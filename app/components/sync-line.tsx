@@ -1,5 +1,6 @@
 import { formatMS } from '@/utils/time'
 
+/*
 function DoubleSidedIcon(props: React.ComponentProps<'svg'>) {
     return (
         <svg
@@ -19,6 +20,7 @@ function DoubleSidedIcon(props: React.ComponentProps<'svg'>) {
         </svg>
     )
 }
+*/
 
 export default function Component({
     content,
