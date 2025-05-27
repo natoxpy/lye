@@ -7,6 +7,7 @@ import {
     useLyricsToolkit,
     useSynchronizer,
 } from '@/states/hooks'
+import { useAudio } from '@/app/components/audio'
 
 function Lines() {
     const { workspace } = useParams<{ workspace: string }>()
@@ -14,6 +15,7 @@ function Lines() {
     const lyricsWorkspaces = useLyrics((state) =>
         state.workspaces.find((v) => v.workspace == workspace)
     )
+    const audio = useAudio()
 
     const lineSyncWp = useLineSync((store) =>
         store.workspaces.find((w) => w.workspace == workspace)
@@ -36,6 +38,7 @@ function Lines() {
                     <div className="flex-col overflow-hidden rounded">
                         {sections.content.map((line, i) => (
                             <SyncLine
+                                time={Math.round(audio.currentTime * 1000)}
                                 key={i}
                                 content={line.content}
                                 start={

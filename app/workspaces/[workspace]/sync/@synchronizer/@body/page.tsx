@@ -148,7 +148,10 @@ function LeftSizeResizeAnker({ targetId }: { targetId: string }) {
                 const timerange = object?.timerange
                 if (!timerange) return
 
-                let start = e > timerange.end - MinimumComponentTime ? timerange.end - MinimumComponentTime : e
+                let start =
+                    e > timerange.end - MinimumComponentTime
+                        ? timerange.end - MinimumComponentTime
+                        : e
                 const end = timerange.end
 
                 if (!objectPrevious) {
@@ -215,7 +218,10 @@ function RightSizeResizeAnker({ targetId }: { targetId: string }) {
                 if (!timerange) return
 
                 const start = timerange.start
-                let end = e < timerange.start + MinimumComponentTime ? timerange.start + MinimumComponentTime : e
+                let end =
+                    e < timerange.start + MinimumComponentTime
+                        ? timerange.start + MinimumComponentTime
+                        : e
 
                 if (!objectNext) {
                     if (end > duration) end = duration
@@ -319,8 +325,8 @@ export default function Page() {
                     //
                     // Lyrics Line was removed but it's linesync
                     // line which uses it was not cleaned
-                    console.error('section should not be undefined')
-                    return <></>
+                    // console.error('section should not be undefined')
+                    return <React.Fragment key={i} />
                 }
 
                 return (

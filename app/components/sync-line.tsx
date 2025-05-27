@@ -1,29 +1,30 @@
 import { formatMS } from '@/utils/time'
 
-// function DoubleSidedIcon(props: React.ComponentProps<'svg'>) {
-//     return (
-//         <svg
-//             width="10"
-//             height="46"
-//             viewBox="0 0 10 46"
-//             fill="none"
-//             xmlns="http://www.w3.org/2000/svg"
-//             {...props}
-//         >
-//             <path d="M2 1H5H8V3.2L5 5.4V40.6L8 42.8V45H5H2V42.8L5 40.6V5.4L2 3.2V1Z" />
-//             <path
-//                 d="M5 5.4L2 3.2V1H5H8V3.2L5 5.4ZM5 5.4V40.6M5 40.6L2 42.8V45H5H8V42.8L5 40.6Z"
-//                 strokeLinecap="round"
-//                 strokeLinejoin="round"
-//             />
-//         </svg>
-//     )
-// }
+function DoubleSidedIcon(props: React.ComponentProps<'svg'>) {
+    return (
+        <svg
+            width="10"
+            height="46"
+            viewBox="0 0 10 46"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            {...props}
+        >
+            <path d="M2 1H5H8V3.2L5 5.4V40.6L8 42.8V45H5H2V42.8L5 40.6V5.4L2 3.2V1Z" />
+            <path
+                d="M5 5.4L2 3.2V1H5H8V3.2L5 5.4ZM5 5.4V40.6M5 40.6L2 42.8V45H5H8V42.8L5 40.6Z"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+        </svg>
+    )
+}
 
 export default function Component({
     content,
     line,
     start,
+    time,
     end,
     synced,
     onClick,
@@ -31,6 +32,7 @@ export default function Component({
     content: string
     line: number
     synced: boolean
+    time: number
     start?: number
     end?: number
     onClick: () => void
@@ -48,18 +50,55 @@ export default function Component({
         >
             <div
                 style={{
-                    background: bg,
+                    background:
+                        start != undefined &&
+                        end != undefined &&
+                        time >= start &&
+                        time <= end
+                            ? 'var(--color-bg-5)'
+                            : bg,
                 }}
-                className="flex items-center justify-center min-w-[56px] h-full"
+                className="flex relative items-center justify-center min-w-[56px] h-full"
             >
-                <span>{line}</span>
+                <span className='z-10'>{line}</span>
+                {start != undefined &&
+                end != undefined &&
+                time >= start &&
+                time <= end ? (
+                    <div
+                        style={{
+                            width:
+                                (1 - (end - time) / (end - start)) * 100 + '%',
+                        }}
+                        className="absolute left-0 h-full bg-accent-blue"
+                    ></div>
+                ) : (
+                    <></>
+                )}
             </div>
             <div
                 style={{
                     background: bg,
                 }}
-                className="flex items-center justify-center min-w-[112px] h-full"
+                className="flex relative items-center justify-center min-w-[112px] h-full"
             >
+                {/*}
+                {start != undefined &&
+                end != undefined &&
+                time >= start &&
+                time <= end ? (
+                    <DoubleSidedIcon
+                        style={{
+                            left:
+                                (1 - (end - time) / (end - start)) * 100 + '%',
+                        }}
+                        className="absolute stroke-accent-1 fill-accent-1"
+                    />
+                ) : (
+                    <></>
+                )}
+                {*/}
+
                 <span>{formatMS(start)}</span>
             </div>
             <div

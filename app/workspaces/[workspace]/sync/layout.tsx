@@ -1,9 +1,11 @@
 'use client'
-import React from 'react'
+import React, { useEffect } from 'react'
 // import { usePlainLyricsLinesWorkspace } from '@/states/store-plain-lyrics'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { UNAME } from '@/utils/units'
+import { useAudio } from '@/app/components/audio'
+import { useSynchronizer } from '@/states/hooks'
 
 function NoLines({ workspaceId }: { workspaceId: string }) {
     return (
@@ -36,8 +38,14 @@ export default function Layout({
     children: React.ReactNode
     synchronizer: React.ReactNode
 }) {
+    const audio = useAudio()
     const { workspace } = useParams<{ workspace: UNAME }>()
     const hasNoLines = false
+    const setDuration = useSynchronizer((state) => state.setDuration)
+
+    useEffect(() => {
+        setDuration(audio.duration * 1000)
+    }, [audio, setDuration])
 
     return (
         <div
