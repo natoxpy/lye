@@ -55,26 +55,29 @@ export default function Component({
                         end != undefined &&
                         time >= start &&
                         time <= end
-                            ? 'var(--color-bg-5)'
+                            ? 'var(--color-bg-6)'
                             : bg,
                 }}
                 className="flex relative items-center justify-center min-w-[56px] h-full"
             >
-                <span className='z-10'>{line}</span>
-                {start != undefined &&
-                end != undefined &&
-                time >= start &&
-                time <= end ? (
-                    <div
-                        style={{
-                            width:
-                                (1 - (end - time) / (end - start)) * 100 + '%',
-                        }}
-                        className="absolute left-0 h-full bg-accent-blue"
-                    ></div>
-                ) : (
-                    <></>
-                )}
+                <span className="z-10">{line}</span>
+                <div className="absolute left-0 top-0 w-full h-full">
+                    {start != undefined &&
+                    end != undefined &&
+                    time > start &&
+                    time < end ? (
+                        <div
+                            style={{
+                                height:
+                                    (1 - (end - time) / (end - start)) * 100 +
+                                    '%',
+                            }}
+                            className="absolute left-0 top-0 w-full bg-accent-blue"
+                        ></div>
+                    ) : (
+                        <></>
+                    )}
+                </div>
             </div>
             <div
                 style={{

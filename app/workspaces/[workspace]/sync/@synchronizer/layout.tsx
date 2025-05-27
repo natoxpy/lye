@@ -127,13 +127,13 @@ export default function Layout({
     }, [container, changeOffset, frame, duration, maxwidth])
 
     return (
-        <div className="flex flex-col h-full gap-2">
-            <div className="bg-bg-3 border-2 border-unaccent-accent-1 rounded-md overflow-hidden">
+        <div className="flex flex-col h-full gap-2 z-30">
+            <div className="bg-bg-3 z-30 border-2 border-unaccent-accent-1 rounded-md overflow-hidden">
                 {options}
             </div>
 
             <div
-                className="bg-bg-3 relative px-1 border-2 border-unaccent-accent-1 rounded-md overflow-hidden h-fit"
+                className="bg-bg-3 relative z-30 px-1 border-2 border-unaccent-accent-1 rounded-md overflow-hidden h-fit"
                 ref={container}
             >
                 <LayoutContextProvider container={container}>
