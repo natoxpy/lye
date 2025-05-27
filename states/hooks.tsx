@@ -127,3 +127,44 @@ export const useWorkspaceUtils = () => {
         },
     }
 }
+
+export function useLyricsToolkit(workspace: string) {
+    const lyrics = useLyrics((state) => state.workspaces)
+    const wp = lyrics.find((w) => w.workspace == workspace)
+
+    if (!wp) return {} as never
+
+    return {
+        findNearestNeighbors: (targetId: string) => {
+            let previous = null
+            let current = null
+            let next = null
+
+            for (let i = 0; i < wp.lyrics.length; i++) {
+                const sections = wp.lyrics[i]
+                if (next != null) break
+
+                for (let y = 0; y < sections.content.length; y++) {
+                    const line = sections.content[y]
+
+                    if (current != null) {
+                        next = line
+                        break
+                    }
+
+                    if (line.id == targetId) {
+                        current = line
+                        continue
+                    }
+
+                    previous = line
+                }
+            }
+
+            return {
+                previous,
+                next,
+            }
+        },
+    }
+}

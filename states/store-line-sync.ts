@@ -6,7 +6,7 @@ export type LineSyncContent = {
     targetId: string
     timerange: {
         start: number
-        duration: number
+        end: number
     }
 }
 
@@ -94,9 +94,11 @@ export const lineSyncStore = createStore<LineSyncStore>()(
 
                         store.workspaces[wpIndex].content.push(lineSyncItem)
 
-                        // LineSyncDatabase.update({
-                        //     ...store.workspaces[wpIndex],
-                        // })
+                        LineSyncDatabase.update(
+                            JSON.parse(
+                                JSON.stringify(store.workspaces[wpIndex])
+                            )
+                        )
                     })
                 },
                 update: (workspace, targetId, timerange) => {
@@ -113,9 +115,11 @@ export const lineSyncStore = createStore<LineSyncStore>()(
                         if (ls == undefined) return
                         ls.timerange = timerange
 
-                        // LineSyncDatabase.update({
-                        //     ...store.workspaces[wpIndex],
-                        // })
+                        LineSyncDatabase.update(
+                            JSON.parse(
+                                JSON.stringify(store.workspaces[wpIndex])
+                            )
+                        )
                     })
                 },
                 delete: (workspace, targetId) => {
@@ -129,9 +133,11 @@ export const lineSyncStore = createStore<LineSyncStore>()(
                             wpIndex
                         ].content.filter((item) => item.targetId != targetId)
 
-                        // LineSyncDatabase.update({
-                        //     ...store.workspaces[wpIndex],
-                        // })
+                        LineSyncDatabase.update(
+                            JSON.parse(
+                                JSON.stringify(store.workspaces[wpIndex])
+                            )
+                        )
                     })
                 },
             },

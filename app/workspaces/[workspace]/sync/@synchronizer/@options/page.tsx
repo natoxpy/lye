@@ -1,12 +1,39 @@
 'use client'
+import { useAudio } from '@/app/components/audio'
 import { useSynchronizer } from '@/states/hooks'
+import PlayIcon from '@/app/components/icons/play'
+import PauseIcon from '@/app/components/icons/pause'
 
 export default function Page() {
     const { setMaxwidth, setOffset, offset, duration, maxwidth, frame } =
         useSynchronizer((state) => state)
 
+    const audio = useAudio()
+
     return (
         <div className="flex grow items-center justify-center">
+            <div
+                style={{
+                    pointerEvents: audio.duration == 0 ? 'none' : 'initial',
+                }}
+                onClick={() => {
+                    if (audio.paused) audio.play()
+                    else audio.pause()
+                }}
+                className="flex items-center justify-center group/playbtn h-[50px] w-[80px] cursor-pointer"
+            >
+                {audio.paused ? (
+                    <PlayIcon
+                        widths={50}
+                        className="stroke-txt-3 group-hover/playbtn:stroke-txt-2"
+                    />
+                ) : (
+                    <PauseIcon
+                        widths={50}
+                        className="stroke-txt-3 group-hover/playbtn:stroke-txt-2"
+                    />
+                )}
+            </div>
             <input
                 value={maxwidth}
                 onInput={(e) => {

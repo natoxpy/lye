@@ -24,7 +24,7 @@ export default function Component({
     content,
     line,
     start,
-    duration,
+    end,
     synced,
     onClick,
 }: {
@@ -32,7 +32,7 @@ export default function Component({
     line: number
     synced: boolean
     start?: number
-    duration?: number
+    end?: number
     onClick: () => void
 }) {
     const bg = synced ? 'var(--color-bg-4)' : 'var(--color-bg-2)'
@@ -76,7 +76,7 @@ export default function Component({
                 }}
                 className="flex items-center justify-center  min-w-[112px] h-full"
             >
-                <span>{formatMS(start && duration ? start + duration : undefined)}</span>
+                <span>{formatMS(end)}</span>
             </div>
         </div>
     )
