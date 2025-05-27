@@ -1,4 +1,4 @@
-import { Title, Description } from './layout'
+import { Title, Description } from './layoutComponents'
 import Header from './header'
 import Animation from './animation'
 

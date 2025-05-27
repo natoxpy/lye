@@ -112,6 +112,7 @@ export function isEncodingArea(c: string): boolean {
     return c == outpad || c == inpad || c == b0 || c == b1
 }
 
+/*
 export function testProcess(
     content: string,
     from: { start: number; end: number },
@@ -137,3 +138,4 @@ export function testProcess(
         // return i
     }
 }
+*/

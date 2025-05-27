@@ -1,4 +1,4 @@
-import { Milliseconds, Seconds, TimeUnit } from '../utils/units'
+import { Milliseconds, Seconds, TimeUnit } from '@/utils/units'
 
 export const timeConverter = {
     StoMS(s: Seconds): Milliseconds {

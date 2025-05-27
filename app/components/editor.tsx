@@ -338,32 +338,32 @@ function Layout({
                     <textarea
                         ref={textareaRef}
                         value={content.join('\n')}
-                        onKeyDown={(e) => {
-                            const txtarea = e.target as HTMLTextAreaElement
-                            const s = txtarea.value.split('\n')[0]
+                        onKeyDown={() => {
+                            // const txtarea = e.target as HTMLTextAreaElement
+                            // const s = txtarea.value.split('\n')[0]
 
-                            const currentCursor = {
-                                start: txtarea.selectionStart,
-                                end: txtarea.selectionEnd,
-                            }
+                            // const currentCursor = {
+                            //     start: txtarea.selectionStart,
+                            //     end: txtarea.selectionEnd,
+                            // }
 
                             setTimeout(() => {
-                                const toCursor = {
-                                    start: txtarea.selectionStart,
-                                    end: txtarea.selectionEnd,
-                                }
+                                // const toCursor = {
+                                //     start: txtarea.selectionStart,
+                                //     end: txtarea.selectionEnd,
+                                // }
 
-                                const res = binary.testProcess(
-                                    txtarea.value,
-                                    currentCursor,
-                                    toCursor,
-                                    txtarea.selectionDirection
-                                )
+                                // const res = binary.testProcess(
+                                //     txtarea.value,
+                                //     currentCursor,
+                                //     toCursor,
+                                //     txtarea.selectionDirection
+                                // )
 
-                                if (res != undefined) {
-                                    txtarea.selectionStart = res
-                                    txtarea.selectionEnd = res
-                                }
+                                // if (res != undefined) {
+                                //     txtarea.selectionStart = res
+                                //     txtarea.selectionEnd = res
+                                // }
                             }, 1)
                         }}
                         onBlur={() => setTextareaFocus(false)}
@@ -435,7 +435,7 @@ function Layout({
                                     .removeEncodings(line)
                                     .replace(HEADER_PREFIX, '')
 
-                                const [head, tail] = writeMetadata(
+                                const [, tail] = writeMetadata(
                                     existingData.head == null
                                         ? hash(String(Math.random()))
                                         : existingData.head.id,

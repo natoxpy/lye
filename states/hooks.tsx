@@ -1,11 +1,11 @@
-import { create, useStore } from 'zustand'
+import { useStore } from 'zustand'
 
 import { hashRandom } from '@/utils/hash'
 
 import { workspacesStore, WorkspaceStore } from './store-workspaces'
 import { Lyrics, lyricsStore, LyricsStore } from './store-lyrics'
 
-import { timedLinesStore } from './store-timed-lines'
+// import { timedLinesStore } from './store-timed-lines'
 import { plainLyricsStore, PlainLyricsStore } from './store-plain-lyrics'
 import {
     sectionedLyricsStore,
@@ -31,7 +31,7 @@ export const useLineSync = <T,>(selector: (state: LineSyncStore) => T) => {
     return useStore(lineSyncStore, selector)
 }
 
-export const useTimedLinesStore = create(() => timedLinesStore)
+// export const useTimedLinesStore = create(() => timedLinesStore)
 
 export const usePlainLyrics = <T,>(
     selector: (state: PlainLyricsStore) => T

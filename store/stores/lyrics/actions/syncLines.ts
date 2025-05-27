@@ -1,7 +1,6 @@
 import { PayloadAction } from '@reduxjs/toolkit'
 import { Line, LinesSync, State } from '../reducer'
 import * as Diff from 'diff'
-import { cyrb53 } from '@/utils/hash'
 import { HEADER_INITIAL } from '..'
 
 class DiffItem {
@@ -52,7 +51,10 @@ class Diffing {
     headerLine: number = 0
     skipCount: number = 0
 
-    constructor(public preLines: string[], public newLines: string[]) {
+    constructor(
+        public preLines: string[],
+        public newLines: string[]
+    ) {
         this.diff = Diff.diffArrays(preLines, newLines)
         this.result = []
     }
@@ -283,8 +285,7 @@ export default function Reducer(state: State, action: PayloadAction<Payload>) {
 
     const newlines: Array<Line> = []
 
-    const genId = (line: number, content: string) =>
-        String(cyrb53(`${line}${content}`))
+    const genId = (line: number, content: string) => String(`${line}${content}`)
 
     const syncActions: Array<LinesSync> = []
 
@@ -343,7 +344,7 @@ export default function Reducer(state: State, action: PayloadAction<Payload>) {
         }
     }
 
-    const linesSyncHash = cyrb53(syncActions.map((item) => item.id).join(''))
+    const linesSyncHash = syncActions.map((item) => item.id).join('')
 
     instance.linesSyncHash = String(linesSyncHash)
     instance.linesSync = syncActions
