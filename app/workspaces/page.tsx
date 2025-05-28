@@ -241,9 +241,14 @@ function ActiveList() {
                                         </span>
                                     </button>
 
+                                    {/*}
                                     <span className="text-txt-3">
                                         UploadLyrics
                                     </span>
+                                    <span className="text-txt-3">
+                                        Download LRC
+                                    </span>
+                                    {*/}
                                 </div>
                             </td>
                         </tr>
