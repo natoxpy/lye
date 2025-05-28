@@ -21,8 +21,8 @@ export type SynchronizerStore = State & Actions
 
 export const synchronizerStore = createStore<SynchronizerStore>()((set) => ({
     frame: 0,
-    offset: 10_000 as Milliseconds,
-    duration: (1000 * 60 * 4) as Milliseconds,
+    offset: 0 as Milliseconds,
+    duration: 0 as Milliseconds,
     maxwidth: 4000,
     setOffset: (offset: number | Milliseconds) =>
         set(() => {
