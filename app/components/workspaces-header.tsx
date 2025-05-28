@@ -130,10 +130,7 @@ export default function Header({
                 />
                 <div
                     style={{
-                        display:
-                            workspaceRef?.fileblob || workspaceRef == null
-                                ? 'none'
-                                : '',
+                        display: audio.duration != 0 ? 'none' : '',
                     }}
                     className="group cursor-pointer"
                 >
