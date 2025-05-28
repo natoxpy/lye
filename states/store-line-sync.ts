@@ -1,6 +1,7 @@
 import { createStore } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import { LineSyncDatabase } from './persistance'
+import { LyricsSection } from './store-lyrics'
 
 export type LineSyncContent = {
     targetId: string
@@ -144,3 +145,23 @@ export const lineSyncStore = createStore<LineSyncStore>()(
         },
     }))
 )
+
+export function getLineSyncCount(
+    lyrics?: LyricsSection[],
+    linesyncs?: LineSyncContent[]
+) {
+    if (!lyrics || !linesyncs) return 0
+
+    let acc = 0
+
+    const inLineSync = (targetId: string) =>
+        linesyncs.findIndex((l) => l.targetId == targetId) != 1
+
+    for (const section of lyrics) {
+        for (const line of section.content) {
+            if (inLineSync(line.id)) acc += 1
+        }
+    }
+
+    return acc
+}

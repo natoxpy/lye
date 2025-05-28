@@ -64,3 +64,16 @@ export const lyricsStore = createStore<LyricsStore>()(
         },
     }))
 )
+
+export function getLyricsCount(lyrics?: LyricsSection[]): number {
+    if (!lyrics) return 0
+    let acc = 0
+
+    for (let i = 0; i < lyrics.length; i++) {
+        for (let y = 0; y < lyrics[i].content.length; y++) {
+            acc += 1
+        }
+    }
+
+    return acc
+}

@@ -4,21 +4,26 @@ import { useEffect, useRef, useState } from 'react'
 import DownArrow from '../components/icons/downArrow'
 import {
     useHeader,
-    usePlainLyrics,
+    useLineSync,
+    useLyrics,
     useWorkspaces,
     useWorkspaceUtils,
 } from '@/states/hooks'
-import { getPlainLyricsCount } from '@/states/store-plain-lyrics'
 import { useRouter } from 'next/navigation'
 import Header from './@header/page'
 import { updateWorkspace } from '@/states/persistance'
+import { getLyricsCount } from '@/states/store-lyrics'
+import { getLineSyncCount } from '@/states/store-line-sync'
 
 function ActiveList() {
     // const deleteWorkspace = useWorkspaces((state) => state.actions.delete)
     // const { deleteWorkspace } = useWorkspaceUtils()
     const { deleteWorkspace } = useWorkspaceUtils()
     const workspaces = useWorkspaces((state) => state.workspaces)
-    const plainLyrics = usePlainLyrics((state) => state.lyrics)
+    const lyrics = useLyrics((state) => state.workspaces)
+    const linesyncs = useLineSync((state) => state.workspaces)
+
+    // const plainLyrics = usePlainLyrics((state) => state.lyrics)
     const router = useRouter()
     const inputFileRef = useRef<HTMLInputElement>(null)
 
@@ -71,18 +76,39 @@ function ActiveList() {
                             </td>
                             <td>
                                 <span className="text-txt-3 whitespace-nowrap">
-                                    {getPlainLyricsCount(
-                                        plainLyrics.find(
+                                    {getLyricsCount(
+                                        lyrics.find(
                                             (pl) =>
                                                 pl.workspace ==
                                                 workspace.shorthand_id
-                                        )?.content ?? ''
+                                        )?.lyrics
                                     )}
                                 </span>
                             </td>
                             <td>
                                 <span className="text-txt-3 whitespace-nowrap">
-                                    {'N\\A'}
+                                    {Math.round(
+                                        (getLineSyncCount(
+                                            lyrics.find(
+                                                (pl) =>
+                                                    pl.workspace ==
+                                                    workspace.shorthand_id
+                                            )?.lyrics,
+                                            linesyncs.find(
+                                                (w) =>
+                                                    w.workspace ==
+                                                    workspace.shorthand_id
+                                            )?.content
+                                        ) /
+                                            getLyricsCount(
+                                                lyrics.find(
+                                                    (pl) =>
+                                                        pl.workspace ==
+                                                        workspace.shorthand_id
+                                                )?.lyrics
+                                            )) *
+                                            100
+                                    ) + '%'}
                                 </span>
                             </td>
 
@@ -436,6 +462,7 @@ export default function Page() {
                                 className="w-52 px-3 bg-bg-3 outline-none text-txt-2 rounded-md border-2 border-transparent transition-all focus:border-bg-5"
                             />
 
+                            {/*}
                             <div className="flex rounded-md overflow-hidden">
                                 <div className="text-txt-2 bg-bg-3 hover:bg-bg-4 px-4 py-2 cursor-pointer select-none">
                                     Active
@@ -447,6 +474,7 @@ export default function Page() {
                                     Finished
                                 </div>
                             </div>
+                            {*/}
                         </div>
 
                         <CreateNewButton />
