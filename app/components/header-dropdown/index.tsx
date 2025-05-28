@@ -5,9 +5,11 @@ import LrclibUploadTab from './lrclib-upload.tab'
 import { useWorkspaces } from '@/states/hooks'
 
 export default function Dropdown({
+    actions,
     tab: [tabIndex, setTabIndex],
     active: [active],
 }: {
+    actions: { downloadLRCFile: () => void }
     tab: [number, (tab: number) => void]
     active: [boolean, (active: boolean) => void]
 }) {
@@ -79,6 +81,7 @@ export default function Dropdown({
                         ref={tab2}
                     />
                     <LrclibUploadTab
+                        actions={actions}
                         prevPage={() => setTabIndex(tabIndex - 1)}
                         ref={tab3}
                     />
