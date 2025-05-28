@@ -1,10 +1,11 @@
 import { useGSAP } from '@gsap/react'
 import Layout from './layout'
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import gsap, { SteppedEase } from 'gsap'
 import CursorIcon from '../assets/icons/cursor'
 import TypingCursorIcon from '../assets/icons/typingCursor'
 import { ScrollToPlugin, TextPlugin } from 'gsap/all'
+import LyricsData from './lyrics-data.json'
 
 export default function Window({
     nextAnimation,
@@ -12,40 +13,8 @@ export default function Window({
     nextAnimation: () => void
 }) {
     const root = useRef<HTMLDivElement>(null)
-    const [lyrics] = useState<
-        { content: string; line: number; header?: boolean }[]
-    >([
-        { line: 1, content: 'Verse', header: true },
-        { line: 1, content: 'Frozen stairs, carptet in blood red' },
-        {
-            line: 2,
-            content: 'Seating goodbyes left unsaid, goodbyes left unsaid',
-        },
-        {
-            line: 3,
-            content: 'Dispite our promisees, here I am following your steps',
-        },
-        { line: 3, content: 'Verse 2', header: true },
-        { line: 4, content: 'Drop by drop' },
-        { line: 5, content: 'As your unchanging reality dampen my sleeve' },
-        { line: 6, content: 'You kisssed them off' },
-        { line: 7, content: 'Through the fibers of my handkercheif' },
-        { line: 7, content: 'Chorus', header: true },
-        { line: 8, content: 'I am fire' },
-        { line: 9, content: 'Burn those who dare to care for me' },
-        {
-            line: 10,
-            content: 'And my fuel are memories, fuel are memories of you',
-        },
-        {
-            line: 11,
-            content: 'They parish with the heat, parish with the heat',
-        },
-        {
-            line: 12,
-            content: 'So I can move on',
-        },
-    ])
+    const lyrics: { content: string; line: number; header?: boolean }[] =
+        LyricsData[0]
 
     const constantType = (target: string, value: string, perchar: number) => {
         return gsap.to(target, {
