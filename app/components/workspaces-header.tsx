@@ -7,6 +7,7 @@ import { useWorkspaces } from '@/states/hooks'
 import { updateWorkspace } from '@/states/persistance'
 import { Workspace } from '@/states/store-workspaces'
 import Link from 'next/link'
+import { useAudio } from './audio'
 
 type Props = {
     onClick(): void
@@ -24,6 +25,7 @@ export default function Header({
     const [workspaceRef, setWorkspaceRef] = useState<Workspace | null>(null)
 
     const inputFileRef = useRef<HTMLInputElement>(null)
+    const audio = useAudio()
 
     const workspaces = useWorkspaces((state) => state.workspaces)
 
@@ -108,6 +110,8 @@ export default function Header({
 
                         const audioBlob = new Blob([audiobuffer])
                         const audioCoverBlob = new Blob([picturebuffer])
+
+                        audio.src = URL.createObjectURL(audioBlob)
 
                         const workspace = workspaces.find(
                             (w) => w.shorthand_id === workspaceId
