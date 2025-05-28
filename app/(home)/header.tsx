@@ -1,15 +1,20 @@
 import Link from 'next/link'
 import Logo from '../components/icons/logo'
+import { HTMLAttributeAnchorTarget } from 'react'
 
 function Option({
     children,
     primary,
+    href,
+    target,
 }: {
+    href: string
     children: React.ReactNode
     primary?: boolean
+    target?: HTMLAttributeAnchorTarget
 }) {
     return (
-        <Link href="/workspaces">
+        <Link href={href} target={target}>
             <div
                 style={{
                     background: primary ? 'var(--color-accent-blue)' : '',
@@ -33,10 +38,15 @@ export default function Component() {
                 <Logo />
             </div>
             <div className="flex items-center gap-[10px] w-fit h-[80]">
-                <Option>Pricing</Option>
-                <Option>Blog</Option>
-                <Option>Contact</Option>
-                <Option primary>Get Started</Option>
+                <Option
+                    target={'_blank'}
+                    href={'https://github.com/natoxpy/lye'}
+                >
+                    Github
+                </Option>
+                <Option primary href={'/workspaces'}>
+                    Get Started
+                </Option>
             </div>
         </div>
     )
