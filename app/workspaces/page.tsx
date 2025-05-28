@@ -431,16 +431,16 @@ function CreateNewButton() {
                         //     artist: song.artist,
                         // })
                     }}
-                    className="relative text-left cursor-pointer hover:bg-bg-4 transition-all px-4 py-2"
+                    className="relative hidden text-left cursor-pointer hover:bg-bg-4 transition-all px-4 py-2"
                 >
                     <span className="text-txt-2">From Genius</span>
                 </button>
 
-                <button className="relative text-left transition-all cursor-default px-4 py-2 opacity-50">
+                <button className="relative hidden text-left transition-all cursor-default px-4 py-2 opacity-50">
                     <span className="text-txt-2">From LUR</span>
                 </button>
 
-                <button className="relative text-left transition-all cursor-default px-4 py-2 opacity-50">
+                <button className="relative hidden text-left transition-all cursor-default px-4 py-2 opacity-50">
                     <span className="text-txt-2">From LRCLIB</span>
                 </button>
             </div>
