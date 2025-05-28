@@ -23,7 +23,7 @@ function Option({
                         ? 'var(--color-txt-2)'
                         : 'var(--color-txt-1)',
                 }}
-                className="cursor-pointer font-semibold flex items-center rounded-[6px] justify-center h-[49px]"
+                className="cursor-pointer relative font-semibold flex items-center rounded-[6px] justify-center h-[49px]"
             >
                 <span className="text-[16px]">{children}</span>
             </div>
@@ -34,10 +34,10 @@ function Option({
 export default function Component() {
     return (
         <div className="flex items-center justify-between h-[100px] max-w-[1400px] px-[100px] w-full">
-            <div>
+            <div className="w-20 h-20">
                 <Logo />
             </div>
-            <div className="flex items-center gap-[10px] w-fit h-[80]">
+            <div className="flex relative items-center gap-[10px] w-fit h-[80]">
                 <Option
                     target={'_blank'}
                     href={'https://github.com/natoxpy/lye'}
@@ -46,6 +46,9 @@ export default function Component() {
                 </Option>
                 <Option primary href={'/workspaces'}>
                     Get Started
+                    <span className="absolute whitespace-nowrap text-txt-3 -right-16">
+                        v0.1.0a
+                    </span>
                 </Option>
             </div>
         </div>
