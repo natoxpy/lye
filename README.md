@@ -22,7 +22,7 @@
 ### Installation
 
 ```bash
-git clone https://github.com/your-username/lye.git
+git clone https://github.com/natoxpy/lye.git
 cd lye
 npm install
 # or
