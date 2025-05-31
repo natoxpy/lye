@@ -111,31 +111,3 @@ export function decode(
 export function isEncodingArea(c: string): boolean {
     return c == outpad || c == inpad || c == b0 || c == b1
 }
-
-/*
-export function testProcess(
-    content: string,
-    from: { start: number; end: number },
-    to: { start: number; end: number },
-    direction: 'forward' | 'backward' | 'none'
-): number | undefined {
-    const cursor = to.start
-    let wantedDirection = from.start > to.start ? 'left' : 'right'
-
-    if (isEncodingArea(content[cursor])) {
-        let i = cursor
-
-        while (isEncodingArea(content[i])) {
-            i = wantedDirection == 'left' ? i - 1 : i + 1
-            if (i < 0) {
-                wantedDirection = wantedDirection == 'left' ? 'right' : 'left'
-                i = wantedDirection == 'left' ? i - 1 : i + 1
-            }
-        }
-
-        console.log(i)
-
-        // return i
-    }
-}
-*/

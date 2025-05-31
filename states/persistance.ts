@@ -2,9 +2,6 @@ import { Workspace, workspacesStore } from './store-workspaces'
 import { Lyrics, lyricsStore } from './store-lyrics'
 import { LineSync, lineSyncStore } from './store-line-sync'
 
-import { PlainLyrics } from './store-plain-lyrics'
-import { SectionedLyrics } from './store-sectioned-lyrics'
-
 export const PersistanceEmitter = new EventTarget()
 
 export function triggerPersistanceEvent() {
@@ -13,7 +10,7 @@ export function triggerPersistanceEvent() {
 }
 
 export async function loadAll() {
-    const workspaces = await getAllWorkspace()
+    const workspaces = await WorkspacesDatabase.getAll()
     workspacesStore.getState().actions.setWorkspaces(workspaces)
     lyricsStore.setState({
         workspaces: await LyricsDatabase.getAll(),
@@ -21,17 +18,6 @@ export async function loadAll() {
     lineSyncStore.setState({
         workspaces: await LineSyncDatabase.getAll(),
     })
-
-    // const plainlines = await getAllPlainlines()
-    // const sectionedLyrics = await getAllSectionedLyrics()
-
-    // plainLyricsStore.setState({
-    //     lyrics: plainlines,
-    // })
-
-    // sectionedLyricsStore.setState({
-    //     workspaces: sectionedLyrics,
-    // })
 
     triggerPersistanceEvent()
 }
@@ -132,160 +118,6 @@ export const WorkspacesDatabase = new DatabaseStore<Workspace>('workspaces')
 export const LyricsDatabase = new DatabaseStore<Lyrics>('lyrics')
 export const LineSyncDatabase = new DatabaseStore<LineSync>('linesync')
 
-//
-// Old persistance system
-//
-
-export async function addWorkspace(workspace: Workspace) {
-    const database = await Database()
-    const transaction = database.transaction('workspaces', 'readwrite')
-    const store = transaction.objectStore('workspaces')
-    store.add(workspace)
-}
-
-export async function addPlainlines(plainlyrics: PlainLyrics) {
-    const database = await Database()
-    const transaction = database.transaction('plainlines', 'readwrite')
-    const store = transaction.objectStore('plainlines')
-    store.add(plainlyrics)
-}
-
-export async function addSectionedLyrics(sectionedLyrics: SectionedLyrics) {
-    const database = await Database()
-    const transaction = database.transaction('sectionedLyrics', 'readwrite')
-    const store = transaction.objectStore('sectionedLyrics')
-    store.add(sectionedLyrics)
-}
-
-export async function updateWorkspace(workspace: Workspace) {
-    const database = await Database()
-    const transaction = database.transaction('workspaces', 'readwrite')
-    const store = transaction.objectStore('workspaces')
-    store.put(workspace)
-}
-
-export async function updatePlainlyrics(plainlyrics: PlainLyrics) {
-    const database = await Database()
-    const transaction = database.transaction('plainlines', 'readwrite')
-    const store = transaction.objectStore('plainlines')
-    store.put(plainlyrics)
-}
-
-export async function updateSectionedLyrics(sectionedLyrics: SectionedLyrics) {
-    const database = await Database()
-    const transaction = database.transaction('sectionedLyrics', 'readwrite')
-    const store = transaction.objectStore('sectionedLyrics')
-    store.put(sectionedLyrics)
-}
-
-export async function getWorkspace(id: string): Promise<Workspace> {
-    const database = await Database()
-    const transaction = database.transaction('workspaces', 'readonly')
-    const store = transaction.objectStore('workspaces')
-    const request = store.get(id)
-
-    return new Promise((res, rej) => {
-        request.onerror = () => rej(request.error)
-        request.onsuccess = () => {
-            if (request.result !== undefined) res(request.result)
-            else rej(request.error)
-        }
-    })
-}
-
-export async function getPlainlines(id: string): Promise<PlainLyrics> {
-    const database = await Database()
-    const transaction = database.transaction('plainlines', 'readonly')
-    const store = transaction.objectStore('plainlines')
-    const request = store.get(id)
-
-    return new Promise((res, rej) => {
-        request.onerror = () => rej(request.error)
-        request.onsuccess = () => {
-            if (request.result !== undefined) res(request.result)
-            else rej(request.error)
-        }
-    })
-}
-
-export async function getSectionedLyrics(id: string): Promise<SectionedLyrics> {
-    const database = await Database()
-    const transaction = database.transaction('sectionedLyrics', 'readonly')
-    const store = transaction.objectStore('sectionedLyrics')
-    const request = store.get(id)
-
-    return new Promise((res, rej) => {
-        if (request.result !== undefined) res(request.result)
-        else rej(request.error)
-    })
-}
-
-export async function getAllWorkspace(): Promise<Workspace[]> {
-    const database = await Database()
-    const transaction = database.transaction('workspaces', 'readonly')
-    const store = transaction.objectStore('workspaces')
-    const request = store.getAll()
-
-    return new Promise((res, rej) => {
-        request.onerror = () => rej(request.error)
-        request.onsuccess = () => {
-            if (request.result !== undefined) res(request.result)
-            else rej(request.error)
-        }
-    })
-}
-
-export async function getAllPlainlines(): Promise<PlainLyrics[]> {
-    const database = await Database()
-    const transaction = database.transaction('plainlines', 'readonly')
-    const store = transaction.objectStore('plainlines')
-    const request = store.getAll()
-
-    return new Promise((res, rej) => {
-        request.onerror = () => rej(request.error)
-        request.onsuccess = () => {
-            if (request.result !== undefined) res(request.result)
-            else rej(request.error)
-        }
-    })
-}
-
-export async function getAllSectionedLyrics(): Promise<SectionedLyrics[]> {
-    const database = await Database()
-    const transaction = database.transaction('sectionedLyrics', 'readonly')
-    const store = transaction.objectStore('sectionedLyrics')
-    const request = store.getAll()
-
-    return new Promise((res, rej) => {
-        request.onerror = () => rej(request.error)
-        request.onsuccess = () => {
-            if (request.result !== undefined) res(request.result)
-            else rej(request.error)
-        }
-    })
-}
-
-export async function deleteWorkspace(id: string) {
-    const database = await Database()
-    const transaction = database.transaction('workspaces', 'readwrite')
-    const store = transaction.objectStore('workspaces')
-    store.delete(id)
-}
-
-export async function deletePlainlines(id: string) {
-    const database = await Database()
-    const transaction = database.transaction('plainlines', 'readwrite')
-    const store = transaction.objectStore('plainlines')
-    store.delete(id)
-}
-
-export async function deleteSectionedLyrics(id: string) {
-    const database = await Database()
-    const transaction = database.transaction('sectionedLyrics', 'readwrite')
-    const store = transaction.objectStore('sectionedLyrics')
-    store.delete(id)
-}
-
 export function Database(): Promise<IDBDatabase> {
     return new Promise((res, rej) => {
         const openRequest = indexedDB.open('store', 1)
@@ -298,10 +130,6 @@ export function Database(): Promise<IDBDatabase> {
                     db.createObjectStore('workspaces', { keyPath: 'id' })
                     db.createObjectStore('lyrics', { keyPath: 'id' })
                     db.createObjectStore('linesync', { keyPath: 'id' })
-
-                    // db.createObjectStore('plainlines', { keyPath: 'id' })
-                    // db.createObjectStore('sectionedLyrics', { keyPath: 'id' })
-                    // db.createObjectStore('synclines', { keyPath: 'id' })
                     break
             }
         }

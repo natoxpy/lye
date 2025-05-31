@@ -5,12 +5,6 @@ import { hashRandom } from '@/utils/hash'
 import { workspacesStore, WorkspaceStore } from './store-workspaces'
 import { Lyrics, lyricsStore, LyricsStore } from './store-lyrics'
 
-// import { timedLinesStore } from './store-timed-lines'
-import { plainLyricsStore, PlainLyricsStore } from './store-plain-lyrics'
-import {
-    sectionedLyricsStore,
-    SectionedLyricsStore,
-} from './store-sectioned-lyrics'
 import { headerStore, HeaderStore } from './store-header'
 import { synchronizerStore, SynchronizerStore } from './store-synchronizer'
 import { UNAME } from '@/utils/units'
@@ -31,30 +25,8 @@ export const useLineSync = <T,>(selector: (state: LineSyncStore) => T) => {
     return useStore(lineSyncStore, selector)
 }
 
-// export const useTimedLinesStore = create(() => timedLinesStore)
-
-export const usePlainLyrics = <T,>(
-    selector: (state: PlainLyricsStore) => T
-): T => {
-    return useStore(plainLyricsStore, selector)
-}
-
-export const useSectionedLyrics = <T,>(
-    selector: (state: SectionedLyricsStore) => T
-): T => {
-    return useStore(sectionedLyricsStore, selector)
-}
-
 export const useHeader = <T,>(selector: (state: HeaderStore) => T): T => {
     return useStore(headerStore, selector)
-}
-
-export function useSectionedLyricsSections(workspace: string) {
-    const wsp = useSectionedLyrics((state) =>
-        state.workspaces.find((w) => w.workspace == workspace)
-    )
-    if (!wsp) return []
-    return wsp.sections
 }
 
 export const useSynchronizer = <T,>(

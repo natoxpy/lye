@@ -11,19 +11,16 @@ import {
 } from '@/states/hooks'
 import { useRouter } from 'next/navigation'
 import Header from './@header/page'
-import { updateWorkspace } from '@/states/persistance'
+import { WorkspacesDatabase } from '@/states/persistance'
 import { getLyricsCount } from '@/states/store-lyrics'
 import { getLineSyncCount } from '@/states/store-line-sync'
 
 function ActiveList() {
-    // const deleteWorkspace = useWorkspaces((state) => state.actions.delete)
-    // const { deleteWorkspace } = useWorkspaceUtils()
     const { deleteWorkspace } = useWorkspaceUtils()
     const workspaces = useWorkspaces((state) => state.workspaces)
     const lyrics = useLyrics((state) => state.workspaces)
     const linesyncs = useLineSync((state) => state.workspaces)
 
-    // const plainLyrics = usePlainLyrics((state) => state.lyrics)
     const router = useRouter()
     const inputFileRef = useRef<HTMLInputElement>(null)
 
@@ -208,7 +205,7 @@ function ActiveList() {
                                                 picturebuffer,
                                             ])
 
-                                            updateWorkspace({
+                                            WorkspacesDatabase.update({
                                                 ...workspace,
                                                 fileblob: audioBlob,
                                                 coverblob: audioCoverBlob,
@@ -240,15 +237,6 @@ function ActiveList() {
                                             Delete
                                         </span>
                                     </button>
-
-                                    {/*}
-                                    <span className="text-txt-3">
-                                        UploadLyrics
-                                    </span>
-                                    <span className="text-txt-3">
-                                        Download LRC
-                                    </span>
-                                    {*/}
                                 </div>
                             </td>
                         </tr>
@@ -258,85 +246,6 @@ function ActiveList() {
         </>
     )
 }
-
-/*
-function ProcessingList({
-    data,
-}: {
-    data: {
-        title: string
-        targets: string[]
-        status: string
-    }[]
-}) {
-    return (
-        <>
-            <table className="grow table-fixed">
-                <thead>
-                    <tr className="h-10 group">
-                        <th className="min-w-12 text-start">
-                            <span className="flex justify-center text-txt-2">
-                                <div className="w-5 h-5 border-2 group-hover:border-txt-3 border-transparent transition-all rounded-full"></div>
-                            </span>
-                        </th>
-
-                        <th className="w-1/3 text-start">
-                            <span className="text-txt-2">Name</span>
-                        </th>
-                        <th className="w-1/3 text-start">
-                            <span className="text-txt-2">Targets</span>
-                        </th>
-                        <th className="w-1/3 text-start">
-                            <span className="text-txt-2">Status</span>
-                        </th>
-
-                        <th className="text-start">
-                            <span className="text-txt-2">Actions</span>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {data.map((value, index) => (
-                        <tr
-                            key={index}
-                            className="border-t-2 group transition-all cursor-pointer w-12 border-bg-5 h-14 relative items-center"
-                            onClick={() => {
-                                console.log(2)
-                            }}
-                        >
-                            <td className="flex justify-center items-center w-12 h-14">
-                                <div className="w-5 h-5 border-2 group-hover:border-txt-3 border-transparent transition-all rounded-full"></div>
-                            </td>
-                            <td>
-                                <span className="text-txt-3">
-                                    {value.title}
-                                </span>
-                            </td>
-                            <td>
-                                <span className="text-txt-3 whitespace-nowrap">
-                                    {value.targets.join(',')}
-                                </span>
-                            </td>
-
-                            <td>
-                                <span className="text-txt-3 whitespace-nowrap">
-                                    {value.status}
-                                </span>
-                            </td>
-
-                            <td className="pr-4">
-                                <div className="flex items-center gap-4 w-full h-full">
-                                    <span className="text-txt-3">Cancel</span>
-                                </div>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </>
-    )
-}
-*/
 
 function CreateNewButton() {
     const [opened, setOpened] = useState(false)
@@ -396,53 +305,6 @@ function CreateNewButton() {
                 >
                     <span className="text-txt-2">Empty</span>
                 </button>
-
-                <button
-                    onClick={async () => {
-                        const url = prompt('Genius link')
-
-                        setOpened(false)
-
-                        if (
-                            url == null ||
-                            url.startsWith('https://genius.com') == false
-                        )
-                            return
-
-                        const response = await fetch(
-                            `/api/genius?url=${decodeURI(url)}`
-                        )
-
-                        if (response.status == 400) {
-                            alert(`${url} was not found`)
-                            return
-                        }
-
-                        // const song = (await response.json()) as {
-                        //     title: string
-                        //     album: string
-                        //     artist: string
-                        //     lyrics: string
-                        // }
-
-                        // createWorkspace({
-                        //     title: song.title,
-                        //     album: song.album,
-                        //     artist: song.artist,
-                        // })
-                    }}
-                    className="relative hidden text-left cursor-pointer hover:bg-bg-4 transition-all px-4 py-2"
-                >
-                    <span className="text-txt-2">From Genius</span>
-                </button>
-
-                <button className="relative hidden text-left transition-all cursor-default px-4 py-2 opacity-50">
-                    <span className="text-txt-2">From LUR</span>
-                </button>
-
-                <button className="relative hidden text-left transition-all cursor-default px-4 py-2 opacity-50">
-                    <span className="text-txt-2">From LRCLIB</span>
-                </button>
             </div>
         </div>
     )
@@ -466,20 +328,6 @@ export default function Page() {
                                 placeholder="Filter"
                                 className="w-52 px-3 bg-bg-3 outline-none text-txt-2 rounded-md border-2 border-transparent transition-all focus:border-bg-5"
                             />
-
-                            {/*}
-                            <div className="flex rounded-md overflow-hidden">
-                                <div className="text-txt-2 bg-bg-3 hover:bg-bg-4 px-4 py-2 cursor-pointer select-none">
-                                    Active
-                                </div>
-                                <div className="text-txt-3 bg-bg-2 hover:bg-bg-4 cursor-pointer px-4 py-2 select-none">
-                                    Processing
-                                </div>
-                                <div className="bg-bg-2 hover:bg-bg-4 cursor-pointer px-4 py-2 text-txt-3 select-none">
-                                    Finished
-                                </div>
-                            </div>
-                            {*/}
                         </div>
 
                         <CreateNewButton />

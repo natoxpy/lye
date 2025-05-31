@@ -1,5 +1,4 @@
 import React, { forwardRef, ReactNode } from 'react'
-// import AddFileIcon from '@/app/components/icons/addFile'
 import FullFileIcon from '@/app/components/icons/fullFile'
 
 type Props = {
@@ -34,17 +33,6 @@ const Layout = forwardRef<HTMLDivElement, Props>((props, ref) => {
                 >
                     {props.navigation}
                 </div>
-                {/* 
-                <div className="w-[240px] h-full">
-                    <div className="flex items-center justify-between w-full h-[30px] px-[20px]">
-                        <span className="text-txt-2 text-[10px] opacity-75">
-                            Variants
-                        </span>
-                        <AddFileIcon className="stroke-txt-1 w-[14px] h-[14px]" />
-                    </div>
-                    <div>{props.variantNavigation}</div>
-                </div>
-                {*/}
             </div>
             <div
                 style={{

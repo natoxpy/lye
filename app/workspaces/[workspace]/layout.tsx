@@ -1,6 +1,4 @@
 'use client'
-import AppProvider from '@/store/provider'
-import PlayerAudioProvider from '@/app/components/player/component'
 import AudioProvider, { useAudio } from '@/app/components/audio/index'
 import { useParams } from 'next/navigation'
 import { ReactNode, useEffect } from 'react'
@@ -34,18 +32,14 @@ export default function Layout({
     navigation: React.ReactNode
 }) {
     return (
-        <AppProvider>
-            <PlayerAudioProvider>
-                <AudioProvider>
-                    <AudioSourceProvider>
-                        <div className="flex-col w-screen max-h-screen h-screen bg-bg-3 flex overflow-hidden">
-                            {header}
-                            {children}
-                            {navigation}
-                        </div>
-                    </AudioSourceProvider>
-                </AudioProvider>
-            </PlayerAudioProvider>
-        </AppProvider>
+        <AudioProvider>
+            <AudioSourceProvider>
+                <div className="flex-col w-screen max-h-screen h-screen bg-bg-3 flex overflow-hidden">
+                    {header}
+                    {children}
+                    {navigation}
+                </div>
+            </AudioSourceProvider>
+        </AudioProvider>
     )
 }

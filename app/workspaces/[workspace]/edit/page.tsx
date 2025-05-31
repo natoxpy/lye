@@ -1,12 +1,5 @@
 'use client'
-// import Editor from '@/app/components/editor'
 import NewEditor from '@/app/components/newEditor'
-// import { usePlainLyrics, useSectionedLyricsSections } from '@/states/hooks'
-// import { PersistanceEmitter, updatePlainlyrics } from '@/states/persistance'
-// import {
-//     plainLyricsStore,
-//     usePlainLyricsWorkspace,
-// } from '@/states/store-plain-lyrics'
 import { UNAME } from '@/utils/units'
 import { useParams } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -16,31 +9,6 @@ import { formatS } from '@/utils/time'
 import { useAudio } from '@/app/components/audio/index'
 import { useLyrics } from '@/states/hooks'
 import { LyricsDatabase } from '@/states/persistance'
-
-// import { SectionedParse } from '@/states/store-sectioned-lyrics'
-// import { useSectionedLyrics } from '@/states/hooks'
-
-// function EditorLoader() {
-//     return (
-//         <>
-//             <div className="bg-bg-3 h-full pt-3">
-//                 <div className="flex flex-col animate-pulse">
-//                     {Array.from({ length: 30 }).map((_, i) => (
-//                         <div
-//                             key={i}
-//                             className="flex items-center w-full min-h-[60px] pr-[25px]"
-//                         >
-//                             <div className="flex min-w-[85px] h-30px justify-end text-[20px] pr-[25px]">
-//                                 <span className="text-txt-1"></span>
-//                             </div>
-//                             <div className="w-full h-[30px]  bg-bg-4 opacity-35 rounded-xl"></div>
-//                         </div>
-//                     ))}
-//                 </div>
-//             </div>
-//         </>
-//     )
-// }
 
 export default function Page() {
     const [, setTick] = useState(0)
@@ -62,10 +30,6 @@ export default function Page() {
         return () => LyricsDatabase.removeReRender(rerender)
     }, [])
 
-    useEffect(() => {
-        // console.log(lyricsWorkspaces?.lyrics)
-    }, [lyricsWorkspaces])
-
     return (
         <div className="w-screen relative pb-[50px]">
             <NewEditor
@@ -80,94 +44,6 @@ export default function Page() {
             </div>
         </div>
     )
-
-    // const lyrics = useLyrics((state) => state)
-
-    // useEffect(() => {
-    //     if (lyrics.workspaces.length != 0) return
-
-    //     lyrics.actions.add({
-    //         workspace: '123',
-    //         id: '321',
-    //         lyrics: [
-    //             {
-    //                 header: {
-    //                     id: 'awa',
-    //                     timerange: {},
-    //                     content: 'verse',
-    //                 },
-    //                 content: [
-    //                     {
-    //                         timerange: {},
-    //                         content: 'iron lotus',
-    //                         id: 'uwu',
-    //                     },
-    //                 ],
-    //             },
-    //         ],
-    //     })
-    // }, [lyrics])
-
-    // useEffect(() => {
-    //     console.log(lyrics)
-    // }, [lyrics])
-
-    /*
-    const [lines, setLines] = useState<string[] | null>(
-        usePlainLyricsWorkspace(workspace)
-    )
-    const plainLyrics = usePlainLyrics((state) => state.lyrics)
-    const workspacesLyricsList = usePlainLyrics((state) => state.lyrics)
-    // const sectionedLyricsSections = useSectionedLyricsSections(workspace)
-
-    const updateLyrics = usePlainLyrics((state) => state.actions.updateLyrics)
-
-    // const updateSectionedLyricsRange = useSectionedLyrics(
-    //     (state) => state.actions.updateRange
-    // )
-
-    useEffect(() => {
-        if (lines == null) return
-        SectionedParse(lines.join('\n'))
-    }, [lines])
-
-    useEffect(() => {
-        if (lines != null) return
-        setLines(
-            plainLyrics
-                .find((pl) => pl.workspace == workspace)
-                ?.content.split('\n') ?? null
-        )
-    }, [lines, plainLyrics, workspace])
-
-    useEffect(() => {
-        if (!lines) return
-
-        updateLyrics(workspace, lines.join('\n'))
-
-        const workspaceData = workspacesLyricsList.find(
-            (w) => w.workspace === workspace
-        )
-
-        if (!workspaceData) return
-
-        updatePlainlyrics(workspaceData)
-    }, [lines, updateLyrics, workspace, workspacesLyricsList])
-
-    useEffect(() => {
-        const handler = () => {
-            if (lines !== null) return
-            const workspaceData = plainLyricsStore
-                .getState()
-                .lyrics.find((w) => w.workspace == workspace)
-
-            if (!workspaceData) return
-            setLines(workspaceData.content.split('\n'))
-        }
-        PersistanceEmitter.addEventListener('rerender', handler)
-        return () => PersistanceEmitter.removeEventListener('rerender', handler)
-    }, [lines, setLines, workspace])
-    */
 }
 
 export function EditPlayer() {

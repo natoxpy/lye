@@ -1,7 +1,7 @@
 import { UNAME } from '@/utils/units'
 import { createStore } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
-import { addWorkspace, deleteWorkspace } from './persistance'
+import { WorkspacesDatabase } from './persistance'
 
 export type Workspace = {
     shorthand_id: string
@@ -68,13 +68,13 @@ export const workspacesStore = createStore<WorkspaceStore>()(
                             ...objData,
                         }
 
-                        addWorkspace(workspaceObj)
+                        WorkspacesDatabase.add(workspaceObj)
                         state.workspaces.push(workspaceObj)
                     })
                 },
                 delete(id: string) {
                     set((state) => {
-                        deleteWorkspace(id)
+                        WorkspacesDatabase.delete(id)
                         state.workspaces = state.workspaces.filter(
                             (w) => w.id != id
                         )

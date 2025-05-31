@@ -10,10 +10,6 @@ const LrclibUploadTab = forwardRef<
         }
     }
 >((props, ref) => {
-    // const workspace = useLineSync((state) =>
-    //     state.workspaces.find((w) => w.workspace == props.workspace)
-    // )
-
     return (
         <div
             ref={ref}
@@ -34,30 +30,6 @@ const LrclibUploadTab = forwardRef<
                 </div>
             </div>
             <div className="flex items-center gap-2 justify-center px-[10px] py-[30px]">
-                {/*}
-                    <button
-                        style={{
-                            background: 'var(--color-accent-blue)',
-                            width: '138px',
-                            color: 'var(--color-txt-2)',
-                        }}
-                        onClick={() => {
-                            const req = fetch(
-                                'http://localhost:3300/api/request-challenge',
-                                { method: 'post' }
-                            )
-
-                            req.then(async (r) => {
-                                const data = await r.json()
-                                console.log(data)
-                            })
-                        }}
-                        className="cursor-pointer font-semibold flex items-center rounded-[6px] justify-center h-[49px]"
-                    >
-                        <span className="text-[16px]">Upload</span>
-                    </button>
-                    {*/}
-
                 <button
                     style={{
                         background: 'var(--color-accent-blue)',
