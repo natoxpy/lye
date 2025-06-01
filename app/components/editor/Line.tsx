@@ -52,8 +52,8 @@ export default function Line({
 
     return (
         <div className="w-full h-16 min-h-16 gap-5 flex text-white text-[24px]">
-            <div className="flex items-center justify-end min-w-12 h-full text-txt-3">
-                {header ? '#' : lineNumber}
+            <div className="flex items-center justify-end min-w-12 h-full">
+                <text className="text-txt-3 text-[20px]">{header ? '#' : lineNumber}</text>
             </div>
             <div className="w-full flex items-center gap-2">
                 {header ? (
