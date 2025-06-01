@@ -2,6 +2,7 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
 import DownArrow from '../components/icons/downArrow'
+import AudioInput from '@/app/components/AudioInput'
 import {
     useHeader,
     useLineSync,
@@ -14,12 +15,15 @@ import Header from './@header/page'
 import { WorkspacesDatabase } from '@/states/persistance'
 import { getLyricsCount } from '@/states/store-lyrics'
 import { getLineSyncCount } from '@/states/store-line-sync'
+import { useAudio } from '../components/audio'
 
 function ActiveList() {
     const { deleteWorkspace } = useWorkspaceUtils()
     const workspaces = useWorkspaces((state) => state.workspaces)
+    const updateWorkspace = useWorkspaces((state) => state.actions.update)
     const lyrics = useLyrics((state) => state.workspaces)
     const linesyncs = useLineSync((state) => state.workspaces)
+    const audio = useAudio()
 
     const router = useRouter()
     const inputFileRef = useRef<HTMLInputElement>(null)
@@ -111,118 +115,65 @@ function ActiveList() {
 
                             <td className="pr-4">
                                 <div className="flex items-center gap-4 w-full h-full">
-                                    <input
-                                        ref={inputFileRef}
-                                        type="file"
-                                        className="hidden"
-                                        onChange={async (e) => {
-                                            const getAudioArrayBuffer =
-                                                async (): Promise<ArrayBuffer> => {
-                                                    return new Promise(
-                                                        (res, rej) => {
-                                                            const file =
-                                                                Array.from(
-                                                                    e.target
-                                                                        .files ??
-                                                                        []
-                                                                )[0]
-                                                            if (
-                                                                !file ||
-                                                                (file &&
-                                                                    !file.type.startsWith(
-                                                                        'audio/'
-                                                                    ))
-                                                            )
-                                                                return
-                                                            const n =
-                                                                new FileReader()
-                                                            n.readAsArrayBuffer(
-                                                                file
-                                                            )
+                                    <AudioInput
+                                        innerRef={inputFileRef}
+                                        onChange={(audioBlob, cover) => {
+                                            audio.src =
+                                                URL.createObjectURL(audioBlob)
 
-                                                            n.onload = () =>
-                                                                res(
-                                                                    n.result as ArrayBuffer
-                                                                )
-                                                            n.onerror = () =>
-                                                                rej(n.error)
-                                                        }
-                                                    )
+                                            let obj
+
+                                            if (cover != undefined)
+                                                obj = {
+                                                    ...workspace,
+                                                    fileblob: audioBlob,
+                                                    coverblob: cover,
+                                                }
+                                            else
+                                                obj = {
+                                                    ...workspace,
+                                                    fileblob: audioBlob,
                                                 }
 
-                                            const getAudioPicture = async (
-                                                arrayBuffer: ArrayBuffer
-                                            ): Promise<ArrayBuffer> => {
-                                                const blob = new Blob([
-                                                    arrayBuffer,
-                                                ])
-
-                                                return new Promise(
-                                                    (res, rej) => {
-                                                        new (
-                                                            window as any
-                                                        ).jsmediatags.read(
-                                                            blob,
-                                                            {
-                                                                onSuccess: (
-                                                                    tag: any
-                                                                ) => {
-                                                                    const picture =
-                                                                        tag
-                                                                            .tags[
-                                                                            'picture'
-                                                                        ]
-                                                                    if (
-                                                                        !picture
-                                                                    )
-                                                                        return
-                                                                    res(
-                                                                        new Uint8Array(
-                                                                            picture.data
-                                                                        ).buffer
-                                                                    )
-                                                                },
-                                                                onError: (
-                                                                    error: never
-                                                                ) => rej(error),
-                                                            }
-                                                        )
-                                                    }
-                                                )
-                                            }
-
-                                            const audiobuffer =
-                                                await getAudioArrayBuffer()
-                                            const picturebuffer =
-                                                await getAudioPicture(
-                                                    audiobuffer
-                                                )
-
-                                            const audioBlob = new Blob([
-                                                audiobuffer,
-                                            ])
-                                            const audioCoverBlob = new Blob([
-                                                picturebuffer,
-                                            ])
-
-                                            WorkspacesDatabase.update({
-                                                ...workspace,
-                                                fileblob: audioBlob,
-                                                coverblob: audioCoverBlob,
-                                            })
+                                            updateWorkspace(obj)
+                                            WorkspacesDatabase.update(obj)
                                         }}
                                     />
 
-                                    <button
-                                        onClick={() =>
-                                            inputFileRef?.current?.click()
-                                        }
-                                        className="group/assign-audio"
-                                    >
-                                        <span className="text-txt-3 group-hover/assign-audio:text-txt-2">
-                                            AssignAudio
-                                        </span>
-                                    </button>
+                                    {workspace.fileblob == undefined ? (
+                                        <button
+                                            onClick={() => {
+                                                inputFileRef?.current?.click()
+                                            }}
+                                            className="group/assign-audio"
+                                        >
+                                            <span className="text-txt-3 whitespace-nowrap group-hover/assign-audio:text-txt-2">
+                                                Assign Audio
+                                            </span>
+                                        </button>
+                                    ) : (
+                                        <button
+                                            onClick={() => {
+                                                const {
+                                                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                                                    fileblob,
+                                                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                                                    coverblob,
+                                                    ...object
+                                                } = workspace
+
+                                                updateWorkspace(object as any)
+                                                WorkspacesDatabase.update({
+                                                    ...(object as any),
+                                                })
+                                            }}
+                                            className="group/assign-audio"
+                                        >
+                                            <span className="text-txt-3 whitespace-nowrap group-hover/assign-audio:text-txt-2">
+                                                Remove Audio
+                                            </span>
+                                        </button>
+                                    )}
 
                                     <button
                                         onClick={() => {

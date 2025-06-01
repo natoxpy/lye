@@ -2,7 +2,7 @@ import LeftArrowIcon from '@/app/components/icons/leftArrow'
 import UploadIcon from '@/app/components/icons/upload'
 import { useWorkspaces } from '@/states/hooks'
 import { forwardRef, useEffect, useState } from 'react'
-import { updateWorkspace } from '@/states/persistance'
+import { WorkspacesDatabase } from '@/states/persistance'
 
 const WorkspaceItemTab = forwardRef<
     HTMLDivElement,
@@ -55,7 +55,7 @@ const WorkspaceItemTab = forwardRef<
                             }
 
                             updateWorkspaceLocal(obj)
-                            updateWorkspace(obj)
+                            WorkspacesDatabase.update(obj)
                         }}
                         className="text-txt-2 text-[18px] bg-transparent outline-none border-none w-48"
                     />
@@ -90,7 +90,7 @@ const WorkspaceItemTab = forwardRef<
                                 }
 
                                 updateWorkspaceLocal(obj)
-                                updateWorkspace(obj)
+                                WorkspacesDatabase.update(obj)
                             }}
                             className="text-txt-2 flex text-[14px] w-full h-[24px] border-b-[1px] border-bg-5 bg-transparent outline-none"
                         />
@@ -119,7 +119,7 @@ const WorkspaceItemTab = forwardRef<
                                 }
 
                                 updateWorkspaceLocal(obj)
-                                updateWorkspace(obj)
+                                WorkspacesDatabase.update(obj)
                             }}
                             className="text-txt-2 flex text-[14px] w-full h-[24px] border-b-[1px] border-bg-5 bg-transparent outline-none"
                         />
