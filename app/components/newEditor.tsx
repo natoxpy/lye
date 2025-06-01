@@ -28,41 +28,22 @@ function TimeInput({
     const [seconds, setSeconds] = useState(
         leadingZero(Math.floor((time ?? NaN) / 1000) % 60)
     )
-    // const [decis, setDecis] = useState(
-    //     leadingZero(Math.floor(((time ?? NaN) % 1000) / 10) % 99)
-    // )
 
     const minuteRef = useRef<HTMLInputElement>(null)
     const secondRef = useRef<HTMLInputElement>(null)
-    // const deciRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
-        if (
-            !(
-                (minutes.length >= 2 && seconds.length >= 2)
-                //&& decis.length >= 2
-            )
-        )
+        if (!(minutes.length >= 2 && seconds.length >= 2))
             return onChange(undefined)
 
         const m = Number(minutes)
         const s = Number(seconds)
-        // const d = Number(decis)
 
         const mMs = m * 60 * 1000
         const sMs = s * 1000
-        // const dMs = d * 10
 
-        onChange(
-            mMs + sMs
-            // + dMs
-        )
-    }, [
-        minutes,
-        seconds,
-        // decis,
-        onChange,
-    ])
+        onChange(mMs + sMs)
+    }, [minutes, seconds, onChange])
 
     const onkeydown = (e: KeyboardEvent<HTMLInputElement>) => {
         if (/[0-9]/.test(e.key) && e.currentTarget.value.length >= 2) {
@@ -115,35 +96,12 @@ function TimeInput({
                     onInput(e)
 
                     if (e.currentTarget.value.length >= 2) {
-                        // deciRef.current?.focus()
-
                         if (Number(e.currentTarget.value) > 60) {
                             e.currentTarget.value = '59'
                         }
                     }
                 }}
             />
-            {/*}
-            <span className="text-txt-3 opacity-35">.</span>
-            <input
-                ref={deciRef}
-                value={decis}
-                onChange={(e) => setDecis(e.target.value)}
-                placeholder="00"
-                className="flex w-7 h-7 text-center items-center outline-none border-none bg-transparent rounded placeholder:text-txt-3 placeholder:opacity-35"
-                onKeyDown={(e) => {
-                    if (
-                        e.key == 'Backspace' &&
-                        e.currentTarget.value.length == 0
-                    ) {
-                        secondRef.current?.focus()
-                    }
-
-                    onkeydown(e)
-                }}
-                onInput={onInput}
-            />
-            {*/}
         </div>
     )
 }
