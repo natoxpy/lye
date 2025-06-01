@@ -61,6 +61,7 @@ export default function Line({
                         <AutoResizeInput
                             header={header}
                             content={content}
+                            onPaste={onPaste}
                             inputRef={ref}
                             onChange={onChange}
                             onKeyDown={onKeyDown}

@@ -1,17 +1,25 @@
-import { KeyboardEvent, useEffect, ChangeEvent, RefObject } from 'react'
+import {
+    KeyboardEvent,
+    useEffect,
+    ChangeEvent,
+    RefObject,
+    ClipboardEvent,
+} from 'react'
 
 export default function Component({
     header,
     content,
+    inputRef,
     onChange,
     onKeyDown,
-    inputRef,
+    onPaste,
 }: {
     header: boolean
     content: string
     onChange: (e: ChangeEvent<HTMLInputElement>) => void
     onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void
     inputRef: RefObject<HTMLInputElement>
+    onPaste: (e: ClipboardEvent<HTMLInputElement>) => void
 }) {
     const computeWidth = (value: string, font: string): number => {
         const span = document.createElement('span')
@@ -43,6 +51,7 @@ export default function Component({
 
     return (
         <input
+            onPaste={onPaste}
             ref={inputRef}
             value={content}
             onChange={(e) => onChange(e)}

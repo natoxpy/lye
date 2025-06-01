@@ -82,9 +82,8 @@ export default function Editor({
     const update = useCallback(
         (value: string, index: number) => {
             setLines((ln) => {
-                const [vl, isHeader] = parseHeader(value)
+                const [vl] = parseHeader(value)
                 ln[index].content = vl
-                ln[index].header = isHeader
                 return [...ln]
             })
         },
