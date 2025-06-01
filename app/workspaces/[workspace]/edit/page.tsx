@@ -1,5 +1,5 @@
 'use client'
-import NewEditor from '@/app/components/newEditor'
+import TextEditor from '@/app/components/editor'
 import { UNAME } from '@/utils/units'
 import { useParams } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -32,7 +32,7 @@ export default function Page() {
 
     return (
         <div className="w-screen relative pb-[50px]">
-            <NewEditor
+            <TextEditor
                 playerCurrentTime={audio.currentTime}
                 lyricsSections={lyricsWorkspaces?.lyrics ?? []}
                 onChange={(lyrics) => lyricsUpdate(workspace, lyrics)}

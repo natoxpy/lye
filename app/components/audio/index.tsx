@@ -42,7 +42,6 @@ export default function Provider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         const newaudio = new Audio()
         setAudio(newaudio)
-        console.log('added new audio')
     }, [setAudio, updateTick])
 
     useEffect(() => {
