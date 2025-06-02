@@ -56,7 +56,7 @@ export default function Component({
                     onkeydown(e)
                 }}
                 placeholder="00"
-                className="flex w-7 h-7 text-center items-center outline-none border-none bg-transparent rounded placeholder:text-txt-3 placeholder:opacity-35"
+                className="flex selection:bg-unaccent-accent-1 w-7 h-7 text-center items-center outline-none border-none bg-transparent rounded placeholder:text-txt-3 placeholder:opacity-35"
                 onInput={(e) => {
                     onInput(e)
 
@@ -71,7 +71,7 @@ export default function Component({
                 value={seconds}
                 onChange={(e) => setSeconds(e.target.value)}
                 placeholder="00"
-                className="flex w-7 h-7 text-center items-center outline-none border-none bg-transparent rounded placeholder:text-txt-3 placeholder:opacity-35"
+                className="flex selection:bg-unaccent-accent-1 w-7 h-7 text-center items-center outline-none border-none bg-transparent rounded placeholder:text-txt-3 placeholder:opacity-35"
                 onKeyDown={(e) => {
                     if (
                         e.key == 'Backspace' &&

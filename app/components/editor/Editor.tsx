@@ -24,6 +24,12 @@ export default function Editor({
     playerCurrentTime: number
 }) {
     const [renderLines, setRenderLines] = useState<Array<JSX.Element>>([])
+    const [mouseSelection, setMouseSelection] = useState<number | null>(null)
+    const [rangeSelection, setRangeSelection] = useState<{
+        start: number
+        end: number
+    } | null>(null)
+
     const [focused, setFocused] = useState<number | null>(null)
     const [selectionStartMemory, setSelectionStartMemory] = useState<
         number | null
@@ -53,10 +59,12 @@ export default function Editor({
             const item = value.map((v) => {
                 const [content, header] = parseHeader(v)
 
+                console.log(content, header)
+
                 return {
                     id: hash(String(Math.random())),
                     content,
-                    header,
+                    header: header,
                 }
             })
 
@@ -82,8 +90,9 @@ export default function Editor({
     const update = useCallback(
         (value: string, index: number) => {
             setLines((ln) => {
-                const [vl] = parseHeader(value)
+                const [vl, header] = parseHeader(value)
                 ln[index].content = vl
+                if (header) ln[index].header = header
                 return [...ln]
             })
         },
@@ -97,6 +106,31 @@ export default function Editor({
             const endSlice = lines.slice(index + 1)
 
             setFocused(index - 1)
+
+            setLines([...startSlice, ...endSlice])
+        },
+        [setLines, lines]
+    )
+
+    const removeMultiple = useCallback(
+        (index: [number, number]) => {
+            if (lines.length - 1 - (index[1] - index[0]) == 0) {
+                const item = {
+                    id: hash(String(Math.random())),
+                    content: '',
+                    header: true,
+                }
+
+                setFocused(0)
+
+                return setLines([item])
+            }
+
+            const startSlice = lines.slice(0, index[0])
+            const endSlice = lines.slice(index[1] + 1)
+
+            if (index[0] == 0) setFocused(index[0] + 1)
+            else setFocused(index[0] - 1)
 
             setLines([...startSlice, ...endSlice])
         },
@@ -187,6 +221,28 @@ export default function Editor({
     )
 
     useEffect(() => {
+        const localOnKeyDown = (e: globalThis.KeyboardEvent) => {
+            if (rangeSelection == null) return
+            if (e.key == 'Backspace' || e.key == 'Delete') {
+                e.preventDefault()
+                removeMultiple([
+                    Math.min(rangeSelection.start, rangeSelection.end),
+                    Math.max(rangeSelection.start, rangeSelection.end),
+                ])
+            }
+
+            setTimeout(() => {
+                setRangeSelection(null)
+            }, 1)
+        }
+
+        document.addEventListener('keydown', localOnKeyDown)
+        return () => {
+            document.removeEventListener('keydown', localOnKeyDown)
+        }
+    })
+
+    useEffect(() => {
         setRenderLines([])
         let offset = 0
 
@@ -203,6 +259,26 @@ export default function Editor({
 
             const lineElement = (
                 <LineComponent
+                    onMouseDown={() => {
+                        setMouseSelection(i)
+                        setRangeSelection({
+                            start: i,
+                            end: i,
+                        })
+                    }}
+                    onMouseUp={() => {
+                        setMouseSelection(null)
+                    }}
+                    onCustomHover={() => {
+                        if (mouseSelection == null) return
+
+                        setMouseSelection(i)
+
+                        setRangeSelection({
+                            start: rangeSelection?.start ?? i,
+                            end: i,
+                        })
+                    }}
                     onPaste={(e) => {
                         const paste = e.clipboardData.getData('text')
                         if (!paste || paste.length == 0) return
@@ -221,7 +297,25 @@ export default function Editor({
                     }}
                     timerange={line.timerange}
                     onKeyDown={(e) => onKeyDown(e, line, i)}
+                    isOnSelectionRange={
+                        rangeSelection == null ||
+                        rangeSelection.start == rangeSelection.end
+                            ? false
+                            : (rangeSelection.start >= i &&
+                                  rangeSelection.end <= i) ||
+                              (rangeSelection.end >= i &&
+                                  rangeSelection.start <= i)
+                    }
                     onRef={(ref) => {
+                        if (
+                            rangeSelection != null &&
+                            rangeSelection.start != rangeSelection.end
+                        ) {
+                            setFocused(null)
+                            return ref.blur()
+                        } else {
+                        }
+
                         if (i == focused) {
                             ref.focus()
                             setFocused(null)
@@ -249,6 +343,8 @@ export default function Editor({
             })
         }
     }, [
+        mouseSelection,
+        rangeSelection,
         addMultiple,
         lines,
         focused,
