@@ -47,7 +47,7 @@ export default function Component({
             getComputedStyle(element).font
         )
         element.style.width = Math.max(width, 12) + 'px'
-    }, [inputRef])
+    }, [inputRef, content])
 
     return (
         <input
