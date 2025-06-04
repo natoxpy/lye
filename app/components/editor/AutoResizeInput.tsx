@@ -59,7 +59,7 @@ export default function Component({
             style={{
                 color: header ? 'var(--color-txt-3)' : 'var(--color-txt-2)',
             }}
-            className="flex selection:bg-unaccent-accent-1 w-auto items-center h-full bg-transparent border-none outline-none"
+            className="flex selection:bg-unaccent-accent-1 flex-shrink-0 w-auto items-center h-full bg-transparent border-none outline-none"
             onInput={(e) => {
                 const width = computeWidth(
                     e.currentTarget.value,
