@@ -47,16 +47,16 @@ export default function Component({
     }
 
     return (
-        <div className="flex h-full items-center text-[20px] text-txt-3">
+        <div className="relative flex h-full items-center text-[20px] text-txt-3">
             <input
+                placeholder="00"
+                className="flex selection:bg-unaccent-accent-1 w-7 h-7 text-center items-center outline-none border-none bg-transparent rounded placeholder:text-red-400 placeholder:opacity-50"
                 ref={minuteRef}
                 value={minutes}
                 onChange={(e) => setMinutes(e.target.value)}
                 onKeyDown={(e) => {
                     onkeydown(e)
                 }}
-                placeholder="00"
-                className="flex selection:bg-unaccent-accent-1 w-7 h-7 text-center items-center outline-none border-none bg-transparent rounded placeholder:text-txt-3 placeholder:opacity-35"
                 onInput={(e) => {
                     onInput(e)
 
@@ -65,13 +65,13 @@ export default function Component({
                     }
                 }}
             />
-            <span className="text-txt-3 opacity-35">:</span>
+            <span className="text-unaccent-accent-1 opacity-40">:</span>
             <input
+                placeholder="00"
+                className="flex selection:bg-unaccent-accent-1 w-7 h-7 text-center items-center outline-none border-none bg-transparent rounded placeholder:text-red-400 placeholder:opacity-50"
                 ref={secondRef}
                 value={seconds}
                 onChange={(e) => setSeconds(e.target.value)}
-                placeholder="00"
-                className="flex selection:bg-unaccent-accent-1 w-7 h-7 text-center items-center outline-none border-none bg-transparent rounded placeholder:text-txt-3 placeholder:opacity-35"
                 onKeyDown={(e) => {
                     if (
                         e.key == 'Backspace' &&

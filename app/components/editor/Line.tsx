@@ -4,6 +4,7 @@ import {
     KeyboardEvent,
     MouseEvent,
     useEffect,
+    useMemo,
     useRef,
 } from 'react'
 import TimeInput from './TimeInput'
@@ -52,6 +53,10 @@ export default function Line({
     }
     const parentRef = useRef<HTMLDivElement>(null)
     const ref = useRef<HTMLInputElement>(null)
+
+    const isNotFullySet = useMemo(() => {
+        return timerange?.end == undefined || timerange?.start == undefined
+    }, [timerange])
 
     useEffect(() => {
         const element = ref.current
@@ -115,7 +120,7 @@ export default function Line({
                             onKeyDown={onKeyDown}
                         />
 
-                        <div className="w-full flex items-center gap-3">
+                        <div className="w-full relative group flex items-center gap-3">
                             <div
                                 style={{
                                     backgroundColor: isPlayingRange
@@ -135,12 +140,29 @@ export default function Line({
 
                             <div
                                 style={{
-                                    backgroundColor: isPlayingRange
-                                        ? 'var(--color-accent-blue)'
-                                        : '',
+                                    backgroundColor: isNotFullySet
+                                        ? 'hsla(var(--color-accent-red-hsl),0.4)'
+                                        : isPlayingRange
+                                          ? 'var(--color-accent-blue)'
+                                          : '',
                                 }}
-                                className="min-w-4 h-1 bg-bg-4 rounded transition-colors"
-                            ></div>
+                                className="relative min-w-4 h-1 bg-bg-4 rounded transition-colors"
+                            >
+                                <div
+                                    style={{
+                                        display: isNotFullySet ? '' : 'none',
+                                    }}
+                                    className="group-hover:flex hidden w-36 absolute left-1/2 -translate-x-1/2 top-6 bg-unaccent-accent-2 rounded px-4 py-3"
+                                >
+                                    <span className="w-full  text-[16px]">
+                                        You should set the{' '}
+                                        <span className="text-accent-blue">
+                                            time range
+                                        </span>{' '}
+                                        for this section
+                                    </span>
+                                </div>
+                            </div>
 
                             <TimeInput
                                 time={timerange?.end}
