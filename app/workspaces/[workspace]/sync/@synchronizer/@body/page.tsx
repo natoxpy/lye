@@ -126,15 +126,20 @@ function AnkerBase({
 function BaseCenter({
     children,
     onDrag,
+    onClick,
 }: {
     children: React.ReactNode
     onDrag: (xms: Milliseconds) => void
+    onClick: () => void
 }) {
     const { container: parentElement } = useLayoutContext()
     const ankerElement = useRef<HTMLDivElement>(null)
     const [mouseDown, setMouseDown] = useState(false)
     const [mouseOffset, setMouseOffset] = useState<null | number>(null)
     const { duration, maxwidth, offset } = useSynchronizer((state) => state)
+    const [timeoutClick, setTimeoutClick] = useState<NodeJS.Timeout | null>(
+        null
+    )
 
     const computeTime = useCallback(
         (e: MouseEvent) => {
@@ -164,9 +169,20 @@ function BaseCenter({
             const x = e.clientX - parentXRef - padding - extraVariable - moffset
 
             const xms = ((offsetPx + x) / maxwidth) * duration
+
+            if (timeoutClick != null) return
+
             onDrag((Math.round(xms / 10) * 10) as Milliseconds)
         },
-        [parentElement, duration, maxwidth, offset, onDrag, mouseOffset]
+        [
+            parentElement,
+            timeoutClick,
+            duration,
+            maxwidth,
+            offset,
+            onDrag,
+            mouseOffset,
+        ]
     )
 
     useEffect(() => {
@@ -176,9 +192,11 @@ function BaseCenter({
         const onMouseMove = (e: MouseEvent) => {
             if (!mouseDown) return
             computeTime(e)
+            if (e.offsetX > 120) setTimeoutClick(null)
         }
 
         const onMouseUp = (e: MouseEvent) => {
+            if (timeoutClick != null) onClick()
             if (!mouseDown) return
 
             computeTime(e)
@@ -188,6 +206,12 @@ function BaseCenter({
         }
 
         const onMouseDown = (e: MouseEvent) => {
+            const timeout = setTimeout(() => {
+                setTimeoutClick(null)
+            }, 200)
+
+            setTimeoutClick(timeout)
+
             e.stopPropagation()
             e.preventDefault()
 
@@ -205,7 +229,7 @@ function BaseCenter({
             document.removeEventListener('mouseup', onMouseUp)
             element.removeEventListener('mousedown', onMouseDown)
         }
-    }, [mouseDown, computeTime])
+    }, [mouseDown, computeTime, onClick, timeoutClick])
 
     return (
         <div
@@ -365,6 +389,7 @@ function MoveObject({
     const { workspace } = useParams<{ workspace: string }>()
     const { update } = useLineSync((state) => state.actions.lineSyncItems)
     const { findNearestNeighbors } = useLyricsToolkit(workspace)
+    const audio = useAudio()
 
     const objectPrevious = useLineSync((state) => {
         const { previous } = findNearestNeighbors(targetId)
@@ -390,6 +415,10 @@ function MoveObject({
 
     return (
         <BaseCenter
+            onClick={() => {
+                if (!object?.timerange) return
+                audio.currentTime = object.timerange.start / 1000
+            }}
             onDrag={(e) => {
                 if (!object?.timerange) return
 

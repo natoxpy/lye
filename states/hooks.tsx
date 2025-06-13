@@ -102,35 +102,36 @@ export const useWorkspaceUtils = () => {
 
 export function useLyricsToolkit(workspace: string) {
     const lyrics = useLyrics((state) => state.workspaces)
-    const wp = lyrics.find((w) => w.workspace == workspace)
+    const syncs = useLineSync((state) => state.workspaces)
 
-    if (!wp) return {} as never
+    const wp = lyrics.find((w) => w.workspace == workspace)
+    const ls = syncs.find((w) => w.workspace == workspace)
+
+    if (!wp || !ls) return {} as never
 
     return {
         findNearestNeighbors: (targetId: string) => {
             let previous = null
-            let current = null
             let next = null
 
-            for (let i = 0; i < wp.lyrics.length; i++) {
-                const sections = wp.lyrics[i]
-                if (next != null) break
+            const list = wp.lyrics
+                .flatMap((v) => v.content)
+                .filter((lyric) => {
+                    return (
+                        ls.content.findIndex((c) => c.targetId == lyric.id) !=
+                        -1
+                    )
+                })
 
-                for (let y = 0; y < sections.content.length; y++) {
-                    const line = sections.content[y]
+            const targetIndex = list.findIndex((v) => v.id == targetId)
+            if (targetIndex == -1) return { previous, next }
 
-                    if (current != null) {
-                        next = line
-                        break
-                    }
+            if (targetIndex + 1 < list.length - 1) {
+                next = list[targetIndex + 1]
+            }
 
-                    if (line.id == targetId) {
-                        current = line
-                        continue
-                    }
-
-                    previous = line
-                }
+            if (list.length > 0) {
+                previous = list[targetIndex - 1]
             }
 
             return {
