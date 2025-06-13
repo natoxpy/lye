@@ -123,6 +123,101 @@ function AnkerBase({
     )
 }
 
+function BaseCenter({
+    children,
+    onDrag,
+}: {
+    children: React.ReactNode
+    onDrag: (xms: Milliseconds) => void
+}) {
+    const { container: parentElement } = useLayoutContext()
+    const ankerElement = useRef<HTMLDivElement>(null)
+    const [mouseDown, setMouseDown] = useState(false)
+    const [mouseOffset, setMouseOffset] = useState<null | number>(null)
+    const { duration, maxwidth, offset } = useSynchronizer((state) => state)
+
+    const computeTime = useCallback(
+        (e: MouseEvent) => {
+            e.preventDefault()
+            e.stopPropagation()
+
+            const element = ankerElement.current
+            if (!element) return
+
+            const parentXRef = parentElement?.current?.getBoundingClientRect().x
+            if (parentXRef == undefined) return
+
+            const offsetPx = (offset / duration) * maxwidth
+
+            // Mouse offset
+            const moffset = mouseOffset ?? 0
+            // mouse adjusted offset
+
+            const padding = 4
+
+            // not fully sure where the `extraVariable` comes from, however I suspect it's from the border
+            // and it should be affected by changes in sync/synchronizer/layout where the parent of this
+            // component can be found, for now as the style currently stands with `p-4` and `border-1` the
+            // extraVars listed make the sizeable portion of the sync element not offset simply by placing
+            // the mouse down without moving at all.
+            const extraVariable = 2.5
+            const x = e.clientX - parentXRef - padding - extraVariable - moffset
+
+            const xms = ((offsetPx + x) / maxwidth) * duration
+            onDrag((Math.round(xms / 10) * 10) as Milliseconds)
+        },
+        [parentElement, duration, maxwidth, offset, onDrag, mouseOffset]
+    )
+
+    useEffect(() => {
+        const element = ankerElement.current
+        if (!element) return
+
+        const onMouseMove = (e: MouseEvent) => {
+            if (!mouseDown) return
+            computeTime(e)
+        }
+
+        const onMouseUp = (e: MouseEvent) => {
+            if (!mouseDown) return
+
+            computeTime(e)
+
+            setMouseDown(false)
+            setTimeout(() => setMouseOffset(null), 1)
+        }
+
+        const onMouseDown = (e: MouseEvent) => {
+            e.stopPropagation()
+            e.preventDefault()
+
+            const mouseoffset = e.clientX - element.getBoundingClientRect().x
+            setMouseOffset(mouseoffset)
+            setMouseDown(true)
+        }
+
+        document.addEventListener('mousemove', onMouseMove)
+        document.addEventListener('mouseup', onMouseUp)
+        element.addEventListener('mousedown', onMouseDown)
+
+        return () => {
+            document.removeEventListener('mousemove', onMouseMove)
+            document.removeEventListener('mouseup', onMouseUp)
+            element.removeEventListener('mousedown', onMouseDown)
+        }
+    }, [mouseDown, computeTime])
+
+    return (
+        <div
+            ref={ankerElement}
+            onClick={(e) => e.stopPropagation()}
+            className="flex text-center items-center justify-center w-full h-full hover:bg-unaccent-accent-1"
+        >
+            {children}
+        </div>
+    )
+}
+
 function LeftSizeResizeAnker({ targetId }: { targetId: string }) {
     const { workspace } = useParams<{ workspace: string }>()
     const { update } = useLineSync((state) => state.actions.lineSyncItems)
@@ -260,6 +355,70 @@ function RightSizeResizeAnker({ targetId }: { targetId: string }) {
     )
 }
 
+function MoveObject({
+    targetId,
+    content,
+}: {
+    targetId: string
+    content: string
+}) {
+    const { workspace } = useParams<{ workspace: string }>()
+    const { update } = useLineSync((state) => state.actions.lineSyncItems)
+    const { findNearestNeighbors } = useLyricsToolkit(workspace)
+
+    const objectPrevious = useLineSync((state) => {
+        const { previous } = findNearestNeighbors(targetId)
+
+        return state.workspaces
+            .find((w) => w.workspace == workspace)
+            ?.content.find((l) => l.targetId == previous?.id)
+    })
+
+    const object = useLineSync((state) =>
+        state.workspaces
+            .find((w) => w.workspace == workspace)
+            ?.content.find((l) => l.targetId == targetId)
+    )
+
+    const objectNext = useLineSync((state) => {
+        const { next } = findNearestNeighbors(targetId)
+
+        return state.workspaces
+            .find((w) => w.workspace == workspace)
+            ?.content.find((l) => l.targetId == next?.id)
+    })
+
+    return (
+        <BaseCenter
+            onDrag={(e) => {
+                if (!object?.timerange) return
+
+                const duration = object.timerange.end - object.timerange.start
+
+                let end = e + duration
+                let start: number = e
+
+                if (
+                    objectPrevious?.timerange &&
+                    start < objectPrevious.timerange.end
+                ) {
+                    start = objectPrevious.timerange.end
+                    end = start + duration
+                }
+
+                if (objectNext?.timerange && end > objectNext.timerange.start) {
+                    end = objectNext.timerange.start
+                    start = end - duration
+                }
+
+                update(workspace, targetId, { start, end })
+            }}
+        >
+            <div className="w-full">{content}</div>
+        </BaseCenter>
+    )
+}
+
 function Component({
     content,
     start,
@@ -296,7 +455,7 @@ function Component({
             className="flex overflow-hidden text-sm items-center justify-between absolute rounded-sm h-16 bg-unaccent-accent-1 hover:border-accent-1 border-bg-2 border-[1px] cursor-pointer text-txt-2"
         >
             <LeftSizeResizeAnker targetId={targetId} />
-            <div className="w-full text-center">{content}</div>
+            <MoveObject content={content} targetId={targetId} />
             <RightSizeResizeAnker targetId={targetId} />
         </div>
     )
