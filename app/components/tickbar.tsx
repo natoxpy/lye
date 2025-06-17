@@ -1,5 +1,5 @@
 'use client'
-import { RefObject, useCallback, useEffect, useRef } from 'react'
+import { RefObject, useCallback, useEffect, useRef, useState } from 'react'
 import generateTicks, { BigTick, SmallTick } from '@/utils/generate_ticks'
 import { Milliseconds } from '@/utils/units'
 import { formatMS } from '@/utils/time'
@@ -128,16 +128,21 @@ export default function Component({
     duration,
     offset,
     onFrameWidth,
+    onClick,
+    onDrag,
 }: {
     offset: Milliseconds
     maxWidth: number
     duration: Milliseconds
     onFrameWidth?: (widthPx: number) => void
     onFullWidth?: (widthMs: Milliseconds, widthPx: number) => void
+    onClick?: (offset: Milliseconds) => void
+    onDrag?: (offset: Milliseconds) => void
 }) {
     const refparent = useRef<HTMLDivElement>(null)
     const refcanvas = useRef<HTMLCanvasElement>(null)
     const draw = useDraw(refcanvas)
+    const [mouseDown, setMouseDown] = useState(false)
 
     const getWidth = useCallback(() => {
         const wp = refparent.current?.getBoundingClientRect().width as 0
@@ -158,10 +163,44 @@ export default function Component({
         return () => window.removeEventListener('resize', resize)
     })
 
+    useEffect(() => {
+        const canvas = refcanvas.current
+        if (!canvas) return
+
+        const onMouseUp = () => {
+            setMouseDown(false)
+        }
+
+        const onMouseMove = (e: MouseEvent) => {
+            if (!mouseDown) return
+
+            const x = e.clientX - canvas.getBoundingClientRect().left
+            const xms = (x / maxWidth) * duration
+            if (onDrag) onDrag(xms as Milliseconds)
+        }
+
+        document.addEventListener('mouseup', onMouseUp)
+        document.addEventListener('mousemove', onMouseMove)
+
+        return () => {
+            document.removeEventListener('mouseup', onMouseUp)
+            document.removeEventListener('mousemove', onMouseMove)
+        }
+    })
+
     return (
         <div ref={refparent} className="w-full bg-bg-3">
             <canvas
                 ref={refcanvas}
+                onMouseDown={() => setMouseDown(true)}
+                onClick={(e) => {
+                    const canvas = refcanvas.current
+                    if (!canvas) return
+
+                    const x = e.clientX - canvas.getBoundingClientRect().left
+                    const xms = (x / maxWidth) * duration
+                    if (onClick) onClick(xms as Milliseconds)
+                }}
                 style={{
                     height: 28 + 'px',
                 }}
