@@ -1,8 +1,16 @@
 'use client'
 import { useAudio } from '@/app/components/audio'
 import { useSynchronizer } from '@/states/hooks'
-import { RefObject, useEffect, useMemo, useRef, useState } from 'react'
+import {
+    RefObject,
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react'
 import { LayoutContextProvider } from './context'
+import { useKeys } from '@/app/components/keyboardProvider'
 
 function TimelineTimebar({
     parentRef,
@@ -92,6 +100,91 @@ function TimelineTimebar({
     )
 }
 
+export function ZoomScrollControl({ children }: { children: React.ReactNode }) {
+    const { frame, maxwidth, duration, offset, setOffset, setMaxwidth } =
+        useSynchronizer((state) => state)
+    const [zoomPoint, setZoomPoint] = useState(0)
+    const elementRef = useRef<HTMLDivElement>(null)
+    const keys = useKeys()
+
+    useEffect(() => {
+        const element = elementRef.current
+        if (!element) return
+
+        const mouseMove = (e: MouseEvent) => {
+            const leftX = element.getBoundingClientRect().left
+            const zp = e.clientX - leftX
+
+            if (zp > frame) {
+                setZoomPoint(frame)
+            } else if (zp < 0) {
+                setZoomPoint(0)
+            } else {
+                setZoomPoint(zp)
+            }
+        }
+
+        document.addEventListener('mousemove', mouseMove)
+
+        return () => {
+            document.removeEventListener('mousemove', mouseMove)
+        }
+    }, [elementRef, frame])
+
+    const process = useCallback(
+        (newMaxWidth: number) => {
+            // const newMaxWidth = Number(e.currentTarget.value)
+
+            const opx = (offset / duration) * maxwidth
+
+            // changing this changes the point where the zoom focuses
+            // frame / 2 means the middle of the frame view
+            const optic = zoomPoint
+
+            const u1 = (opx + optic) / maxwidth
+            const opx1 = u1 * newMaxWidth - optic
+            const o = (opx1 / newMaxWidth) * duration
+
+            setOffset(o)
+            setMaxwidth(newMaxWidth)
+        },
+        [zoomPoint, duration, maxwidth, offset, setMaxwidth, setOffset]
+    )
+
+    useEffect(() => {
+        const element = elementRef.current
+        if (!element) return
+
+        const onWheel = (e: WheelEvent) => {
+            const delta = e.deltaX == 0 ? e.deltaY : e.deltaX
+            if (!keys.shift) return
+            const min = frame * 2
+            const max = ((frame / 3) * duration) / 1000
+
+            console.log()
+
+            let nmw = maxwidth - delta * (maxwidth / frame)
+
+            if (nmw > max) nmw = max
+            else if (nmw < min) nmw = min
+
+            process(nmw)
+        }
+
+        element.addEventListener('wheel', onWheel)
+
+        return () => {
+            element.removeEventListener('wheel', onWheel)
+        }
+    }, [zoomPoint, duration, frame, maxwidth, keys, process])
+
+    return (
+        <>
+            <div ref={elementRef}>{children}</div>
+        </>
+    )
+}
+
 export default function Layout({
     options,
     tickbar,
@@ -105,14 +198,14 @@ export default function Layout({
         (state) => state
     )
     const container = useRef<HTMLDivElement>(null)
+    const keys = useKeys()
 
     useEffect(() => {
         if (!container.current) return
         const el = container.current
 
         const onWheel = (e: WheelEvent) => {
-            e.preventDefault()
-            e.stopPropagation()
+            if (keys.shift) return
 
             const delta = e.deltaX == 0 ? e.deltaY : e.deltaX
             const frameDuration = (frame / maxwidth) * duration
@@ -124,7 +217,7 @@ export default function Layout({
         return () => {
             el.removeEventListener('wheel', onWheel)
         }
-    }, [container, changeOffset, frame, duration, maxwidth])
+    }, [container, changeOffset, frame, duration, maxwidth, keys])
 
     return (
         <div className="flex flex-col h-full gap-2 z-30">
@@ -136,11 +229,13 @@ export default function Layout({
                 className="bg-bg-3 relative z-30 px-1 border-2 border-unaccent-accent-1 rounded-md overflow-hidden h-fit"
                 ref={container}
             >
-                <LayoutContextProvider container={container}>
-                    <TimelineTimebar parentRef={container} />
-                    {tickbar}
-                    {body}
-                </LayoutContextProvider>
+                <ZoomScrollControl>
+                    <LayoutContextProvider container={container}>
+                        <TimelineTimebar parentRef={container} />
+                        {tickbar}
+                        {body}
+                    </LayoutContextProvider>
+                </ZoomScrollControl>
             </div>
         </div>
     )
