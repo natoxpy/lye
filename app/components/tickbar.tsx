@@ -176,7 +176,7 @@ export default function Component({
 
             const x = e.clientX - canvas.getBoundingClientRect().left
             const xms = (x / maxWidth) * duration
-            if (onDrag) onDrag(xms as Milliseconds)
+            if (onDrag) onDrag((xms + offset) as Milliseconds)
         }
 
         document.addEventListener('mouseup', onMouseUp)
@@ -199,7 +199,7 @@ export default function Component({
 
                     const x = e.clientX - canvas.getBoundingClientRect().left
                     const xms = (x / maxWidth) * duration
-                    if (onClick) onClick(xms as Milliseconds)
+                    if (onClick) onClick((xms + offset) as Milliseconds)
                 }}
                 style={{
                     height: 28 + 'px',
