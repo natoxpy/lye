@@ -72,6 +72,22 @@ export default function Provider({ children }: { children: React.ReactNode }) {
         }
     }, [audio, updateTick])
 
+    useEffect(() => {
+        if (!audio) return
+
+        const onkeydown = (e: KeyboardEvent) => {
+            if (e.code != 'Space') return
+
+            if (audio.paused) audio.play()
+            else audio.pause()
+        }
+
+        document.addEventListener('keydown', onkeydown)
+        return () => {
+            document.removeEventListener('keydown', onkeydown)
+        }
+    })
+
     return (
         <AudioContext.Provider
             value={{
