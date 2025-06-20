@@ -47,7 +47,7 @@ export default function Component() {
                 <Option primary href={'/workspaces'}>
                     Get Started
                     <span className="absolute whitespace-nowrap text-txt-3 -right-16">
-                        v0.1.1a
+                        v0.2.0
                     </span>
                 </Option>
             </div>
