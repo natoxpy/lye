@@ -42,7 +42,7 @@ export const useWorkspaceUtils = () => {
 
     const createWorkspace = (
         workspace: { title: string; artist: string; album: string },
-        lyrics: Lyrics
+        lyrics: Omit<Lyrics, 'id' | 'workspace'>
     ) => {
         const workspaceId = crypto.randomUUID() as UNAME
         const shorthandId = workspaceId.split('-')[0] as UNAME
@@ -56,7 +56,12 @@ export const useWorkspaceUtils = () => {
             coverblob: undefined as never,
             fileblob: undefined as never,
         })
-        lyricsStore.add(lyrics)
+
+        const lc = lyrics as Lyrics
+        lc.id = crypto.randomUUID()
+        lc.workspace = shorthandId
+
+        lyricsStore.add(lc)
         lineSyncStore.add({
             content: [],
             workspace: shorthandId,

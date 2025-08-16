@@ -198,7 +198,11 @@ function ActiveList() {
     )
 }
 
-function CreateNewButton() {
+function CreateNewButton({
+    setOverlaySearch,
+}: {
+    setOverlaySearch: (s: string) => void
+}) {
     const [opened, setOpened] = useState(false)
     const { createEmptyWorkspace } = useWorkspaceUtils()
 
@@ -256,6 +260,128 @@ function CreateNewButton() {
                 >
                     <span className="text-txt-2">Empty</span>
                 </button>
+                <button
+                    onClick={() => {
+                        setOpened(false)
+                        setOverlaySearch('lrclib')
+                    }}
+                    className="relative text-left cursor-pointer hover:bg-bg-4 transition-all px-4 py-2"
+                >
+                    <span className="text-txt-2">From LRCLIB</span>
+                </button>
+            </div>
+        </div>
+    )
+}
+
+function LrclibOverlay({
+    setOverlaySearch,
+}: {
+    setOverlaySearch: (s: string) => void
+}) {
+    const { createWorkspace } = useWorkspaceUtils()
+    const [searching, setSearching] = useState(false)
+    const [query, setQuery] = useState('')
+    const [results, setResults] = useState<
+        Array<{
+            artist: string
+            trackName: string
+            id: number
+            albumName: string
+            lyrics: string
+        }>
+    >([])
+
+    const querySearch = async () => {
+        setSearching(true)
+
+        const req = await fetch(
+            'https://lrclib.net/api/search?q=' + encodeURIComponent(query)
+        )
+        const data = await req.json()
+
+        setResults(
+            data.map((v: any) => {
+                return {
+                    id: v.id,
+                    artist: v.artistName,
+                    trackName: v.trackName,
+                    albumName: v.albumName,
+                    lyrics: v.plainLyrics,
+                }
+            })
+        )
+
+        setSearching(false)
+    }
+
+    return (
+        <div
+            className="root flex justify-center items-start pt-44 bg-[hsla(var(--color-bg-3-hsl),0.5)] z-20 absolute w-screen h-screen"
+            onClick={(e) => {
+                if (e.target == e.currentTarget) setOverlaySearch('')
+            }}
+        >
+            <div className="flex flex-col gap-1">
+                <div className="flex bg-bg-4  rounded-md overflow-hidden">
+                    <input
+                        value={query}
+                        disabled={searching}
+                        onChange={(e) => setQuery(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key == 'Enter') querySearch()
+                        }}
+                        placeholder="LRCLIB Search"
+                        className="w-full p-3 text-txt-2 bg-transparent border-none outline-none"
+                    />
+                    <button
+                        onClick={querySearch}
+                        disabled={searching}
+                        className="w-20 focus:bg-accent-blue hover:bg-accent-blue disabled:bg-unaccent-accent-2 transition-colors outline-none px-3 text-txt-2 font-semibold bg-unaccent-accent-1"
+                    >
+                        {searching ? '...' : 'Search'}
+                    </button>
+                </div>
+                <div className="bg-bg-4 max-h-96 flex flex-col rounded-md overflow-x-hidden overflow-y-auto">
+                    {results.map((item) => (
+                        <div
+                            onClick={() => {
+                                const lyrics = item.lyrics.split('\n')
+                                setOverlaySearch('')
+
+                                createWorkspace(
+                                    {
+                                        title: item.trackName,
+                                        artist: item.artist,
+                                        album: item.albumName,
+                                    },
+                                    {
+                                        lyrics: [
+                                            {
+                                                header: {
+                                                    content: '',
+                                                    id: crypto.randomUUID(),
+                                                },
+                                                content: lyrics.map((line) => {
+                                                    return {
+                                                        content: line,
+                                                        id: crypto.randomUUID(),
+                                                    }
+                                                }),
+                                            },
+                                        ],
+                                    }
+                                )
+                            }}
+                            key={item.id}
+                            className="w-96 hover:bg-unaccent-accent-1 text-txt-2 p-2"
+                        >
+                            <span className="whitespace-normal">
+                                {item.artist} - {item.trackName}
+                            </span>
+                        </div>
+                    ))}
+                </div>
             </div>
         </div>
     )
@@ -268,9 +394,16 @@ export default function Page() {
         header.setTab(0)
     })
 
+    const [overlaySearch, setOverlaySearch] = useState('')
+
     return (
         <div className="flex flex-col w-screen max-h-screen h-screen bg-bg-2">
             <Header />
+
+            {overlaySearch == 'lrclib' && (
+                <LrclibOverlay setOverlaySearch={setOverlaySearch} />
+            )}
+
             <div className="flex justify-center pt-10">
                 <div className="flex flex-col grow max-w-[1480px] mx-20 gap-3">
                     <div className="flex justify-between w-full rounded-lg">
@@ -281,7 +414,7 @@ export default function Page() {
                             />
                         </div>
 
-                        <CreateNewButton />
+                        <CreateNewButton setOverlaySearch={setOverlaySearch} />
                     </div>
                     <div className="px-6 py-4 text-[18px] rounded-lg bg-bg-3">
                         <ActiveList />
