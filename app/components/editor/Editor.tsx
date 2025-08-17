@@ -114,7 +114,10 @@ export default function Editor({
 
     const removeMultiple = useCallback(
         (index: [number, number]) => {
-            if (lines.length - 1 - (index[1] - index[0]) == 0) {
+            const selectedAllLines =
+                lines.length - 1 - (index[1] - index[0]) == 0
+
+            if (selectedAllLines) {
                 const item = {
                     id: hash(String(Math.random())),
                     content: '',
@@ -129,8 +132,10 @@ export default function Editor({
             const startSlice = lines.slice(0, index[0])
             const endSlice = lines.slice(index[1] + 1)
 
-            if (index[0] == 0) setFocused(index[0] + 1)
-            else setFocused(index[0] - 1)
+            if (index[0] == 0) {
+                endSlice[0].header = true
+                setFocused(index[0] + 1)
+            } else setFocused(index[0] - 1)
 
             setLines([...startSlice, ...endSlice])
         },
@@ -164,8 +169,9 @@ export default function Editor({
                     const selectionStart = element.selectionStart
                     const selectionEnd = element.selectionEnd
 
-                    if (selectionStart == selectionEnd && selectionStart == 0)
+                    if (selectionStart == selectionEnd && selectionStart == 0) {
                         setFocused(i - 1)
+                    }
 
                     break
                 }
@@ -178,8 +184,9 @@ export default function Editor({
                     if (
                         selectionStart == selectionEnd &&
                         selectionStart == e.currentTarget.value.length
-                    )
+                    ) {
                         setFocused(i + 1)
+                    }
                     break
                 }
 
@@ -267,6 +274,8 @@ export default function Editor({
                         })
                     }}
                     onMouseUp={() => {
+                        if (rangeSelection?.end == rangeSelection?.start)
+                            setRangeSelection(null)
                         setMouseSelection(null)
                     }}
                     onCustomHover={() => {

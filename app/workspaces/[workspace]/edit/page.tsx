@@ -21,6 +21,32 @@ export default function Page() {
 
     const audio = useAudio()
 
+    const [shift, setShift] = useState(false)
+
+    useEffect(() => {
+        if (!audio) return
+
+        const onkeydown = (e: KeyboardEvent) => {
+            if (e.key == 'Shift') setShift(true)
+
+            if (!(shift && e.key == ' ')) return
+
+            if (audio.paused) audio.play()
+            else audio.pause()
+        }
+
+        const onkeyup = (e: KeyboardEvent) => {
+            if (e.key == 'Shift') setShift(false)
+        }
+
+        document.addEventListener('keydown', onkeydown)
+        document.addEventListener('keyup', onkeyup)
+        return () => {
+            document.removeEventListener('keydown', onkeydown)
+            document.removeEventListener('keyup', onkeyup)
+        }
+    })
+
     useEffect(() => {
         const rerender = () => {
             setTick((t) => t + 1)
